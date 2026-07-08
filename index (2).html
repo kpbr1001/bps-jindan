@@ -644,7 +644,7 @@ tr:last-child td{border-bottom:none;}
   <section class="hero no-print">
     <div class="wrap">
       <span class="badge">📄 공고 · 양식 · 사업계획서 3종 비교 진단</span>
-      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v3.0 · 공고유형분기(5종)·동적배점·suppress·자기검증</span>
+      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v3.1 · 9·10·12·13동적화·빌드해시·디버그로그</span>
       <h1>지원사업 사업계획서<br/>AI 진단 MVP</h1>
       <p>지원공고, 작성양식, 작성한 사업계획서를 비교하여 <b>적합성, 감점 리스크, 보완 방향</b>을 진단합니다. 심사위원 관점의 보완 가이드를 받아보세요.</p>
     </div>
@@ -1188,7 +1188,7 @@ tr:last-child td{border-bottom:none;}
 
       <div class="callout" style="margin-top:4px">
         <span class="co-ico">📉</span>
-        <div><b>리스크 합산:</b> 점수형 리스크 4가지(①~④)를 방치하면 예상 감점은 <b>약 -12점</b>으로, 현재 62점에서 50점대로 떨어져 선정 경쟁력이 크게 약화됩니다. 반대로 모두 보완하면 <b>72~74점대</b> 진입이 가능한 구조입니다. ⑤ 자격요건은 점수와 별개로 <b>신청 가능 여부</b>를 결정하므로 최우선 확인 대상입니다.</div>
+        <div id="risk-sum"><b>리스크 합산:</b> 점수형 리스크를 방치하면 종합점수가 하락해 선정 경쟁력이 약화됩니다. 보완 시 점수 회복이 가능한 구조입니다. 자격요건은 점수와 별개로 신청 가능 여부를 결정하므로 최우선 확인 대상입니다.</div>
       </div>
     </div>
 
@@ -1238,7 +1238,7 @@ tr:last-child td{border-bottom:none;}
 
       <div class="callout" style="margin-top:6px">
         <span class="co-ico">🎯</span>
-        <div><b>한 줄 요약:</b> 1~4번을 순서대로 처리하면 약 <b>5~6일</b>의 집중 보완으로 <b>62점 → 72~74점대</b> 진입이 가능한 시나리오입니다. 시간이 부족하면 점수 회복 폭이 가장 큰 <b>1번(시장·매출 근거)</b>을 반드시 우선 완료하고, 신청 전 <b>자격요건(감점 리스크 ⑤)</b>을 별도로 확인하세요.</div>
+        <div id="prio-summary"><b>한 줄 요약:</b> 우선순위 순서대로 집중 보완하면 종합점수 회복이 가능합니다. 시간이 부족하면 점수 회복 폭이 가장 큰 1번 과제를 우선 완료하고, 신청 전 자격요건을 별도로 확인하세요.</div>
       </div>
     </div>
 
@@ -1302,8 +1302,8 @@ tr:last-child td{border-bottom:none;}
       </div><!-- /#qcards -->
     </div>
 
-    <!-- ===== 12. 리라이팅 전/후 ===== -->
-    <div class="card">
+    <!-- ===== 12. 리라이팅 전/후 (동적) ===== -->
+    <div class="card" id="sec-rewrites">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
         <h3 class="h-sec" style="font-size:18px"><span class="num">12</span>이렇게 바꿔보세요 (수정 예시)</h3>
         <span class="sample-badge">예시 데이터</span>
@@ -1311,32 +1311,8 @@ tr:last-child td{border-bottom:none;}
       <p class="sub">막연한 주장을 근거 있는 문장으로 바꾸는 예시입니다. 실제로는 업로드한 문장을 기반으로 제안합니다.</p>
       <div style="height:14px"></div>
 
-      <div style="font-size:13px;font-weight:800;color:var(--gray-600);margin-bottom:8px">사례 A · 시장규모 서술</div>
-      <div class="rewrite">
-        <div class="rw-box before"><span class="rw-tag">수정 전</span><div class="rw-text">"본 시장은 매우 크고 빠르게 성장하고 있어 충분한 사업 기회가 있다."</div></div>
-        <div class="rw-arrow">→</div>
-        <div class="rw-box after"><span class="rw-tag">수정 후</span><div class="rw-text">"국내 OO시장은 OOO억 원 규모(통계청, 2025)이며 연 OO% 성장 중이다. 이 중 당사 목표 세분시장(SOM)은 OO억 원으로, 3년 내 OO% 점유를 목표로 한다."</div></div>
-      </div>
-
-      <div style="font-size:13px;font-weight:800;color:var(--gray-600);margin:18px 0 8px">사례 B · 매출 추정</div>
-      <div class="rewrite">
-        <div class="rw-box before"><span class="rw-tag">수정 전</span><div class="rw-text">"3년 차에 매출 50억 원을 달성하겠다."</div></div>
-        <div class="rw-arrow">→</div>
-        <div class="rw-box after"><span class="rw-tag">수정 후</span><div class="rw-text">"객단가 OO만 원 × 연 OO건 × 전환율 OO% 기준, 1년차 OO억 → 3년차 OO억 원. 보수·기본·공격 3개 시나리오로 제시(붙임 2 추정근거표)."</div></div>
-      </div>
-
-      <div style="font-size:13px;font-weight:800;color:var(--gray-600);margin:18px 0 8px">사례 C · 팀 역량 서술</div>
-      <div class="rewrite">
-        <div class="rw-box before"><span class="rw-tag">수정 전</span><div class="rw-text">"대표는 다년간의 경험을 보유하고 있으며 팀원들은 각 분야 전문가로 구성되어 있다."</div></div>
-        <div class="rw-arrow">→</div>
-        <div class="rw-box after"><span class="rw-tag">수정 후</span><div class="rw-text">"대표 OOO는 OO업계 OO년·동종제품 OO 출시 경험 보유. CTO OOO(OO대 OO전공, 특허 OO건)가 기술을, COO OOO가 생산을 담당. 부족한 마케팅은 OO기관 자문 연계(붙임 4 협약서)."</div></div>
-      </div>
-
-      <div style="font-size:13px;font-weight:800;color:var(--gray-600);margin:18px 0 8px">사례 D · 성과목표(KPI)</div>
-      <div class="rewrite">
-        <div class="rw-box before"><span class="rw-tag">수정 전</span><div class="rw-text">"사업을 통해 매출을 늘리고 고용을 창출하며 시장에서 경쟁력을 확보하겠다."</div></div>
-        <div class="rw-arrow">→</div>
-        <div class="rw-box after"><span class="rw-tag">수정 후</span><div class="rw-text">"협약기간 내 ① 매출 OO억 원 ② 신규고용 OO명 ③ 인증 OO건 ④ 시제품 OO종 출시를 달성. 분기별 마일스톤은 붙임 5 추진일정표에 정량 제시."</div></div>
+      <div id="rewrites-body">
+        <!-- renderReport가 d.rewrites로 동적 생성 -->
       </div>
 
       <div class="callout" style="margin-top:16px">
@@ -1359,22 +1335,16 @@ tr:last-child td{border-bottom:none;}
       </div>
 
       <div class="mentor-block">
-        <h4>🎯 합격선 진입을 위한 3대 핵심 메시지</h4>
-        <ul class="mb-list">
-          <li><b>시장을 숫자로 말하라.</b> "큰 시장"이 아니라 "OOO억 원 시장(출처)" — 통계청·산업협회 자료로 TAM-SAM-SOM을 제시하면 사업성 평가가 가장 크게 움직입니다.</li>
-          <li><b>매출은 계산식으로 증명하라.</b> 목표 숫자만 던지지 말고 객단가×수량×전환율로 분해하고, 보수·기본·공격 3개 시나리오로 신뢰를 확보하세요.</li>
-          <li><b>팀이 해낼 수 있음을 보여라.</b> 핵심인력의 경력·역할·증빙을 표로 정리하면 "작성 누락" 감점을 막고 실행력 점수가 올라갑니다.</li>
+        <h4>🎯 합격선 진입을 위한 핵심 메시지</h4>
+        <ul class="mb-list" id="key-messages">
+          <li>진단 결과를 종합한 핵심 보완 방향입니다.</li>
         </ul>
       </div>
 
       <div class="mentor-block">
         <h4>⏱ 제출 전 실행 로드맵 (체크하며 진행하세요)</h4>
-        <div class="action-list">
-          <label class="action-item"><input type="checkbox"/><span><b>1일차</b> — 신청 자격(중복수혜·제외요건) 공고문 원문과 대조해 신청 가능 여부 확정</span><span class="ai-day">자격</span></label>
-          <label class="action-item"><input type="checkbox"/><span><b>2~3일차</b> — 시장규모 통계 확보 + TAM-SAM-SOM 작성, 매출 추정 근거표 작성</span><span class="ai-day">핵심</span></label>
-          <label class="action-item"><input type="checkbox"/><span><b>4일차</b> — 핵심인력 이력·역할·증빙 표 작성, 부족 역량 외부협력 계획 명시</span><span class="ai-day">보강</span></label>
-          <label class="action-item"><input type="checkbox"/><span><b>5일차</b> — 예산 비목별 산출근거 + 본문-증빙 번호 연결, 전체 정량지표 점검</span><span class="ai-day">마감</span></label>
-          <label class="action-item"><input type="checkbox"/><span><b>제출 직전</b> — 양식 목차 누락 0건 확인, 분량(15p 내외) 점검, 맞춤법 검수</span><span class="ai-day">검수</span></label>
+        <div class="action-list" id="roadmap-list">
+          <!-- renderReport가 d.roadmap으로 동적 생성 -->
         </div>
       </div>
 
@@ -1454,6 +1424,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">f9f5adcf</span></div>
   </div>
 </footer>
 
@@ -1864,9 +1835,21 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
   "priorities": [
     {"rank":1,"title":"<보완 과제>","effect":"<기대 점수>","why":"<이유, 사업계획서 근거>","time":"<소요>","docs":"<필요자료>"}
   ],
+  "rewrites": [
+    {"topic":"<수정 대상 영역, 예: 시장규모 서술>","before":"<계획서의 현재 표현을 그대로 인용하거나 전형적 약한 표현>","after":"<공고 취지에 맞게 개선한 문장 예시. 이 유형에 존재하지 않는 축(suppress)은 절대 예시로 만들지 말 것>"}
+    /* 2~3개. 판별된 유형의 핵심 평가축에 해당하는 수정만. AI보조금이면 AI활용 진정성·소상공인 수혜 서술 개선 등 */
+  ],
+  "roadmap": [
+    {"when":"<시점, 예: 1일차>","task":"<제출 전 실행 과제, 계획서 근거>","tag":"<자격/핵심/보강/마감/검수 중>"}
+    /* 4~6개. 판별 유형의 리스크·우선순위를 반영한 실제 실행 체크리스트 */
+  ],
   "mentoring": "<종합 멘토링 의견 6~8문장, 점수 근거와 보완 방향, 객관적·전문적 어조>"
 }
-※ items는 공고 배점표를 따른 가변 개수입니다. totalScore는 items score의 합과 일치하고, items max의 합은 100이어야 합니다. JSON만 출력하세요.`;
+※ items는 공고 배점표를 따른 가변 개수입니다. totalScore는 items score의 합과 일치하고, items max의 합은 100이어야 합니다.
+※ rewrites(수정예시)는 판별된 유형의 핵심 평가축에 해당하는 것만 2~3개 작성하세요. suppress 축(예: AI보조금·자금 유형의 시장규모·TAM·매출추정)은 수정예시로도 절대 만들지 마세요 — before/after 어디에도 등장 금지.
+※ roadmap(실행 로드맵)은 risks·priorities를 반영한 실제 제출 전 실행 순서로 4~6개. 판별 유형에 없는 과제(예: AI보조금인데 TAM-SAM-SOM 작성)를 넣지 마세요.
+※ risks(감점 리스크)도 판별 유형의 riskFocus를 따르세요. suppress 축을 리스크로 만들면 오진단입니다.
+JSON만 출력하세요.`;
 }
 
 /* 관대한 JSON 파서 — AI가 흔히 저지르는 JSON 문법 실수를 자동 복구
@@ -2113,6 +2096,21 @@ function validateKoreanText(text){
 /* 실제 진단 데이터(API 응답)로 4~13번 섹션을 채운다 */
 function renderReport(d){
   if(!d) return false;
+  // ── 배포·데이터 진단 로그 (F12 콘솔에서 확인) ──
+  try{
+    console.log('%c[Beconic 진단 v3.1]','color:#3182f6;font-weight:bold',{
+      grantType: d.grantType||'(없음)',
+      grantTypeLabel: d.grantTypeLabel||'(없음)',
+      배점항목수: (d.items||[]).length,
+      rewrites: (d.rewrites||[]).length,
+      roadmap: (d.roadmap||[]).length,
+      risks: (d.risks||[]).length,
+      priorities: (d.priorities||[]).length,
+      rubricSource: d.rubricSource||'(없음)'
+    });
+    if(!d.rewrites || !d.rewrites.length) console.warn('[Beconic] rewrites 없음 → 12번 섹션 숨김. AI 응답에 rewrites 필드 미포함.');
+    if(!d.roadmap || !d.roadmap.length) console.warn('[Beconic] roadmap 없음 → priorities 기반 대체 로드맵 사용.');
+  }catch(_){}
   const isQuality = (d.mode === 'quality') || (state && state.mode === 'quality');
   const lv = (l)=> l==='양호'?'sev-low': l==='취약'?'sev-high':'sev-mid';
   const fillCls = (l)=> l==='양호'?'f-low': l==='취약'?'f-high':'f-mid';
@@ -2293,6 +2291,76 @@ function renderReport(d){
   // 13) 종합 멘토링
   const mentorBox = $('#mentor-summary');
   if(mentorBox && d.mentoring) mentorBox.innerHTML = esc(d.mentoring).replace(/\n/g,'<br/><br/>');
+
+  // 12) 수정 예시 (rewrites) — AI 응답 기반, 없으면 섹션 숨김
+  const rwSec = $('#sec-rewrites');
+  if(rwSec){
+    if(d.rewrites && d.rewrites.length){
+      rwSec.style.display='';
+      const body = $('#rewrites-body');
+      if(body){
+        body.innerHTML = d.rewrites.map((r,i)=>`
+          <div style="font-size:13px;font-weight:800;color:var(--gray-600);margin:${i?'18px':'0'} 0 8px">사례 ${String.fromCharCode(65+i)} · ${esc(r.topic||'')}</div>
+          <div class="rewrite">
+            <div class="rw-box before"><span class="rw-tag">수정 전</span><div class="rw-text">${esc(r.before||'')}</div></div>
+            <div class="rw-arrow">→</div>
+            <div class="rw-box after"><span class="rw-tag">수정 후</span><div class="rw-text">${esc(r.after||'')}</div></div>
+          </div>`).join('');
+      }
+    } else {
+      rwSec.style.display='none';   // 데이터 없으면 창업 예시 노출 대신 숨김
+    }
+  }
+
+  // 실행 로드맵 (roadmap) — AI 응답 기반
+  const rmList = $('#roadmap-list');
+  if(rmList){
+    if(d.roadmap && d.roadmap.length){
+      rmList.innerHTML = d.roadmap.map(r=>
+        `<label class="action-item"><input type="checkbox"/><span><b>${esc(r.when||'')}</b> — ${esc(r.task||'')}</span><span class="ai-day">${esc(r.tag||'')}</span></label>`
+      ).join('');
+    } else {
+      // 데이터 없으면 우선순위(priorities)에서 파생한 최소 로드맵
+      const base = (d.priorities||[]).slice(0,4).map((p,i)=>
+        `<label class="action-item"><input type="checkbox"/><span><b>${i+1}단계</b> — ${esc(p.title||'')}</span><span class="ai-day">${esc(p.time||'보완')}</span></label>`
+      ).join('');
+      rmList.innerHTML = base + `<label class="action-item"><input type="checkbox"/><span><b>제출 직전</b> — 신청 자격요건 공고문 원문 대조, 양식 목차 누락 점검, 맞춤법 검수</span><span class="ai-day">검수</span></label>`;
+    }
+  }
+
+  // 9번 리스크 합산 — 실제 penalty 합산
+  const riskSum = $('#risk-sum');
+  if(riskSum && d.risks && d.risks.length){
+    const nums = d.risks.map(r=>{ const m=String(r.penalty||'').match(/-?\d+/); return m?Math.abs(+m[0]):0; });
+    const totalPen = nums.reduce((a,b)=>a+b,0);
+    const cur = (typeof d.totalScore==='number')?d.totalScore:null;
+    const scored = d.risks.filter((r,i)=>nums[i]>0).length;
+    if(totalPen>0 && cur!=null){
+      riskSum.innerHTML = `<b>리스크 합산:</b> 점수형 리스크 ${scored}가지를 방치하면 예상 감점은 <b>약 -${totalPen}점</b>으로, 현재 ${cur}점에서 <b>${Math.max(0,cur-totalPen)}점대</b>로 낮아질 수 있습니다. 반대로 보완하면 상위 밴드 진입이 가능한 구조입니다. 자격요건은 점수와 별개로 <b>신청 가능 여부</b>를 결정하므로 최우선 확인 대상입니다.`;
+    }
+  }
+
+  // 10번 우선순위 한줄요약 — 실제 effect 합산
+  const prioSum = $('#prio-summary');
+  if(prioSum && d.priorities && d.priorities.length){
+    const gains = d.priorities.map(p=>{ const m=String(p.effect||'').match(/\+?\d+/); return m?+m[0]:0; });
+    const totalGain = gains.reduce((a,b)=>a+b,0);
+    const cur = (typeof d.totalScore==='number')?d.totalScore:null;
+    const top = d.priorities[0]?d.priorities[0].title:'1번 과제';
+    if(cur!=null && totalGain>0){
+      prioSum.innerHTML = `<b>한 줄 요약:</b> 우선순위 순서대로 처리하면 집중 보완으로 <b>${cur}점 → 약 ${cur+totalGain}점대</b> 회복이 가능한 시나리오입니다. 시간이 부족하면 점수 회복 폭이 가장 큰 <b>${esc(top)}</b>을(를) 우선 완료하고, 신청 전 자격요건을 별도 확인하세요.`;
+    }
+  }
+
+  // 13번 핵심 메시지 — 최상위 우선순위/약점 기반
+  const keyMsg = $('#key-messages');
+  if(keyMsg){
+    const src = (d.priorities && d.priorities.length) ? d.priorities.slice(0,3).map(p=>({t:p.title,d:p.why}))
+              : (d.weaknesses||[]).slice(0,3).map(w=>({t:'',d:w}));
+    if(src.length){
+      keyMsg.innerHTML = src.map(x=> `<li>${x.t?`<b>${esc(x.t)}.</b> `:''}${esc(x.d||'')}</li>`).join('');
+    }
+  }
 
   // 7) 적합성 — API가 fit 주면 갱신(아니면 입력값 기반 renderFit 유지)
   if(d.fit && d.fit.length){
