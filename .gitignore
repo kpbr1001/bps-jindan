@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+__MACOSX/
+# 로컬 환경
+.env
+.env.local
+node_modules/
+# Netlify 로컬
+.netlify/
