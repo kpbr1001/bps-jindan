@@ -644,7 +644,7 @@ tr:last-child td{border-bottom:none;}
   <section class="hero no-print">
     <div class="wrap">
       <span class="badge">📄 공고 · 양식 · 사업계획서 3종 비교 진단</span>
-      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v3.1 · 9·10·12·13동적화·빌드해시·디버그로그</span>
+      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v3.2 · suppress렌더필터·멘토링폴백·리스크정화</span>
       <h1>지원사업 사업계획서<br/>AI 진단 MVP</h1>
       <p>지원공고, 작성양식, 작성한 사업계획서를 비교하여 <b>적합성, 감점 리스크, 보완 방향</b>을 진단합니다. 심사위원 관점의 보완 가이드를 받아보세요.</p>
     </div>
@@ -1424,7 +1424,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">f9f5adcf</span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">0eb4dee3</span></div>
   </div>
 </footer>
 
@@ -1849,6 +1849,9 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
 ※ rewrites(수정예시)는 판별된 유형의 핵심 평가축에 해당하는 것만 2~3개 작성하세요. suppress 축(예: AI보조금·자금 유형의 시장규모·TAM·매출추정)은 수정예시로도 절대 만들지 마세요 — before/after 어디에도 등장 금지.
 ※ roadmap(실행 로드맵)은 risks·priorities를 반영한 실제 제출 전 실행 순서로 4~6개. 판별 유형에 없는 과제(예: AI보조금인데 TAM-SAM-SOM 작성)를 넣지 마세요.
 ※ risks(감점 리스크)도 판별 유형의 riskFocus를 따르세요. suppress 축을 리스크로 만들면 오진단입니다.
+★★ 절대 금지 (가장 흔한 오류): AI보조금·자금·바우처 유형에서 "시장규모 근거 부재", "매출 추정 로직 비현실", "TAM-SAM-SOM 부재" 같은 리스크를 만들지 마세요. 이는 창업 공고 전용 축이며, 이 유형들엔 존재하지 않습니다. risks·priorities·rewrites·roadmap·mentoring 어디에도 시장규모·TAM·SAM·SOM·매출추정·객단가·상환력 단어를 쓰지 마세요.
+★★ AI보조금 유형의 risks는 반드시 다음 중에서: 단순구독 취지부적합 / AI적용 프로세스 밀착성 부족 / 소상공인 수혜 불명확 / AI모델 구현방식(RAG·파인튜닝) 미제시 / 보안·운영안정성 미제시 / 자격·배제사유.
+※ mentoring(종합 멘토링)도 판별 유형의 실제 점수·항목명으로 작성하세요. 창업 배점(문제인식·성장전략·실현가능성)을 언급하지 마세요.
 JSON만 출력하세요.`;
 }
 
@@ -2112,6 +2115,39 @@ function renderReport(d){
     if(!d.roadmap || !d.roadmap.length) console.warn('[Beconic] roadmap 없음 → priorities 기반 대체 로드맵 사용.');
   }catch(_){}
   const isQuality = (d.mode === 'quality') || (state && state.mode === 'quality');
+
+  // ── suppress 강제 필터: 판별 유형에 없는 축(TAM·매출추정·상환력)을 AI가 보내도 렌더 전 제거 ──
+  // 프롬프트가 새어나가도 화면엔 안 나오게 하는 이중 안전망
+  (function enforceSuppress(){
+    const gt = d.grantType;
+    if(!gt || !GRANT_TYPES[gt]) return;
+    const sup = GRANT_TYPES[gt].suppress || [];
+    if(!sup.length) return;
+    // suppress 축을 감지할 키워드 (유형별 금지 축 → 탐지어)
+    const KW = {
+      '시장규모(TAM)': ['tam','sam','som','시장규모','목표시장','시장 규모','점유율'],
+      '매출추정': ['매출추정','매출 추정','매출액 추정','객단가','단가×','전환율','매출 산출','판매수량'],
+      '상환력·재무건전성': ['상환','부채비율','상환재원','원리금','대출 상환'],
+      'AI활용 적합성': ['ai활용 적합성'],
+      '경쟁사 점유율': ['경쟁사 점유','시장 점유율'],
+      'TECH_RND': ['trl','기술성숙도'],
+    };
+    // 활성 금지 키워드 집합
+    const banned = [];
+    sup.forEach(s=>{ (KW[s]||[]).forEach(k=>banned.push(k.toLowerCase())); });
+    if(!banned.length) return;
+    const hit = (txt)=>{ const t=String(txt||'').toLowerCase(); return banned.some(k=>t.includes(k)); };
+    const scrub = (arr, fields)=> (arr||[]).filter(o=> !fields.some(f=>hit(o[f])) );
+    // risks: title/why/fix에 금지축이 있으면 제거
+    if(Array.isArray(d.risks))      d.risks      = scrub(d.risks,      ['title','why','fix']);
+    if(Array.isArray(d.priorities)) d.priorities = scrub(d.priorities, ['title','why']);
+    if(Array.isArray(d.rewrites))   d.rewrites   = scrub(d.rewrites,   ['topic','before','after']);
+    if(Array.isArray(d.roadmap))    d.roadmap    = scrub(d.roadmap,    ['task']);
+    // priorities는 rank 재정렬
+    if(Array.isArray(d.priorities)) d.priorities.forEach((p,i)=> p.rank=i+1);
+    try{ console.log('%c[Beconic] suppress 필터 적용','color:#e02d3c',{유형:gt, 금지축:sup, 남은risks:(d.risks||[]).length}); }catch(_){}
+  })();
+
   const lv = (l)=> l==='양호'?'sev-low': l==='취약'?'sev-high':'sev-mid';
   const fillCls = (l)=> l==='양호'?'f-low': l==='취약'?'f-high':'f-mid';
   const sevCls = (s)=> s==='상'?'sev-high': s==='하'?'sev-low':'sev-mid';
@@ -2290,7 +2326,15 @@ function renderReport(d){
 
   // 13) 종합 멘토링
   const mentorBox = $('#mentor-summary');
-  if(mentorBox && d.mentoring) mentorBox.innerHTML = esc(d.mentoring).replace(/\n/g,'<br/><br/>');
+  if(mentorBox){
+    const txt = d.mentoring || d.summary || '';
+    if(txt){
+      mentorBox.innerHTML = esc(txt).replace(/\n/g,'<br/><br/>');
+    } else {
+      // 데이터 없으면 정적 창업예시(62점) 대신 중립 안내
+      mentorBox.innerHTML = '진단 결과 요약이 생성되지 않았습니다. 상단의 항목별 평가와 감점 리스크를 참고하세요.';
+    }
+  }
 
   // 12) 수정 예시 (rewrites) — AI 응답 기반, 없으면 섹션 숨김
   const rwSec = $('#sec-rewrites');
