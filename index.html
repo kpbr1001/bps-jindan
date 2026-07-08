@@ -644,7 +644,7 @@ tr:last-child td{border-bottom:none;}
   <section class="hero no-print">
     <div class="wrap">
       <span class="badge">📄 공고 · 양식 · 사업계획서 3종 비교 진단</span>
-      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v2.4 · 필수점검5종·스트리밍·JSON복구·자기검증</span>
+      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v3.0 · 공고유형분기(5종)·동적배점·suppress·자기검증</span>
       <h1>지원사업 사업계획서<br/>AI 진단 MVP</h1>
       <p>지원공고, 작성양식, 작성한 사업계획서를 비교하여 <b>적합성, 감점 리스크, 보완 방향</b>을 진단합니다. 심사위원 관점의 보완 가이드를 받아보세요.</p>
     </div>
@@ -1100,46 +1100,18 @@ tr:last-child td{border-bottom:none;}
       </div>
     </div>
 
-    <!-- ===== 8. 양식 충족도 (도넛) ===== -->
-    <div class="card">
+    <!-- ===== 8. 양식 충족도 (도넛) — 창업 유형에서만 표시, 동적 렌더 ===== -->
+    <div class="card" id="sec-formfit" style="display:none">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
         <h3 class="h-sec" style="font-size:18px"><span class="num">8</span>지원양식 충족도</h3>
         <span class="sample-badge">예시 데이터</span>
       </div>
       <p class="sub">양식이 요구한 문항을 얼마나 채웠는지 보여줍니다. 빈 칸이 클수록 누락이 많은 항목입니다.</p>
       <div style="height:14px"></div>
-      <div class="donut-grid">
-        <!-- 도넛 4개 -->
-        <div class="donut-card">
-          <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="#e5e8eb" stroke-width="9"/>
-            <circle cx="40" cy="40" r="32" fill="none" stroke="#22c55e" stroke-width="9" stroke-linecap="round"
-              stroke-dasharray="201" stroke-dashoffset="50" transform="rotate(-90 40 40)"/>
-            <text x="40" y="46" text-anchor="middle" font-size="17" font-weight="800" fill="#191f28">75%</text></svg>
-          <div class="d-name">문제인식</div><div class="d-sub">정량 근거만 보강</div>
-        </div>
-        <div class="donut-card">
-          <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="#e5e8eb" stroke-width="9"/>
-            <circle cx="40" cy="40" r="32" fill="none" stroke="#f59e0b" stroke-width="9" stroke-linecap="round"
-              stroke-dasharray="201" stroke-dashoffset="80" transform="rotate(-90 40 40)"/>
-            <text x="40" y="46" text-anchor="middle" font-size="17" font-weight="800" fill="#191f28">60%</text></svg>
-          <div class="d-name">실현가능성</div><div class="d-sub">개발 로드맵 누락</div>
-        </div>
-        <div class="donut-card">
-          <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="#e5e8eb" stroke-width="9"/>
-            <circle cx="40" cy="40" r="32" fill="none" stroke="#f59e0b" stroke-width="9" stroke-linecap="round"
-              stroke-dasharray="201" stroke-dashoffset="86" transform="rotate(-90 40 40)"/>
-            <text x="40" y="46" text-anchor="middle" font-size="17" font-weight="800" fill="#191f28">57%</text></svg>
-          <div class="d-name">성장전략</div><div class="d-sub">시장규모 근거 누락</div>
-        </div>
-        <div class="donut-card">
-          <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="#e5e8eb" stroke-width="9"/>
-            <circle cx="40" cy="40" r="32" fill="none" stroke="#f59e0b" stroke-width="9" stroke-linecap="round"
-              stroke-dasharray="201" stroke-dashoffset="80" transform="rotate(-90 40 40)"/>
-            <text x="40" y="46" text-anchor="middle" font-size="17" font-weight="800" fill="#191f28">60%</text></svg>
-          <div class="d-name">팀 구성</div><div class="d-sub">핵심인력 이력 보강</div>
-        </div>
+      <div class="donut-grid" id="formfit-grid">
+        <!-- 도넛: renderReport가 배점항목 기준으로 동적 생성 -->
       </div>
-      <div class="how-to" style="margin-top:14px">📌 <b>읽는 법:</b> 원이 꽉 찰수록 양식 요구를 충족한 것입니다. 모든 항목이 70%에 못 미쳐 보완 여지가 있으며, 특히 <b>성장전략(57%)</b>은 시장규모 근거가, <b>실현가능성(60%)</b>은 개발 로드맵이 비어 있어 우선 보완 대상입니다.</div>
+      <div class="how-to" id="formfit-howto" style="margin-top:14px">📌 <b>읽는 법:</b> 원이 꽉 찰수록 양식 요구를 충족한 것입니다. 항목별 충족도가 낮을수록 우선 보완 대상입니다.</div>
     </div>
 
     <!-- ===== 9. 감점 리스크 (카드형) ===== -->
@@ -1600,6 +1572,95 @@ const API_PROXY_URL = '/.netlify/functions/diagnose';   // Netlify 프록시 경
 
 const DIAG_MODEL = 'claude-sonnet-4-6';
 
+/* =====================================================================
+ * 공고 유형분기 엔진 v3 — 유형별 진단축·리스크·필수점검 (프롬프트 내장 판별)
+ * 배점 폴백을 유형별로 분기하여 소상공인/자금/R&D/바우처 오진단 방지
+ * ===================================================================== */
+const GRANT_TYPES = {
+  AI_SUBSIDY: {
+    label:'AI활용 보조금',
+    fundNature:'보조금(정부지원금+자부담)',
+    axis:'AI활용의 진정성·성장가능성·실행역량',
+    fallbackRubric:'AI활용 적합성30·성장가능성40·참여역량30',
+    trap:'단순 구매·구독이면 지원취지 부적합(핵심 탈락요인)',
+    suppress:['시장규모(TAM)','매출추정','상환력·재무건전성','경쟁사 점유율'],
+    riskFocus:'① AI활용이 단순 상용툴 구독에 그치는지(취지 부적합) ② AI적용 지점이 실제 사업 프로세스에 밀착됐는지 ③ 소상공인 수혜가 아니라 자사 생산성에만 치우쳤는지 ④ 보안성·운영안정성 제시 여부(발표평가 우대)',
+    checks:'1.AI활용이 자체 모델·프롬프트·리포트 체계 결합인가, 단순구독인가 2.AI적용 프로세스 지점의 구체성 3.소상공인/고객이 얻는 가치의 명확성 4.AI활용모델 구현방식(RAG·파인튜닝·에이전트 등) 명시 여부 5.자격·배제사유(휴폐업·체납·중복참여) 대조',
+    detect:'AI 도입·활용, 생산성 향상, 정부지원금+자부담, 소상공인 대상, 보조금'
+  },
+  STARTUP: {
+    label:'창업',
+    fundNature:'창업사업화 보조금',
+    axis:'문제인식·실현가능성·성장전략·팀',
+    fallbackRubric:'문제인식20·실현가능성30·성장전략30·팀구성20',
+    trap:'휴·폐업·중복참여·자격미달(업력 초과 등)',
+    suppress:['상환력·재무건전성'],
+    riskFocus:'① 시장규모·TAM 근거 ② 경쟁 차별성 ③ 매출추정 산출식 ④ 팀 실행역량 ⑤ 자격(업력·중복)',
+    checks:'1.시장규모 출처·산출식 2.경쟁 대비 차별성 3.매출추정 근거 4.팀 구성·역할 5.자격요건(업력·지역·중복참여)',
+    detect:'예비창업·창업패키지, 아이템, 시장진입, 스케일업, 창업 3년/7년 이내'
+  },
+  LOAN: {
+    label:'자금(융자·보증)',
+    fundNature:'융자·보증(상환 의무)',
+    axis:'재무건전성·상환능력·자금용도 타당성',
+    fallbackRubric:'재무건전성40·상환능력30·자금용도30',
+    trap:'체납·채무불이행·상환불능',
+    suppress:['시장규모(TAM)','매출추정','AI활용 적합성','경쟁사 점유율'],
+    riskFocus:'① 상환재원·현금흐름 ② 부채비율·재무건전성 ③ 자금용도의 사업연계성 ④ 체납·신용 상태 ⑤ 담보·보증 여력',
+    checks:'1.상환재원(현금흐름·매출) 근거 2.부채비율·재무상태 3.자금용도와 사업의 연계성 4.국세·지방세 체납 여부 5.보증·담보 여력',
+    detect:'융자·보증·대출·상환, 정책자금, 운전자금·시설자금, 신보·기보·지역신보'
+  },
+  RND: {
+    label:'R&D',
+    fundNature:'연구개발 출연·보조금',
+    axis:'기술성·사업화 가능성·수행역량',
+    fallbackRubric:'기술성40·사업화가능성35·수행역량25',
+    trap:'기술성 미흡·과제목표 불명확·TRL 과장',
+    suppress:['상환력·재무건전성'],
+    riskFocus:'① 기술 명칭 정확성(용어-실제모델 일치) ② TRL·개발목표 정량성 ③ 성과지표 기준선·목표값 ④ 개발 인력·인프라 ⑤ 지재권·선행기술',
+    checks:'1.핵심기술 용어와 실제 적용모델 일치 2.TRL·개발목표 정량성 3.KPI 기준선 실측값+목표값 4.연구인력·장비 역량 5.특허·선행기술 대비 신규성',
+    detect:'연구개발·R&D·기술개발, TRL, 과제·시제품, 출연금'
+  },
+  VOUCHER: {
+    label:'바우처',
+    fundNature:'바우처(수행기관 매칭)',
+    axis:'수요 명확성·수행 적정성·집행계획',
+    fallbackRubric:'수요명확성40·수행적정성30·집행계획30',
+    trap:'수요 불명확·수행사 부적정·집행 부실',
+    suppress:['시장규모(TAM)','매출추정','상환력·재무건전성'],
+    riskFocus:'① 해결하려는 수요·과제의 구체성 ② 수행기관 역량 적합성 ③ 바우처 집행계획 현실성 ④ 자부담 대응 ⑤ 성과 활용계획',
+    checks:'1.수요·과제의 구체성 2.수행기관 선정 적정성 3.집행계획 현실성 4.자부담 준비 5.도입 후 활용·성과계획',
+    detect:'바우처·수출바우처·데이터바우처, 수행기관, 멘토 매칭'
+  }
+};
+/* 유형 판별 힌트 블록 (프롬프트에 주입) */
+function buildTypeClassifierBlock(){
+  const rows = Object.entries(GRANT_TYPES).map(([k,t])=>
+    `  - ${k} (${t.label}): 자금성격=${t.fundNature} / 심사축=${t.axis} / 신호=[${t.detect}]`
+  ).join('\n');
+  return `# STEP 0. 공고 유형 판별 (채점보다 먼저 수행)
+아래 [지원공고문]을 읽고 자금성격·심사축·탈락트랩을 근거로 딱 하나의 유형으로 분류하세요.
+${rows}
+판별이 애매하면 억지로 밀어넣지 말고 grantType을 "UNCLASSIFIED"로 두고 그 이유를 summary에 밝히세요.
+판별한 유형의 심사축·리스크초점·필수점검을 이후 채점 전 과정에 일관되게 적용합니다.`;
+}
+/* 유형별 채점·리스크·점검 규칙 블록 */
+function buildTypeRuleBlock(){
+  const rules = Object.entries(GRANT_TYPES).map(([k,t])=>
+    `▸ ${k} (${t.label})
+   - 배점표 미발견 시 폴백: ${t.fallbackRubric}  (rubricSource="추정")
+   - 탈락트랩: ${t.trap}
+   - 리스크 초점: ${t.riskFocus}
+   - 필수점검(유형특화): ${t.checks}
+   - 생성 금지(suppress): ${t.suppress.join(', ')} — 이 유형에 존재하지 않는 축이므로 risks·items·summary 어디에도 만들지 마세요.`
+  ).join('\n\n');
+  return `# 유형별 채점·리스크 규칙 (판별된 유형의 블록만 적용)
+${rules}
+
+★ 배점 폴백 철칙: 배점표를 못 찾아도 **다른 유형의 배점으로 폴백 금지**. 반드시 판별된 유형의 폴백 배점만 사용하고 rubricSource="추정" 표기.
+★ suppress 철칙: 판별 유형의 suppress 항목은 절대 생성 금지(특히 매출추정·TAM·상환력은 유형 불일치 시 오진단의 주원인).`;
+}
+
 /* 스마트 발췌 — 긴 문서에서 핵심 구간(배점표·평가지표·성과지표)을 우선 포착
    단순 앞부분 컷의 한계(붙임 배점표가 뒤에 있으면 잘림)를 보완 */
 function smartExcerpt(text, opts){
@@ -1742,6 +1803,8 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
   return `당신은 정부·공공 지원사업 사업계획서를 20년간 평가해 온 전문 심사위원이자 컨설턴트입니다.
 아래 [지원공고문]과 [사업계획서]를 비교 분석하여, 신뢰할 수 있는 진단 결과를 JSON으로만 출력하세요.
 
+${buildTypeClassifierBlock()}
+
 # 절대 원칙 (위반 금지)
 1. 업로드된 문서에 실제로 있는 내용만 근거로 삼습니다. 문서에 없는 시장규모·매출·수치를 지어내지 마세요.
 2. "반드시 선정", "탈락", "100% 가능" 같은 단정 표현을 쓰지 마세요. "보완 필요", "감점 가능성", "추가 확인 필요"로 표현합니다.
@@ -1749,21 +1812,20 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
 4. 모든 진단은 사업계획서의 실제 내용을 인용·반영해야 합니다. 일반론만 쓰지 마세요.
 5. **근거 인용(evidence) 의무**: 각 평가항목·리스크의 evidence에는 그 판단의 근거가 된 문서 속 문구를 **원문 그대로 8자 이상 복사**해 넣으세요. 요약·바꿔쓰기 금지(시스템이 원문과 대조해 검증합니다). 근거가 문서에 없으면 evidence를 빈 문자열로 두고, 해당 판단은 일반론·추정임을 comment에 밝히세요.
 
-# 채점 기준 결정 (가장 먼저 수행)
-A. 지원공고문에서 "평가지표·배점표·심사기준"을 먼저 찾으세요. 흔히 '평가항목', '배점', '심사지표', 붙임/별표의 '기술성평가 지표' 등에 있습니다.
-B. 공고에 배점표가 있으면 그 항목명과 배점(max)을 **그대로** 사용합니다. 항목 수는 3개든 5개든 공고를 따릅니다. (예: 역량20·목표설정25·구축내용30·달성가능성25 = 100)
-C. 공고에 배점표가 없을 때만 일반 창업지원 배점(문제인식20·실현가능성30·성장전략30·팀구성20=100)을 쓰되, rubricSource를 "추정"으로 표기합니다.
+# 채점 기준 결정 (STEP 0 유형판별 후 수행)
+A. 지원공고문에서 "평가지표·배점표·심사기준"을 먼저 찾으세요. 흔히 '평가항목', '배점', '심사지표', 붙임/별표의 '기술성평가 지표' 등에 있습니다. 공고 본문의 '선정절차/서류평가 항목'에 배점표가 있는 경우가 많으니 반드시 확인하세요.
+B. 공고에 배점표가 있으면 그 항목명과 배점(max)을 **그대로** 사용합니다. 항목 수는 3개든 5개든 공고를 따릅니다. (예: AI활용적합성30·성장가능성40·참여역량30 = 100)
+C. 공고에 배점표가 없을 때만 **판별된 유형의 폴백 배점**(아래 유형별 규칙 참조)을 쓰되, rubricSource를 "추정"으로 표기합니다. ★다른 유형의 배점으로 폴백하지 마세요 — 이것이 오진단의 핵심 원인입니다.
 D. 항목별 max의 합은 100이어야 합니다. score는 0~max 정수입니다.
 E. 선정 기준선(cutScore)도 공고에 명시(예: 60점/70점)되어 있으면 그 값을, 없으면 70을 쓰고 추정임을 표기합니다.
 
-# 필수 점검 항목 (반드시 하나씩 확인 — 치명적 감점/탈락 요인)
-채점 전에 아래 5가지를 신청서에서 **명시적으로 대조**하고, 문제가 있으면 반드시 risks 또는 fit에 포함하세요. 놓치면 심사에서 탈락하는 항목들입니다.
-1. **과제명·사업유형 일치**: 신청서의 과제명·사업명이 이 공고의 사업명과 일치하는가? 다른 사업(예: '자율형공장', '창업패키지' 등 타 사업명)이 과제명에 들어가 있으면 [CRITICAL]로 risks에 넣으세요. 공고가 '동시수행 불가'로 지정한 사업명이 신청서에 있으면 특히 위험합니다.
-2. **기술 명칭 정확성**: 신청서가 사용하는 AI·기술 용어가 실제 적용 모델과 일치하는가? 예를 들어 '생성형 AI'라 써놓고 실제로는 이상탐지(Autoencoder)·예측(LSTM·회귀) 모델이면 용어 오류입니다. 핵심 기술을 잘못 명명하면 [HIGH]로 risks에 넣고, 기술 이해도 의심으로 관련 항목을 감점하세요. 철자 오류(TensorFlow 등)도 확인.
-3. **성과지표 정량성**: 핵심성과지표(KPI)가 몇 개인가? 각 지표에 **현재 기준선 실측값**과 **목표값**이 함께 있는가? 기준선이 공백이면(예: "○% 증가"인데 현재값 없음) "무엇 대비인지 불명"으로 [HIGH] 감점하세요. 지표가 2개 이하이거나 정성적("증대·확보" 수준)이면 감점.
-4. **자격·필수요건 충족**: 업력·지역·기업규모·필수 참여조건(예: 멘토단·교육 이수) 등 공고의 자격요건을 신청서/입력정보가 충족하는가? 불명확하면 fit에 "확인필요"로 표기.
-5. **근거·증빙 연계**: 시장규모·매출추정·특허·인증 등 주요 주장에 출처·산출식·증빙 연계가 있는가? "자체조사"만 있거나 산출 과정이 없으면 근거 부재로 감점.
-※ 위 5개는 반드시 검토하되, 신청서에 해당 문제가 실제로 없으면 억지로 만들지 마세요. 있는 문제만 정직하게 지적합니다.
+${buildTypeRuleBlock()}
+
+# 필수 점검 항목 (판별 유형의 점검 우선 + 공통 점검)
+채점 전에 **판별된 유형의 '필수점검(유형특화)' 항목을 먼저** 신청서와 대조하고, 문제가 있으면 risks 또는 fit에 넣으세요. 이어 아래 공통 점검도 확인합니다.
+[공통] ① 과제명·사업유형 일치: 신청서 과제명이 이 공고 사업명과 일치하는가? 공고가 '동시수행 불가'로 지정한 타 사업명이 신청서에 있으면 [CRITICAL]로 risks에. ② 자격·배제사유: 휴폐업·국세지방세 체납·중복참여·참여제한 등 배제사유 해당 여부. ③ 근거·증빙 연계: 주요 주장에 출처·산출식·증빙이 있는가.
+※ 유형특화 점검을 우선하되, 신청서에 해당 문제가 실제로 없으면 억지로 만들지 마세요. 있는 문제만 정직하게 지적합니다.
+※ 판별 유형의 suppress 축(예: AI보조금·자금 유형에서 시장규모·매출추정)은 리스크로도 만들지 마세요 — 해당 공고에 존재하지 않는 평가축입니다.
 
 # 기업 입력정보
 ${companyInfo}
@@ -1778,6 +1840,8 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
 
 # 출력 형식 (반드시 이 JSON 구조로만, 그 외 텍스트·마크다운 금지)
 {
+  "grantType": "<AI_SUBSIDY/STARTUP/LOAN/RND/VOUCHER/UNCLASSIFIED 중 STEP0 판별 결과>",
+  "grantTypeLabel": "<판별 유형의 한글명, 예: AI활용 보조금>",
   "totalScore": <0~100 정수, items score 합과 일치>,
   "grade": "<A/B/C/D>",
   "rubricSource": "<공고명시 / 추정>",
@@ -2083,10 +2147,17 @@ function renderReport(d){
     : ((d.grade||'')+'등급 · '+(total>=cut?'선정권':'보완 필요'));
   const heroVerdict = $('#hero-verdict'); if(heroVerdict) heroVerdict.textContent = d.verdict||'';
   const gap = isQuality ? null : (d.gapToCut!=null ? d.gapToCut : (total-cut));
+  // 판별된 공고 유형 배지 (full 모드에서만)
+  const typeLabel = d.grantTypeLabel || (d.grantType && GRANT_TYPES[d.grantType] ? GRANT_TYPES[d.grantType].label : '');
+  const typeBadge = (!isQuality && typeLabel)
+    ? (d.grantType==='UNCLASSIFIED'
+        ? `<span style="color:var(--amber);font-weight:800;background:var(--amber-bg);padding:2px 9px;border-radius:6px">⚠ 공고유형 확인필요</span>`
+        : `<span style="color:var(--blue);font-weight:800;background:var(--blue-light);padding:2px 9px;border-radius:6px">📋 ${esc(typeLabel)} 기준 진단</span>`)
+    : '';
   const heroMeta = $('#hero-meta');
   if(heroMeta) heroMeta.innerHTML = isQuality
     ? `<span>작성 완성도 <b>${total}점</b></span><span>등급 <b>${d.grade||'-'}</b></span><span style="color:var(--amber);font-weight:700">공고 미입력 · 적합성 미평가</span>`
-    : `<span>선정 기준선 <b>${cut}점</b></span><span>현재 격차 <b>${gap>=0?'+':''}${gap}점</b></span><span>종합 <b>${total}점</b></span>`;
+    : `${typeBadge}<span>선정 기준선 <b>${cut}점</b></span><span>현재 격차 <b>${gap>=0?'+':''}${gap}점</b></span><span>종합 <b>${total}점</b></span>`;
   // 게이지 원호
   const circ = $('#hero-gauge-arc');
   if(circ){ const C=326.7; circ.setAttribute('stroke-dashoffset', (C*(1-total/maxSum)).toFixed(1)); }
@@ -2115,6 +2186,44 @@ function renderReport(d){
   }
   // 레이더 갱신
   updateRadar(d.items);
+
+  // 8) 지원양식 충족도 — 창업 유형에서만 표시 (비창업은 창업4축이 안 맞아 숨김)
+  const formFitSec = $('#sec-formfit');
+  if(formFitSec){
+    const isStartup = (d.grantType === 'STARTUP');
+    if(!isStartup || isQuality || !d.items || !d.items.length){
+      formFitSec.style.display = 'none';   // 창업 아니면 섹션 자체를 숨김
+    } else {
+      formFitSec.style.display = '';
+      const grid = $('#formfit-grid');
+      const donutColor = (pct)=> pct>=70 ? '#22c55e' : pct>=50 ? '#f59e0b' : '#ef4444';
+      const C = 2*Math.PI*32;   // 201.06
+      if(grid){
+        grid.innerHTML = d.items.map(it=>{
+          const pct = Math.round((it.score/it.max)*100);
+          const off = (C*(1-pct/100)).toFixed(0);
+          const col = donutColor(pct);
+          const sub = it.level==='취약' ? '우선 보완' : it.level==='양호' ? '충족' : '보강 여지';
+          return `<div class="donut-card">
+            <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="#e5e8eb" stroke-width="9"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round"
+                stroke-dasharray="${C.toFixed(0)}" stroke-dashoffset="${off}" transform="rotate(-90 40 40)"/>
+              <text x="40" y="46" text-anchor="middle" font-size="17" font-weight="800" fill="#191f28">${pct}%</text></svg>
+            <div class="d-name">${esc(it.name)}</div><div class="d-sub">${esc(sub)}</div>
+          </div>`;
+        }).join('');
+      }
+      const ffHow = $('#formfit-howto');
+      if(ffHow){
+        const weakest = [...d.items].sort((a,b)=>(a.score/a.max)-(b.score/b.max))[0];
+        ffHow.innerHTML = `📌 <b>읽는 법:</b> 원이 꽉 찰수록 배점 항목의 현재 충족도가 높은 것입니다. 특히 <b>${esc(weakest.name)}</b>이(가) 상대적으로 낮아 우선 보완 대상입니다.`;
+      }
+      // 예시 배지 → AI 분석 배지 (이 섹션은 위 forEach 범위 밖일 수 있어 명시 처리)
+      const ffBadge = formFitSec.querySelector('.sample-badge');
+      if(ffBadge){ ffBadge.textContent='AI 분석 결과'; ffBadge.style.background='var(--green-bg)'; ffBadge.style.color='var(--green)'; ffBadge.style.borderColor='#bbf0cf'; }
+    }
+  }
+
   // 읽는 법 갱신 (실제 점수 기준)
   const howto = $('#eval-howto');
   if(howto){
@@ -2123,7 +2232,8 @@ function renderReport(d){
     if(isQuality){
       howto.innerHTML = `📌 <b>읽는 법:</b> 공고문 없이 <b>일반 작성 완성도</b>를 본 결과입니다(공고 배점 아님). 4개 항목 합(${sumExpr}=<b>${total}점</b>)은 참고치이며, 특정 사업 적합성·선정 여부과는 무관합니다. 특히 <b>${esc(weakest.name)}</b>이(가) 상대적으로 취약해 우선 보완 대상입니다. 공고문을 추가하면 공고 적합성까지 진단합니다.`;
     } else {
-      const srcNote = d.rubricSource==='추정' ? '공고에 배점표가 없어 일반 창업지원 배점으로 추정했습니다. ' : '공고 배점표를 그대로 적용했습니다. ';
+      const _tLabel = d.grantTypeLabel || (d.grantType && GRANT_TYPES[d.grantType] ? GRANT_TYPES[d.grantType].label : '해당 유형');
+      const srcNote = d.rubricSource==='추정' ? `공고에 배점표가 없어 <b>${esc(_tLabel)}</b> 표준 배점으로 추정했습니다. ` : '공고 배점표를 그대로 적용했습니다. ';
       howto.innerHTML = `📌 <b>읽는 법:</b> ${srcNote}${d.items.length}개 항목 점수의 합(${sumExpr}=<b>${total}점</b>)이 종합점수와 일치합니다. 검은 선(선정 기준선 ${cutPct}%)을 넘지 못한 항목이 보완 대상이며, 특히 <b>${esc(weakest.name)}</b>이(가) 상대적으로 취약해 우선 보완이 필요합니다.`;
     }
   }
