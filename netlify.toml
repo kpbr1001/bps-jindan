@@ -1,3 +1,5 @@
+# netlify.toml — 그로스벤처스 AI 사업계획서 진단 배포 설정 (v2.1.1)
+
 [build]
   publish = "."
   functions = "netlify/functions"
@@ -5,6 +7,7 @@
 [functions]
   node_bundler = "esbuild"
 
+# 프록시 호출용 리다이렉트
 [[redirects]]
   from = "/api/diagnose"
   to = "/.netlify/functions/diagnose"
