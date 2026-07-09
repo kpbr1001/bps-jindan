@@ -1278,7 +1278,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">437442ac</span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">b534acb1</span></div>
   </div>
 </footer>
 
@@ -1639,7 +1639,12 @@ ${buildTypeClassifierBlock()}
 
 # 채점 기준 결정 (STEP 0 유형판별 후 수행)
 A. 지원공고문에서 "평가지표·배점표·심사기준"을 먼저 찾으세요. 흔히 '평가항목', '배점', '심사지표', 붙임/별표의 '기술성평가 지표' 등에 있습니다. 공고 본문의 '선정절차/서류평가 항목'에 배점표가 있는 경우가 많으니 반드시 확인하세요.
-B. 공고에 배점표가 있으면 그 항목명과 배점(max)을 **그대로** 사용합니다. 항목 수는 3개든 5개든 공고를 따릅니다. (예: AI활용적합성30·성장가능성40·참여역량30 = 100)
+B. 공고에 배점표가 있으면 그 **대분류 항목명과 배점(max)을 한 글자도 바꾸지 말고 그대로** 사용합니다. ★★절대 규칙:
+   - 공고의 대분류가 4개면 items도 정확히 4개입니다. 하나의 대분류를 임의로 2개로 쪼개거나(예: "구축 내용 적절성 30점"을 "방법론 20 + 성과지표 10"으로 분리) 합치지 마세요. 이것이 이번 오진단의 핵심 원인입니다.
+   - 항목명은 공고 표기 그대로 씁니다. "스마트공장 구축 내용 적절성"을 "AI공장 구축 방법론"으로 바꾸지 마세요.
+   - 공고에 없는 항목(예: "사업비 편성", "기대효과 및 성과지표")을 배점 항목으로 새로 만들지 마세요. 그런 내용은 해당 대분류의 하위 평가요소일 뿐입니다.
+   - 가점 항목(예: 가점 5점)이 있으면 별도 표기하되 100점 만점 대분류와 섞지 마세요.
+   (예: 공고가 도입·공급기업역량20·구축목표타당성25·구축내용적절성30·목표달성가능성25 = 4개 100점이면, items도 이 4개 그대로)
 C. 공고에 배점표가 없을 때만 **판별된 유형의 폴백 배점**(아래 유형별 규칙 참조)을 쓰되, rubricSource를 "추정"으로 표기합니다. ★다른 유형의 배점으로 폴백하지 마세요 — 이것이 오진단의 핵심 원인입니다.
 D. 항목별 max의 합은 100이어야 합니다. score는 0~max 정수입니다.
 E. 선정 기준선(cutScore)도 공고에 명시(예: 60점/70점)되어 있으면 그 값을, 없으면 70을 쓰고 추정임을 표기합니다.
@@ -2026,6 +2031,10 @@ function renderReport(d){
     t = t.replace(/(\))\s*(이|가|은|는|을|를|에|의|에서|으로|로)?\s*(공고|평가|심사|계획서|사업계획서)?[^)]*$/,'$1'); // 닫는 괄호 뒤 서술 제거
     t = t.replace(/\s+(이|가|은|는|을|를|에|의|에서|으로|로)\s+.*(명시된|명시되지|제시된|제시되지|서술된|서술되지|기재된|기재되지|부재|미흡|부족|우려|가능성이 있음|우대 요건).*$/,''); // 조사+서술형 꼬리 제거
     t = t.replace(/\s*(추상적으로|추상적|구체적으로|전무하여|전무).*$/,''); // 부사형 서술 꼬리 제거
+    // ★연결어미 절 제거★: "…공란에 가깝고 KPI가 미제시" → "…공란" (동사+연결어미 이후 통째 제거)
+    t = t.replace(/\s*[가-힣]*(하고|되고|이고|고|하며|되며|이며|며|되어|하여|되어야|있어|없어|않아|않고|되지|하지)\s+.*$/,'');
+    // 서술성 종결(동사 활용형)으로 끝나면 그 동사구 제거: "…항목이 공란에 가깝고" → "…항목"
+    t = t.replace(/\s+[가-힣]{1,6}(에|이|가|을|를|은|는)?\s*(가깝|미흡|부족|공란|누락|불명확|부재|미제시|미비|저조|취약)[가-힣]*$/,'');
     t = t.replace(/\s*에 대한 서술[이은는]?$/,'');       // "…에 대한 서술이" 잔여 정리
     t = t.replace(/[·,\s]+$/,'').trim();
     // 끝에 남은 조사 정리: "명사 + 이/가/을/를/은/는/에" 로 끝나면 조사 제거 ("…대상이"→"…대상")
@@ -2060,6 +2069,31 @@ function renderReport(d){
   if(Array.isArray(d.priorities)) d.priorities.forEach(p=>{ if(p&&p.title) p.title = cleanTitle(p.title); });
   if(Array.isArray(d.rewrites))   d.rewrites.forEach(r=>{ if(r&&r.topic)  r.topic  = cleanTitle(r.topic); });
 
+  // ── 축 감지 실행 가이드 (12번 수정예시·13번 로드맵 공용) ──
+  // 폴백 fix가 기본값일 때 항목마다 다른 구체 가이드를 생성해 중복 방지
+  const deriveGuide = (topic, why)=>{
+    const s = String(topic||'') + ' ' + String(why||'');
+    if(/오기재|오타|명칭.*오|Tensoflow/i.test(s))
+      return '기술·제품 명칭의 오기재를 정확한 표기로 바로잡고, 계획서 전체에서 표기를 통일하세요.';
+    if(/과제명|사업명|불일치|트랙/.test(s))
+      return '공고문의 정확한 사업명·트랙명으로 과제명을 일치시키고, 동시수행 제한 여부를 확인해 계획서 첫머리에 명시하세요.';
+    if(/kpi|목표값|기준값|불량률|가동률|리드타임|정량|성과지표/i.test(s))
+      return '현재 실측값 → 목표값을 표로 제시하고(예: 불량률 3%→1%), 산출 근거와 측정 방법을 함께 적으세요.';
+    if(/rag|파인튜닝|모델|구현|tensorflow|학습 데이터|정확도|검증/i.test(s))
+      return '채택한 AI 구현 방식과 학습 데이터 확보량·모델 검증 방법·정확도 목표치를 구체적으로 기재하세요.';
+    if(/공급기업|전문성|투입인력|pm|조직|역량|인력/i.test(s))
+      return '공급기업의 수행 실적·핵심 인력 이력·투입 공수와 역할 분담을 표로 제시해 역량을 입증하세요.';
+    if(/보안|운영|안정성|연동|백업/.test(s))
+      return '보안 솔루션 구축·연동 방식과 접근통제·백업·장애대응 절차를 구체적으로 서술하세요.';
+    if(/소상공인|수혜|편익|고객/.test(s))
+      return '수혜 대상이 얻는 편익을 정량 지표(시간 단축·비용 절감 등)로 제시하세요.';
+    if(/일정|마일스톤|협약|추진/.test(s))
+      return '협약기간 내 월별·단계별 추진 일정과 중간 점검 시점을 표로 정리하세요.';
+    if(/자금|집행|예산|사업비|편성/.test(s))
+      return '사업비를 세부 항목·금액·산출 근거와 함께 항목별로 명시하세요.';
+    return '계획서 해당 부분에 정량 근거·수행 방식·기대효과를 함께 넣어 검증 가능한 문장으로 다시 작성하세요.';
+  };
+
   const lv = (l)=> l==='양호'?'sev-low': l==='취약'?'sev-high':'sev-mid';
   const fillCls = (l)=> l==='양호'?'f-low': l==='취약'?'f-high':'f-mid';
   const sevCls = (s)=> s==='상'?'sev-high': s==='하'?'sev-low':'sev-mid';
@@ -2086,6 +2120,13 @@ function renderReport(d){
   const total = d.totalScore!=null ? d.totalScore : (d.items||[]).reduce((s,i)=>s+(i.score||0),0);
   const cut = isQuality ? null : ((d.cutScore!=null && d.cutScore>0) ? d.cutScore : 70);
   const maxSum = (d.items||[]).reduce((s,i)=>s+(i.max||0),0) || 100;   // 항목 max 합(보통 100)
+  // ★배점 검증장치★ — 공고 배점표를 정확히 추출했는지 자체 점검
+  const itemCount = (d.items||[]).length;
+  const maxSumFlag = (!isQuality && d.rubricSource!=='추정' && Math.abs(maxSum-100)>2);
+  if(!isQuality){
+    try{ console.log('%c[Beconic] 배점 검증','color:#0a7',{항목수:itemCount, 배점합:maxSum, rubricSource:d.rubricSource||'(없음)', 경고:maxSumFlag?'⚠️ 배점합≠100 — 공고 배점표 오추출 의심':'정상'}); }catch(_){}
+    if(maxSumFlag) console.warn('[Beconic] ⚠️ 배점 합('+maxSum+')이 100과 다릅니다. AI가 공고 배점표를 잘못 추출했을 수 있습니다. 항목수='+itemCount);
+  }
   const gauge = $('#hero-gauge'); // 아래에서 id 부여
   const heroNum = $('#hero-score'); if(heroNum) heroNum.innerHTML = total+'<small>점</small>';
   const heroGrade = $('#hero-grade'); if(heroGrade) heroGrade.textContent = isQuality
@@ -2180,7 +2221,8 @@ function renderReport(d){
     } else {
       const _tLabel = d.grantTypeLabel || (d.grantType && GRANT_TYPES[d.grantType] ? GRANT_TYPES[d.grantType].label : '해당 유형');
       const srcNote = d.rubricSource==='추정' ? `공고에 배점표가 없어 <b>${esc(_tLabel)}</b> 표준 배점으로 추정했습니다. ` : '공고 배점표를 그대로 적용했습니다. ';
-      howto.innerHTML = `📌 <b>읽는 법:</b> ${srcNote}${d.items.length}개 항목 점수의 합(${sumExpr}=<b>${total}점</b>)이 종합점수와 일치합니다. 검은 선(선정 기준선 ${cutPct}%)을 넘지 못한 항목이 보완 대상이며, 특히 <b>${esc(weakest.name)}</b>이(가) 상대적으로 취약해 우선 보완이 필요합니다.`;
+      const warnNote = maxSumFlag ? ` <span style="color:var(--amber);font-weight:700">⚠️ 배점 합이 ${maxSum}점으로 100점과 달라, 공고 원문 배점표와 항목·배점을 다시 대조해 보세요.</span>` : '';
+      howto.innerHTML = `📌 <b>읽는 법:</b> ${srcNote}${d.items.length}개 항목 점수의 합(${sumExpr}=<b>${total}점</b>)이 종합점수와 일치합니다. 검은 선(선정 기준선 ${cutPct}%)을 넘지 못한 항목이 보완 대상이며, 특히 <b>${esc(weakest.name)}</b>이(가) 상대적으로 취약해 우선 보완이 필요합니다.${warnNote}`;
     }
   }
 
@@ -2199,16 +2241,22 @@ function renderReport(d){
       // 약점 텍스트에서 축을 감지해 차별화된 해결책·필요자료 생성 (동일 문구 반복 방지)
       const deriveFix = (txt)=>{
         const t = String(txt||'');
-        if(/rag|파인튜닝|에이전트|구현\s?방식|모델|기술/i.test(t))
-          return {fix:'RAG·파인튜닝·프롬프트 등 채택한 AI 구현 방식과 그 근거(정확도·비용·데이터 적합성)를 계획서에 구체적으로 명시하세요.', docs:'AI 아키텍처 개요도, 모델·방식 선정 근거 자료'};
+        if(/오기재|오타|명칭.*오|Tensoflow|표기.*오|잘못\s?기재/i.test(t))
+          return {fix:'기술·제품 명칭의 오기재를 정확한 표기로 바로잡고, 계획서 전체에서 표기를 통일하세요.', docs:'정확한 명칭 확인 자료(공식 문서·매뉴얼)'};
+        if(/과제명|사업명|불일치|트랙/.test(t))
+          return {fix:'공고문의 정확한 사업명·트랙명으로 과제명을 일치시키고, 동시수행 제한 여부를 확인해 명시하세요.', docs:'공고문 원문, 사업 신청서 표지'};
+        if(/rag|파인튜닝|에이전트|구현\s?방식|모델|학습 데이터|정확도|검증/i.test(t))
+          return {fix:'채택한 AI 구현 방식과 학습 데이터 확보량·모델 검증 방법·정확도 목표치를 계획서에 구체적으로 명시하세요.', docs:'AI 아키텍처 개요도, 모델·방식 선정 근거 자료'};
+        if(/공급기업|전문성|투입인력|pm|조직/i.test(t))
+          return {fix:'공급기업의 수행 실적·핵심 인력 이력·투입 공수와 역할 분담을 표로 제시해 역량을 입증하세요.', docs:'공급기업 실적 증빙, 인력 이력서'};
         if(/소상공인|수혜|편익|고객|효과/.test(t))
-          return {fix:'소상공인이 얻는 편익(예: 상담 시간 단축·비용 절감·접근성)을 정량 지표로 제시하세요.', docs:'수혜 대상 정의, 도입 전후 효과 추정 근거'};
-        if(/일정|마일스톤|kpi|지표|협약|로드맵/i.test(t))
-          return {fix:'협약기간 내 월별·단계별 추진 일정과 중간 점검 KPI(정량 목표)를 표로 정리하세요.', docs:'추진 일정표, 단계별 KPI 정의서'};
-        if(/보안|운영|안정성|장애|데이터\s?보호/.test(t))
-          return {fix:'데이터 보안·운영 안정성 확보 방안(접근통제·백업·장애대응)을 구체적으로 서술하세요.', docs:'보안·운영 관리 방안, 관련 인증·정책 자료'};
-        if(/자금|집행|예산|사업비|비용/.test(t))
-          return {fix:'사업비 세부 집행 항목과 금액을 근거와 함께 항목별로 명시하세요.', docs:'사업비 세부 집행 계획표, 산출 근거'};
+          return {fix:'수혜 대상이 얻는 편익(예: 상담 시간 단축·비용 절감·접근성)을 정량 지표로 제시하세요.', docs:'수혜 대상 정의, 도입 전후 효과 추정 근거'};
+        if(/일정|마일스톤|kpi|지표|협약|로드맵|목표값|기준값/i.test(t))
+          return {fix:'현재 실측값 → 목표값을 표로 제시하고, 협약기간 내 월별·단계별 추진 일정과 중간 점검 시점을 정리하세요.', docs:'추진 일정표, 단계별 KPI 정의서'};
+        if(/보안|운영|안정성|장애|데이터\s?보호|연동/.test(t))
+          return {fix:'보안 솔루션 구축·연동 방식과 접근통제·백업·장애대응 절차를 구체적으로 서술하세요.', docs:'보안·운영 관리 방안, 관련 인증·정책 자료'};
+        if(/자금|집행|예산|사업비|비용|편성/.test(t))
+          return {fix:'사업비 세부 집행 항목과 금액을 산출 근거와 함께 항목별로 명시하세요.', docs:'사업비 세부 집행 계획표, 산출 근거'};
         return {fix:'해당 약점을 계획서에 근거·수치·수행 방식과 함께 구체적으로 보강하세요.', docs:'계획서 해당 섹션, 뒷받침 증빙·수치 자료'};
       };
       risks = d.weaknesses.slice(0,5).map(w=>{
@@ -2228,6 +2276,12 @@ function renderReport(d){
     }
     if(risks && risks.length){
     d.risks = risks; // suppress 필터가 이미 위에서 처리됨 (weaknesses는 유형정합하므로 안전)
+    // AI가 보낸 risks의 fix/docs가 비었거나 무의미하면 title·why 축 감지로 보정 (엉뚱한 해결책 방지)
+    risks.forEach(r=>{
+      const fx = String(r.fix||'').trim();
+      if(!fx || fx.length < 8){ r.fix = deriveGuide(r.title, r.why); }
+      if(!String(r.docs||'').trim()){ r.docs = '계획서 해당 섹션, 뒷받침 증빙·수치 자료'; }
+    });
     riskBox.innerHTML = risks.map((r,i)=>{
       const vb = r._verify==='fail'
         ? '<span class="vbadge vb-fail" title="AI가 제시한 근거가 업로드 문서에서 확인되지 않았습니다 — 직접 확인하세요">⚠ 근거 확인 필요</span>'
@@ -2323,26 +2377,7 @@ function renderReport(d){
       if(rwSrc.length){
         try{ console.log('%c[Beconic] rewrites 폴백 실행','color:#f59e0b','rewrites 비어있음 → '+rwSrc.length+'건 생성(가이드 형식)'); }catch(_){}
         // 축을 감지해 '작성 가이드(after)'를 항목별로 차별화 (동일 문구 반복 방지)
-        const deriveGuide = (topic, why)=>{
-          const s = String(topic||'') + ' ' + String(why||'');
-          if(/과제명|사업명|불일치|트랙/.test(s))
-            return '공고문의 정확한 사업명·트랙명으로 과제명을 일치시키고, 동시수행 제한 여부를 확인해 계획서 첫머리에 명시하세요.';
-          if(/kpi|목표|불량률|가동률|리드타임|지표|정량/i.test(s))
-            return '현재 실측값 → 목표값을 표로 제시하고(예: 불량률 3%→1%), 산출 근거와 측정 방법을 함께 적으세요.';
-          if(/rag|파인튜닝|모델|구현|tensorflow|학습 데이터|정확도/i.test(s))
-            return '채택한 AI 구현 방식(RAG·파인튜닝 등)과 학습 데이터 확보량·모델 검증 방법·정확도 목표치를 구체적으로 기재하세요.';
-          if(/공급기업|전문성|투입인력|pm|조직|역량/i.test(s))
-            return '공급기업의 수행 실적·핵심 인력 이력·투입 공수와 역할 분담을 표로 제시해 역량을 입증하세요.';
-          if(/보안|운영|안정성|연동|백업/.test(s))
-            return '보안 솔루션 구축·연동 방식과 접근통제·백업·장애대응 절차를 구체적으로 서술하세요.';
-          if(/소상공인|수혜|편익|고객/.test(s))
-            return '수혜 대상이 얻는 편익을 정량 지표(시간 단축·비용 절감 등)로 제시하세요.';
-          if(/일정|마일스톤|협약|추진/.test(s))
-            return '협약기간 내 월별·단계별 추진 일정과 중간 점검 시점을 표로 정리하세요.';
-          if(/자금|집행|예산|사업비/.test(s))
-            return '사업비를 세부 항목·금액·산출 근거와 함께 항목별로 명시하세요.';
-          return '계획서 해당 부분에 정량 근거·수행 방식·기대효과를 함께 넣어 검증 가능한 문장으로 다시 작성하세요.';
-        };
+        // 축을 감지해 '작성 가이드(after)'를 항목별로 차별화 (공용 deriveGuide 사용)
         d.rewrites = rwSrc.map(s=>({
           topic: s.topic,
           _fallback: true,
@@ -2389,10 +2424,13 @@ function renderReport(d){
         return `<label class="action-item"><input type="checkbox"/><span><b>${esc(r.when||'')}</b> — ${esc(r.task||'')}${desc?`<span class="act-desc">${esc(desc)}</span>`:''}</span><span class="ai-day">${esc(r.tag||'')}</span></label>`;
       }).join('');
     } else {
-      // 데이터 없으면 우선순위(priorities)에서 파생한 최소 로드맵 (제목 + 안전 요약 설명)
+      // 데이터 없으면 우선순위(priorities)에서 파생한 최소 로드맵 (제목 + 축 감지 설명)
       const tags=['핵심','보강','정비','마감'];
+      const isGenericFix = (s)=> !s || /해당 약점을 계획서에 근거·수치|근거·수치·수행 방식과 함께 구체적으로 보강/.test(String(s));
       const base = (d.priorities||[]).slice(0,4).map((p,i)=>{
-        const desc = shortDesc(p.fix || p.why || '');
+        // fix가 기본 폴백 문구면 축을 감지해 구체 가이드로 대체 (단계마다 다른 설명)
+        const raw = isGenericFix(p.fix) ? deriveGuide(p.title, p.why) : p.fix;
+        const desc = shortDesc(raw);
         return `<label class="action-item"><input type="checkbox"/><span><b>${i+1}단계</b> — ${esc(p.title||'')}${desc?`<span class="act-desc">${esc(desc)}</span>`:''}</span><span class="ai-day">${tags[i]||'보완'}</span></label>`;
       }).join('');
       rmList.innerHTML = base + `<label class="action-item"><input type="checkbox"/><span><b>제출 직전</b> — 신청 자격요건 공고문 원문 대조, 양식 목차 누락 점검, 맞춤법 검수</span><span class="ai-day">검수</span></label>`;
