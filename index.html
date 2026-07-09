@@ -1277,7 +1277,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">9ae89eee</span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">d3c39be2</span></div>
   </div>
 </footer>
 
@@ -1683,11 +1683,11 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
     {"item":"<자격항목>","require":"<공고 요구>","current":"<입력/계획서 반영>","status":"<충족/확인필요/미확인>","action":"<조치>"}
   ],
   "risks": [
-    {"title":"<리스크>","severity":"<상/중/하>","penalty":"<예상 감점>","why":"<이유>","fix":"<해결책>","docs":"<필요자료>","evidence":"<이 리스크의 근거가 된 문서의 실제 문구를 8자 이상 그대로 인용. 없으면 빈 문자열>"}
+    {"title":"<리스크를 나타내는 20자 이내의 짧은 명사구. 괄호·'예:'·부연설명 금지, 상세 내용은 why에 작성>","severity":"<상/중/하>","penalty":"<예상 감점>","why":"<이유>","fix":"<해결책>","docs":"<필요자료>","evidence":"<이 리스크의 근거가 된 문서의 실제 문구를 8자 이상 그대로 인용. 없으면 빈 문자열>"}
     /* 필수: 3~5개 반드시 생성. 판별 유형의 riskFocus를 따를 것. 절대 비우지 말 것 */
   ],
   "priorities": [
-    {"rank":1,"title":"<보완 과제>","effect":"<기대 점수>","why":"<이유, 사업계획서 근거>","time":"<소요>","docs":"<필요자료>"}
+    {"rank":1,"title":"<보완 과제를 나타내는 20자 이내 짧은 명사구. 괄호·'예:'·부연 금지, 상세는 why에>","effect":"<기대 점수>","why":"<이유, 사업계획서 근거>","time":"<소요>","docs":"<필요자료>"}
     /* 필수: 3~4개 반드시 생성. 절대 비우지 말 것 */
   ],
   "rewrites": [
@@ -1708,7 +1708,7 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
 ★★ AI보조금 유형의 risks는 반드시 다음 중에서: 단순구독 취지부적합 / AI적용 프로세스 밀착성 부족 / 소상공인 수혜 불명확 / AI모델 구현방식(RAG·파인튜닝) 미제시 / 보안·운영안정성 미제시 / 자격·배제사유.
 ※ mentoring(종합 멘토링)도 판별 유형의 실제 점수·항목명으로 작성하세요. 창업 배점(문제인식·성장전략·실현가능성)을 언급하지 마세요.
 ★★ risks와 priorities와 rewrites는 절대 비우지 마세요. weaknesses(약점)를 작성했다면 그 약점들을 감점 리스크(risks)와 보완 우선순위(priorities)와 수정예시(rewrites)로도 반드시 변환해 채우세요. risks는 title/severity/why/fix/docs 형식, priorities는 rank/title/effect/why 형식, rewrites는 topic/before/after 형식으로 구체화합니다. 이 셋 중 하나라도 비면 진단이 불완전합니다. roadmap도 4~6개 반드시 채우세요.
-★ 일관성: weaknesses·risks·priorities는 같은 문제를 다른 관점으로 본 것이므로 서로 대응되어야 합니다. weaknesses에 있는 핵심 항목이 risks에서 누락되지 않도록 하고, 점수 영향이 큰 약점부터 risks·priorities 상위에 배치하세요. 개수가 달라도 되지만, weaknesses의 주요 항목은 risks에도 반영되어야 합니다.
+★★ 개수 일치 (중요): weaknesses에 작성한 약점의 개수만큼 risks도 동일하게 만드세요. 약점이 5개면 risks도 5개입니다 — 하나도 누락하지 마세요. priorities는 그 중 점수 영향이 큰 상위 3~4개, roadmap은 risks 전체를 제출 순서로 재배열해 risks와 같은 개수로 만드세요. "핵심 메시지"(mentoring 내 요약)와 roadmap 단계 수가 크게 어긋나지 않도록 하세요. 점수 영향이 큰 약점부터 risks·priorities 상위에 배치합니다.
 JSON만 출력하세요.`;
 }
 
@@ -2009,6 +2009,23 @@ function renderReport(d){
     try{ console.log('%c[Beconic] suppress 필터 적용','color:#e02d3c',{유형:gt, 금지축:sup, 남은risks:(d.risks||[]).length, weaknesses정화:`${wkBefore}→${(d.weaknesses||[]).length}`}); }catch(_){}
   })();
 
+  // ── 제목 정제: AI가 title에 "핵심(예: 상세…" 처럼 부연을 넣어 괄호가 안 닫히거나 잘리는 문제 방지 ──
+  // 여는 괄호 뒤 "예:" 부연은 제거하고, 짝이 안 맞는 미완결 괄호도 잘라 깔끔한 핵심만 남김
+  const cleanTitle = (s)=>{
+    let t = String(s||'').trim();
+    // "( 예: ... )" 또는 "(예 ..." 형태의 부연 설명 제거 (닫힘 여부 무관)
+    t = t.replace(/\s*[（(]\s*예\s*[:：].*$/,'');        // "(예: ~" 이후 통째 제거
+    t = t.replace(/\s*[（(][^)）]*$/,'');                // 닫히지 않은 여는 괄호 이후 제거
+    // 남은 여는/닫는 괄호 개수 불일치 시 마지막 여는 괄호부터 제거
+    const op=(t.match(/[（(]/g)||[]).length, cl=(t.match(/[)）]/g)||[]).length;
+    if(op>cl){ t = t.replace(/\s*[（(][^（()）]*$/,''); }
+    t = t.replace(/[·,\s]+$/,'').trim();                 // 끝의 구두점·공백 정리
+    return t;
+  };
+  if(Array.isArray(d.risks))      d.risks.forEach(r=>{ if(r&&r.title)  r.title  = cleanTitle(r.title); });
+  if(Array.isArray(d.priorities)) d.priorities.forEach(p=>{ if(p&&p.title) p.title = cleanTitle(p.title); });
+  if(Array.isArray(d.rewrites))   d.rewrites.forEach(r=>{ if(r&&r.topic)  r.topic  = cleanTitle(r.topic); });
+
   const lv = (l)=> l==='양호'?'sev-low': l==='취약'?'sev-high':'sev-mid';
   const fillCls = (l)=> l==='양호'?'f-low': l==='취약'?'f-high':'f-mid';
   const sevCls = (s)=> s==='상'?'sev-high': s==='하'?'sev-low':'sev-mid';
@@ -2162,11 +2179,11 @@ function renderReport(d){
       };
       risks = d.weaknesses.slice(0,5).map(w=>{
         const txt = String(w||'');
-        // "제목 — 설명" 또는 "제목: 설명" 분리
-        const m = txt.match(/^(.+?)[—:\-]\s*(.+)$/);
+        // "제목 — 설명"만 분리 (콜론은 "예:" 부연과 충돌하므로 구분자에서 제외)
+        const m = txt.match(/^(.+?)\s*[—–]\s*(.+)$/);
         const d2 = deriveFix(txt);
         return {
-          title: m ? m[1].trim() : txt.slice(0,30),
+          title: cleanTitle(m ? m[1].trim() : txt.slice(0,40)),
           severity: '중',
           penalty: '',
           why: m ? m[2].trim() : txt,
@@ -2266,8 +2283,8 @@ function renderReport(d){
       const rwSrc = (d.priorities && d.priorities.length)
         ? d.priorities.slice(0,3).map(p=>({topic:p.title, why:p.why}))
         : (d.weaknesses||[]).slice(0,3).map(w=>{
-            const t=String(w||''); const m=t.match(/^(.+?)[—:\-]\s*(.+)$/);
-            return {topic: m?m[1].trim():t.slice(0,24), why: m?m[2].trim():t};
+            const t=String(w||''); const m=t.match(/^(.+?)\s*[—–]\s*(.+)$/);
+            return {topic: cleanTitle(m?m[1].trim():t.slice(0,40)), why: m?m[2].trim():t};
           });
       if(rwSrc.length){
         try{ console.log('%c[Beconic] rewrites 폴백 실행','color:#f59e0b','rewrites 비어있음 → '+rwSrc.length+'건 생성(가이드 형식)'); }catch(_){}
