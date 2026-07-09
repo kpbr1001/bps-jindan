@@ -913,7 +913,7 @@ tr:last-child td{border-bottom:none;}
 
       <div class="callout" style="margin-top:16px">
         <span class="co-ico">🔍</span>
-        <div><b>신뢰성 원칙:</b> 본 진단은 업로드 문서에서 <b>확인된 내용만</b> 근거로 삼습니다. 문서에 없는 시장규모·매출·점수는 임의로 생성하지 않으며, 근거가 부족한 항목은 "확인 필요"로 표기합니다. 최종 선정 여부는 주관기관 심사 결과에 따릅니다.</div>
+        <div><b>신뢰성 원칙:</b> 본 진단은 업로드 문서에서 <b>확인된 내용만</b> 근거로 삼습니다. 문서에 없는 수치·점수·근거는 임의로 생성하지 않으며, 근거가 부족한 항목은 "확인 필요"로 표기합니다. 최종 선정 여부는 주관기관 심사 결과에 따릅니다.</div>
       </div>
     </div>
 
@@ -945,7 +945,7 @@ tr:last-child td{border-bottom:none;}
               transform="rotate(-90 60 60)"/>
           </svg>
           <div class="gauge-label">
-            <div class="gauge-num" id="hero-score">62<small>점</small></div>
+            <div class="gauge-num" id="hero-score">–<small>점</small></div>
             <div class="gauge-grade" id="hero-grade">B등급 · 보완 필요</div>
           </div>
         </div>
@@ -1030,7 +1030,7 @@ tr:last-child td{border-bottom:none;}
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed var(--gray-300)">
             <span style="font-size:13.5px;font-weight:800;color:var(--gray-700)">합계 (100점 만점) <span style="font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-light);padding:2px 7px;border-radius:6px;margin-left:4px">공고 배점표 자동 적용</span></span>
-            <span style="font-size:18px;font-weight:900;color:var(--blue-dark)">62점 <span style="font-size:12px;font-weight:700;color:var(--gray-500)">/ 선정선 70점</span></span>
+            <span style="font-size:18px;font-weight:900;color:var(--blue-dark)">–점 <span style="font-size:12px;font-weight:700;color:var(--gray-500)">/ 선정선 70점</span></span>
           </div>
           <div class="legend">
             <span><i style="background:#22c55e"></i>양호(70%↑)</span>
@@ -1041,7 +1041,7 @@ tr:last-child td{border-bottom:none;}
         </div>
       </div>
 
-      <div class="how-to" id="eval-howto" style="margin-top:16px">📌 <b>읽는 법:</b> 평가 항목과 배점은 <b>업로드한 공고의 배점표를 그대로 따릅니다</b>(예: 창업패키지는 문제인식20·실현30·성장30·팀20, 제조AI특화는 역량20·목표25·내용30·달성25). 아래 예시는 4개 항목 합(15+18+17+12=<b>62점</b>)이 종합점수와 일치하는 경우이며, 특히 <b>성장전략(57%)</b>이 배점(30점)이 커서 같은 노력 대비 점수 회복 폭이 가장 큽니다.</div>
+      <div class="how-to" id="eval-howto" style="margin-top:16px">📌 <b>읽는 법:</b> 평가 항목과 배점은 <b>업로드한 공고의 배점표를 그대로 따릅니다.</b> 진단을 실행하면 해당 공고 기준의 항목별 점수가 아래에 표시됩니다.</div>
     </div>
 
     <!-- ===== 6. 강점 / 약점 2분할 ===== -->
@@ -1054,22 +1054,11 @@ tr:last-child td{border-bottom:none;}
       <div class="sw-grid">
         <div class="sw-box str">
           <h4>💪 이대로 살릴 강점</h4>
-          <ul id="sw-strengths">
-            <li><b>문제인식의 구체성 (15/20점)</b> — 해결하려는 문제를 현장 사례·수요자 관점과 함께 명확히 짚어, 심사위원이 "왜 이 사업이 필요한지" 도입부에서 바로 이해합니다. 사업계획서에서 가장 완성도 높은 영역입니다.</li>
-            <li><b>제품·서비스 차별성</b> — 경쟁 대비 핵심 차별점이 한 문장으로 정리되어 전달력이 좋습니다. 기술·기능 중심 설명에서 "고객 가치" 언어로 한 단계 더 다듬으면 설득력이 배가됩니다.</li>
-            <li><b>대표의 업(業) 이해도</b> — 사업 배경 서술에서 시장과 고객에 대한 이해, 실행 의지가 드러나 신뢰를 형성합니다.</li>
-            <li><b>사업 추진 방향의 일관성</b> — 문제→해결책→목표가 논리적으로 연결되어, 전체 스토리라인이 흔들리지 않습니다.</li>
-          </ul>
+          <ul id="sw-strengths"><li style="color:var(--gray-500)">진단 실행 후 강점이 표시됩니다.</li></ul>
         </div>
         <div class="sw-box wk">
           <h4>⚠️ 지금 채워야 할 약점</h4>
-          <ul id="sw-weaknesses">
-            <li><b>시장규모 근거 부재 (성장전략 17/30점)</b> — "큰 시장·빠른 성장" 같은 형용사만 있고 출처·산출식이 없습니다. 심사위원은 검증 불가능한 주장을 사업성 리스크로 간주합니다.</li>
-            <li><b>매출 추정 로직 공백</b> — 목표 매출 숫자는 있으나 단가×수량×전환율 같은 산출 과정이 없어, "희망 사항"으로 읽힐 위험이 있습니다.</li>
-            <li><b>팀 역량 서술 미흡 (팀 12/20점)</b> — 핵심인력 이력·역할·전문성이 단편적이어서 "이 팀이 실제로 해낼 수 있는가"라는 실행력 질문에 충분히 답하지 못합니다.</li>
-            <li><b>증빙-본문 단절</b> — 특허·인증·실적을 본문에서 언급만 하고 첨부 증빙과 번호로 연결하지 않아, 객관적 사실이 주관적 주장처럼 보입니다.</li>
-            <li><b>정량 KPI 부재</b> — 추진일정·성과목표가 정성적 서술에 머물러, 사업 종료 후 무엇을 달성하는지 측정 기준이 모호합니다.</li>
-          </ul>
+          <ul id="sw-weaknesses"><li style="color:var(--gray-500)">진단 실행 후 보완할 약점이 표시됩니다.</li></ul>
         </div>
       </div>
       <div class="callout" style="margin-top:16px">
@@ -1096,7 +1085,7 @@ tr:last-child td{border-bottom:none;}
       <div class="how-to">📌 본 표의 자격요건은 일반적인 창업지원사업 기준 예시이며, 정확한 요건은 업로드한 공고문 원문을 따릅니다. '입력값 대조'는 STEP 2에서 입력하신 값을 그대로 표시합니다.</div>
       <div class="callout" style="margin-top:12px">
         <span class="co-ico">🚦</span>
-        <div><b>가장 먼저 할 일:</b> 자격요건은 점수가 아니라 <b>신청 가능 여부 자체</b>를 좌우합니다. '확인 필요'·'미확인' 항목을 공고문 원문과 대조해 신청 자격부터 확정하세요.</div>
+        <div><b>가장 먼저 할 일:</b> 자격요건은 점수가 아니라 <b>신청 가능 여부 자체</b>를 좌우합니다. '확인 필요'·'미확인' 항목을 공고문 원문과 대조해 신청 자격부터 확인하세요.</div>
       </div>
     </div>
 
@@ -1162,53 +1151,7 @@ tr:last-child td{border-bottom:none;}
       <div style="height:14px"></div>
 
       <div id="qcards">
-      <details class="qcard" open>
-        <summary>
-          <span class="q-title">1. 문제인식 (현황·문제점) · 15/20점</span>
-          <span class="q-right"><span class="qmini qm-g">양호 75%</span><span class="q-arrow">▼</span></span>
-        </summary>
-        <div class="q-body">
-          <div class="q-block"><span class="qb-label qb-good">잘된 점</span><br/>해결하려는 문제를 현장 사례·수요자 관점과 함께 구체적으로 제시해 도입부 설득력이 높습니다. 사업 추진 배경과 문제의 연결이 자연스럽습니다.</div>
-          <div class="q-block"><span class="qb-label qb-bad">부족한 점</span><br/>문제의 "규모"가 숫자로 제시되지 않았습니다. 얼마나 많은 사람이 겪고, 얼마의 비용·시간이 낭비되는지 정량 근거가 없어 문제의 심각성이 체감되지 않습니다.</div>
-          <div class="q-block"><span class="qb-label qb-fix">보완 방향</span><br/>문제 규모를 정량 지표(피해 규모·발생 빈도·연간 비용)로 한두 문장 추가하고, 출처를 함께 표기하세요. 도입부에서 "이건 큰 문제다"를 숫자로 각인시키면 이후 모든 주장의 설득력이 올라갑니다.</div>
-        </div>
-      </details>
-
-      <details class="qcard">
-        <summary>
-          <span class="q-title">2. 실현가능성 (기술·추진방법) · 18/30점</span>
-          <span class="q-right"><span class="qmini qm-y">보통 60%</span><span class="q-arrow">▼</span></span>
-        </summary>
-        <div class="q-body">
-          <div class="q-block"><span class="qb-label qb-good">잘된 점</span><br/>핵심 기술·방법의 방향성과 차별점은 제시되어 있어, 무엇을 만들려는지는 명확합니다.</div>
-          <div class="q-block"><span class="qb-label qb-bad">부족한 점</span><br/>단계별 개발 로드맵, 산출물 정의, 검증 방법이 없어 "정말 기간 내에 될까?"라는 실행 가능성 의문이 남습니다. 기술 수준(TRL)과 현재 진척도가 불명확합니다.</div>
-          <div class="q-block"><span class="qb-label qb-fix">보완 방향</span><br/>분기별 마일스톤(언제·무엇을·어떻게 검증)을 표로 정리하고, 현재 TRL 단계와 목표 단계를 명시하세요. 보유한 시제품·MVP·테스트 결과가 있으면 사진·데이터를 증빙으로 연결하면 신뢰도가 크게 오릅니다.</div>
-        </div>
-      </details>
-
-      <details class="qcard">
-        <summary>
-          <span class="q-title">3. 성장전략 (시장·수익모델) · 17/30점</span>
-          <span class="q-right"><span class="qmini qm-y">보통 57%</span><span class="q-arrow">▼</span></span>
-        </summary>
-        <div class="q-body">
-          <div class="q-block"><span class="qb-label qb-good">잘된 점</span><br/>목표 고객과 시장 진입 방향에 대한 기본 서술은 있어, 사업화 의지가 읽힙니다.</div>
-          <div class="q-block"><span class="qb-label qb-bad">부족한 점</span><br/>시장규모 근거, 수익모델의 단위경제(고객당 매출·비용), 경쟁사 비교가 비어 있습니다. 배점이 가장 큰 항목(30점)이라 전체 점수에 미치는 영향이 큽니다.</div>
-          <div class="q-block"><span class="qb-label qb-fix">보완 방향</span><br/>① 출처 기반 시장규모(TAM-SAM-SOM 3단계) ② 단가×수량×전환율 매출 산출식 ③ 경쟁사 3곳 비교표(가격·기능·차별점)를 추가하세요. <b>수정 우선순위 1번 과제</b>로, 여기를 채우면 점수 회복 폭이 가장 큽니다.</div>
-        </div>
-      </details>
-
-      <details class="qcard">
-        <summary>
-          <span class="q-title">4. 팀 구성 (인력·역량) · 12/20점</span>
-          <span class="q-right"><span class="qmini qm-y">보통 60%</span><span class="q-arrow">▼</span></span>
-        </summary>
-        <div class="q-body">
-          <div class="q-block"><span class="qb-label qb-good">잘된 점</span><br/>대표자의 사업 의지와 업에 대한 이해는 드러나며, 기본적인 팀 구성 윤곽은 제시되어 있습니다.</div>
-          <div class="q-block"><span class="qb-label qb-bad">부족한 점</span><br/>핵심인력의 역할·관련 경력·전문성이 단편적이어서 "이 팀이 이 사업을 실제로 해낼 수 있는가"라는 실행력 질문에 충분히 답하지 못합니다.</div>
-          <div class="q-block"><span class="qb-label qb-fix">보완 방향</span><br/>핵심 인력별로 [이름·직책·핵심 역할·관련 경력·증빙]을 표로 정리하세요. 부족한 역량(예: 기술·마케팅·생산)은 외부 자문위원·협력기관·채용 계획으로 보완 방안을 명시하면 "팀이 완결적이다"는 인상을 줍니다.</div>
-        </div>
-      </details>
+      <div class="callout" style="margin:0"><span class="co-ico">⏳</span><div>문항별 상세 피드백을 생성 중입니다. 진단을 실행하면 업로드한 계획서·공고문 기준으로 항목별 평가가 채워집니다.</div></div>
       </div><!-- /#qcards -->
     </div>
 
@@ -1241,7 +1184,7 @@ tr:last-child td{border-bottom:none;}
 
       <div class="mentor-block" style="margin-top:14px">
         <h4>🧭 총평 — 지금 어디에 서 있는가</h4>
-        <div class="mb-quote" id="mentor-summary">"본 사업계획서는 100점 만점 환산 기준 62점으로, 선정 기준선(70점) 대비 8점 부족한 '보완 필요' 단계입니다. 항목별로 보면 문제인식(15/20)은 평가 가능한 수준에 도달했으나, 배점이 큰 성장전략(17/30)과 실현가능성(18/30)에서 정량 근거가 부족해 전체 점수를 끌어내리고 있습니다.<br/><br/>핵심 진단은 명확합니다. 이 계획서의 약점은 '역량의 부재'가 아니라 '근거의 부재'입니다. 사업 아이템과 추진 의지는 충분하나, 시장규모·매출 추정·팀 역량·성과지표가 검증 가능한 형태로 제시되지 않아 심사위원이 객관적으로 판단할 근거가 부족한 상태입니다. 심사 현장에서 이런 계획서는 '아이디어는 좋으나 실현 근거가 약하다'는 평으로 합격선 부근에서 탈락하는 전형적 패턴에 해당합니다.<br/><br/>다만 부족한 부분이 대부분 '보유하고 있으나 서술하지 않은' 영역이라, 통계 인용·산출식·증빙 연결이라는 비교적 짧은 보완으로 70점대 진입이 현실적으로 가능합니다. 수정 우선순위 1~4번을 5~6일 내 집중 보완하고, 신청 전 자격요건을 별도 확인할 것을 권고합니다. 최종 선정 여부는 주관기관의 평가위원 심사 결과에 따릅니다."</div>
+        <div class="mb-quote" id="mentor-summary">진단을 실행하면 업로드한 계획서·공고 기준의 종합 총평이 여기에 표시됩니다.</div>
       </div>
 
       <div class="mentor-block">
@@ -1334,7 +1277,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">ceddc67f</span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">a08cbe6f</span></div>
   </div>
 </footer>
 
@@ -2056,9 +1999,13 @@ function renderReport(d){
     if(Array.isArray(d.priorities)) d.priorities = scrub(d.priorities, ['title','why']);
     if(Array.isArray(d.rewrites))   d.rewrites   = scrub(d.rewrites,   ['topic','before','after']);
     if(Array.isArray(d.roadmap))    d.roadmap    = scrub(d.roadmap,    ['task']);
+    // ★ weaknesses(약점): 문자열 배열이라 별도 정화. 폴백으로 risks/priorities에 승격되므로 반드시 먼저 정화해야 창업축(시장규모·매출추정) 재유입 차단
+    const wkBefore = Array.isArray(d.weaknesses) ? d.weaknesses.length : 0;
+    if(Array.isArray(d.weaknesses)) d.weaknesses = d.weaknesses.filter(w=> !hit(w));
+    if(Array.isArray(d.strengths))  d.strengths  = d.strengths.filter(s=> !hit(s));
     // priorities는 rank 재정렬
     if(Array.isArray(d.priorities)) d.priorities.forEach((p,i)=> p.rank=i+1);
-    try{ console.log('%c[Beconic] suppress 필터 적용','color:#e02d3c',{유형:gt, 금지축:sup, 남은risks:(d.risks||[]).length}); }catch(_){}
+    try{ console.log('%c[Beconic] suppress 필터 적용','color:#e02d3c',{유형:gt, 금지축:sup, 남은risks:(d.risks||[]).length, weaknesses정화:`${wkBefore}→${(d.weaknesses||[]).length}`}); }catch(_){}
   })();
 
   const lv = (l)=> l==='양호'?'sev-low': l==='취약'?'sev-high':'sev-mid';
@@ -2196,6 +2143,7 @@ function renderReport(d){
     // risks가 비면 weaknesses에서 리스크 카드 자동 생성 (AI가 risks 필드를 생략하는 경우 대응)
     let risks = (d.risks && d.risks.length) ? d.risks : null;
     if(!risks && d.weaknesses && d.weaknesses.length){
+      try{ console.log('%c[Beconic] risks 폴백 실행','color:#f59e0b','risks 비어있음 → 정화된 weaknesses '+d.weaknesses.length+'건에서 리스크 카드 생성'); }catch(_){}
       risks = d.weaknesses.slice(0,5).map(w=>{
         const txt = String(w||'');
         // "제목 — 설명" 또는 "제목: 설명" 분리
@@ -2287,14 +2235,31 @@ function renderReport(d){
     if(txt){
       mentorBox.innerHTML = esc(txt).replace(/\n/g,'<br/><br/>');
     } else {
-      // 데이터 없으면 정적 창업예시(62점) 대신 중립 안내
+      // 데이터 없으면 정적 창업예시 대신 중립 안내
       mentorBox.innerHTML = '진단 결과 요약이 생성되지 않았습니다. 상단의 항목별 평가와 감점 리스크를 참고하세요.';
     }
   }
 
-  // 12) 수정 예시 (rewrites) — AI 응답 기반, 없으면 섹션 숨김
+  // 12) 수정 예시 (rewrites) — AI 응답 기반, 없으면 정화된 weaknesses/priorities에서 폴백 생성
   const rwSec = $('#sec-rewrites');
   if(rwSec){
+    // rewrites 폴백: AI가 필드를 생략해도 섹션을 숨기지 않고, 유형정합한 약점→수정예시로 변환
+    if((!d.rewrites || !d.rewrites.length)){
+      const rwSrc = (d.priorities && d.priorities.length)
+        ? d.priorities.slice(0,3).map(p=>({topic:p.title, why:p.why}))
+        : (d.weaknesses||[]).slice(0,3).map(w=>{
+            const t=String(w||''); const m=t.match(/^(.+?)[—:\-]\s*(.+)$/);
+            return {topic: m?m[1].trim():t.slice(0,24), why: m?m[2].trim():t};
+          });
+      if(rwSrc.length){
+        try{ console.log('%c[Beconic] rewrites 폴백 실행','color:#f59e0b','rewrites 비어있음 → '+rwSrc.length+'건 생성(섹션 숨김 방지)'); }catch(_){}
+        d.rewrites = rwSrc.map(s=>({
+          topic: s.topic,
+          before: '(현재 계획서에는 이 부분이 추상적이거나 근거 없이 서술되어 있을 가능성이 높습니다.)',
+          after: (s.why? s.why+' ' : '') + '— 이 내용을 계획서에 정량 근거·수행 방식·기대효과와 함께 구체적으로 서술하세요.'
+        }));
+      }
+    }
     if(d.rewrites && d.rewrites.length){
       rwSec.style.display='';
       const body = $('#rewrites-body');
