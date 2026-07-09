@@ -536,6 +536,7 @@ tr:last-child td{border-bottom:none;}
 .action-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--gray-800,#2b3440);padding:12px 14px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:11px;line-height:1.5;}
 .action-item input{margin-top:2px;accent-color:var(--blue);width:17px;height:17px;flex-shrink:0;}
 .action-item .ai-day{margin-left:auto;font-size:11px;font-weight:800;color:var(--blue-dark);background:var(--blue-light);padding:3px 9px;border-radius:7px;white-space:nowrap;}
+.action-item .act-desc{display:block;margin-top:3px;font-size:12px;font-weight:400;color:var(--gray-600,#6b7684);line-height:1.5;}
 
 /* 해석 도움말 */
 .how-to{font-size:12px;color:var(--gray-500);background:var(--gray-50);border-radius:10px;padding:10px 13px;margin-top:10px;line-height:1.55;}
@@ -1277,7 +1278,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">dedee9fc</span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">437442ac</span></div>
   </div>
 </footer>
 
@@ -2041,6 +2042,18 @@ function renderReport(d){
       }
       t = t.replace(/[\s·,]+$/,'');
     }
+    // (4) ★최종 괄호 짝 검사★ — 위 어떤 단계에서 잘렸든, 안 닫힌 여는 괄호가 있으면 그 괄호 앞까지만
+    let fo=(t.match(/[（(]/g)||[]).length, fc=(t.match(/[)）]/g)||[]).length;
+    while(fo > fc){
+      t = t.replace(/\s*[（(][^（()）]*$/,'').replace(/[\s·,]+$/,'');  // 마지막 여는 괄호부터 끝까지 제거
+      fo=(t.match(/[（(]/g)||[]).length; fc=(t.match(/[)）]/g)||[]).length;
+      if(!/[（(]/.test(t)) break;
+    }
+    // (5) ★최종 조사 정리★ — 축약/괄호처리 후 끝에 남은 단독 조사 제거 ("…구현을"→"…구현", "…수립이"→"…수립")
+    //   단, 닫는 괄호로 끝나면(완결 명사구) 건드리지 않음
+    if(!/[)）]$/.test(t)){
+      t = t.replace(/([가-힣A-Za-z0-9]{2,})(을|를|이|가|은|는|에|의|로|으로)$/,'$1');
+    }
     return t.trim();
   };
   if(Array.isArray(d.risks))      d.risks.forEach(r=>{ if(r&&r.title)  r.title  = cleanTitle(r.title); });
@@ -2309,11 +2322,32 @@ function renderReport(d){
           });
       if(rwSrc.length){
         try{ console.log('%c[Beconic] rewrites 폴백 실행','color:#f59e0b','rewrites 비어있음 → '+rwSrc.length+'건 생성(가이드 형식)'); }catch(_){}
+        // 축을 감지해 '작성 가이드(after)'를 항목별로 차별화 (동일 문구 반복 방지)
+        const deriveGuide = (topic, why)=>{
+          const s = String(topic||'') + ' ' + String(why||'');
+          if(/과제명|사업명|불일치|트랙/.test(s))
+            return '공고문의 정확한 사업명·트랙명으로 과제명을 일치시키고, 동시수행 제한 여부를 확인해 계획서 첫머리에 명시하세요.';
+          if(/kpi|목표|불량률|가동률|리드타임|지표|정량/i.test(s))
+            return '현재 실측값 → 목표값을 표로 제시하고(예: 불량률 3%→1%), 산출 근거와 측정 방법을 함께 적으세요.';
+          if(/rag|파인튜닝|모델|구현|tensorflow|학습 데이터|정확도/i.test(s))
+            return '채택한 AI 구현 방식(RAG·파인튜닝 등)과 학습 데이터 확보량·모델 검증 방법·정확도 목표치를 구체적으로 기재하세요.';
+          if(/공급기업|전문성|투입인력|pm|조직|역량/i.test(s))
+            return '공급기업의 수행 실적·핵심 인력 이력·투입 공수와 역할 분담을 표로 제시해 역량을 입증하세요.';
+          if(/보안|운영|안정성|연동|백업/.test(s))
+            return '보안 솔루션 구축·연동 방식과 접근통제·백업·장애대응 절차를 구체적으로 서술하세요.';
+          if(/소상공인|수혜|편익|고객/.test(s))
+            return '수혜 대상이 얻는 편익을 정량 지표(시간 단축·비용 절감 등)로 제시하세요.';
+          if(/일정|마일스톤|협약|추진/.test(s))
+            return '협약기간 내 월별·단계별 추진 일정과 중간 점검 시점을 표로 정리하세요.';
+          if(/자금|집행|예산|사업비/.test(s))
+            return '사업비를 세부 항목·금액·산출 근거와 함께 항목별로 명시하세요.';
+          return '계획서 해당 부분에 정량 근거·수행 방식·기대효과를 함께 넣어 검증 가능한 문장으로 다시 작성하세요.';
+        };
         d.rewrites = rwSrc.map(s=>({
           topic: s.topic,
           _fallback: true,
-          before: (s.why || '해당 항목의 서술 근거가 부족합니다.'),
-          after: '계획서 해당 부분에 정량 근거·수행 방식·기대효과를 함께 넣어 검증 가능한 문장으로 다시 작성하세요.'
+          before: (s.why || (String(s.topic||'')+' 항목의 서술 근거·수치가 부족합니다.')),
+          after: deriveGuide(s.topic, s.why)
         }));
       }
     }
@@ -2337,16 +2371,30 @@ function renderReport(d){
   // 실행 로드맵 (roadmap) — AI 응답 기반
   const rmList = $('#roadmap-list');
   if(rmList){
+    // 설명문을 완결된 문장 단위로 안전하게 요약 (중간 짤림·"..." 방지)
+    const shortDesc = (s)=>{
+      let x = String(s||'').trim();
+      if(!x) return '';
+      // 첫 문장(마침표/느낌표 기준)만, 없으면 60자 이내 어절 경계
+      const sent = x.match(/^[^.!?。]*[.!?。]/);
+      if(sent && sent[0].length <= 70){ return sent[0].replace(/[·,\s]+$/,'').trim(); }
+      if(x.length <= 60) return x;
+      const words = x.split(/\s+/); let acc='';
+      for(const w of words){ if((acc+' '+w).trim().length > 58) break; acc=(acc+' '+w).trim(); }
+      return (acc || x.slice(0,56)).replace(/[·,\s]+$/,'') + ' …';
+    };
     if(d.roadmap && d.roadmap.length){
-      rmList.innerHTML = d.roadmap.map(r=>
-        `<label class="action-item"><input type="checkbox"/><span><b>${esc(r.when||'')}</b> — ${esc(r.task||'')}</span><span class="ai-day">${esc(r.tag||'')}</span></label>`
-      ).join('');
+      rmList.innerHTML = d.roadmap.map(r=>{
+        const desc = shortDesc(r.desc || r.detail || r.task_desc || '');
+        return `<label class="action-item"><input type="checkbox"/><span><b>${esc(r.when||'')}</b> — ${esc(r.task||'')}${desc?`<span class="act-desc">${esc(desc)}</span>`:''}</span><span class="ai-day">${esc(r.tag||'')}</span></label>`;
+      }).join('');
     } else {
-      // 데이터 없으면 우선순위(priorities)에서 파생한 최소 로드맵 (제목만 — 잘린 설명 첨부 안 함)
+      // 데이터 없으면 우선순위(priorities)에서 파생한 최소 로드맵 (제목 + 안전 요약 설명)
       const tags=['핵심','보강','정비','마감'];
-      const base = (d.priorities||[]).slice(0,4).map((p,i)=>
-        `<label class="action-item"><input type="checkbox"/><span><b>${i+1}단계</b> — ${esc(p.title||'')}</span><span class="ai-day">${tags[i]||'보완'}</span></label>`
-      ).join('');
+      const base = (d.priorities||[]).slice(0,4).map((p,i)=>{
+        const desc = shortDesc(p.fix || p.why || '');
+        return `<label class="action-item"><input type="checkbox"/><span><b>${i+1}단계</b> — ${esc(p.title||'')}${desc?`<span class="act-desc">${esc(desc)}</span>`:''}</span><span class="ai-day">${tags[i]||'보완'}</span></label>`;
+      }).join('');
       rmList.innerHTML = base + `<label class="action-item"><input type="checkbox"/><span><b>제출 직전</b> — 신청 자격요건 공고문 원문 대조, 양식 목차 누락 점검, 맞춤법 검수</span><span class="ai-day">검수</span></label>`;
     }
   }
