@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- 캐시 무효화: 같은 파일명 재배포 시 브라우저·CDN이 옛 버전을 잡는 문제 방지 -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <title>지원사업 사업계획서 AI 진단 MVP</title>
 <meta name="description" content="지원공고, 작성양식, 사업계획서를 비교해 적합성, 감점 리스크, 보완 방향을 진단합니다." />
 
@@ -657,7 +661,7 @@ tr:last-child td{border-bottom:none;}
   <section class="hero no-print">
     <div class="wrap">
       <span class="badge">📄 공고 · 양식 · 사업계획서 3종 비교 진단</span>
-      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v5.0 · 로드맵매칭·soft축감지·라벨중복제거·오절단가드</span>
+      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v5.1 · 캐시무효화·배포정합성자가검증</span>
       <h1>지원사업 사업계획서<br/>AI 진단 MVP</h1>
       <p>지원공고, 작성양식, 작성한 사업계획서를 비교하여 <b>적합성, 감점 리스크, 보완 방향</b>을 진단합니다. 심사위원 관점의 보완 가이드를 받아보세요.</p>
     </div>
@@ -1289,7 +1293,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">8bb08837</span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">b4d03a07</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1307,6 +1311,40 @@ tr:last-child td{border-bottom:none;}
    - 향후 고도화를 위해 분석 함수 구조를 분리 (현재는 스텁)
    ================================================================= */
 'use strict';
+
+// ── 빌드 서명 + 배포 정합성 자가검증 ──
+// 문제: footer의 build 해시는 HTML에 하드코딩이라, 옛 JS가 배포돼도 최신처럼 보인다.
+// 해결: 실제 실행 중인 핵심 함수(renderReport)의 소스 지문을 런타임에 계산해,
+//       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
+//       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
+(function(){
+  var SIG='v5.1';
+  try{ console.log('%c[Beconic BUILD] '+SIG+' · b4d03a07 · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
+  document.addEventListener('DOMContentLoaded',function(){
+    try{
+      var src = (typeof renderReport==='function') ? renderReport.toString() : '';
+      // 이 버전이 반드시 담아야 할 수정들의 코드 지문
+      var markers = {
+        'soft축감지': src.indexOf('const soft')>=0 || src.indexOf('soft =')>=0,
+        'roadmap매칭': src.indexOf('cleanPool')>=0,
+        '화이트리스트가드': src.indexOf('완성형 표준 라벨')>=0,
+        '로드맵dedup': src.indexOf('dedupeRoadmap')>=0
+      };
+      var missing = Object.keys(markers).filter(function(k){ return !markers[k]; });
+      var el = document.getElementById('build-loaded');
+      if(el){
+        if(missing.length===0){
+          el.textContent = '· v5.1 ✓ '+new Date().toISOString().slice(11,19);
+          el.style.color = '#16a34a';
+        } else {
+          el.textContent = '· ⚠ 옛 코드 실행 중(누락: '+missing.join(',')+') — 캐시 강력새로고침(Ctrl+Shift+R) 또는 재배포 필요';
+          el.style.color = '#dc2626'; el.style.fontWeight = '800';
+          try{ console.warn('[Beconic BUILD] 배포 불일치! 누락된 수정:',missing,'→ 브라우저 강력새로고침 또는 GitHub 재배포 확인'); }catch(_){}
+        }
+      }
+    }catch(_){}
+  });
+})();
 
 const LS_KEY = 'gv_ai_diagnosis_v1';
 
