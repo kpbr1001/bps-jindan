@@ -588,14 +588,20 @@ tr:last-child td{border-bottom:none;}
    A4 인쇄 / PDF 저장
    ============================================================ */
 @media print{
-  @page{size:A4 portrait;margin:13mm 14mm;}
+  @page{size:A4 portrait;margin:9mm 10mm;}
   body{background:#fff;font-size:10.5pt;}
   .appbar,.no-print,.dropzone,.field,.btn,.btn-group,.cta-box,
   #screen-main,.loading-overlay,.edit-tag{display:none !important;}
   #screen-result{display:block !important;}
-  .wrap{max-width:100%;padding:0;}
+  .wrap{max-width:100%;padding:0 !important;}
   .section{padding:0;}
-  .card{box-shadow:none;border:1px solid #d1d6db;break-inside:avoid;page-break-inside:avoid;margin-bottom:9px;padding:16px 18px;}
+  .card{box-shadow:none;border:1px solid #d1d6db;break-inside:avoid;page-break-inside:avoid;margin-bottom:7px;padding:12px 14px;}
+  /* PDF 첫 페이지 커버: 브랜드 + 면책 */
+  .print-cover{margin-bottom:10px;}
+  .print-cover .pc-brand{border-bottom:2px solid #3182f6;padding-bottom:8px;margin-bottom:10px;}
+  .print-cover .pc-title{font-size:16pt;font-weight:800;color:#191f28;}
+  .print-cover .pc-sub{font-size:8.5pt;color:#6b7684;margin-top:3px;}
+  .print-cover .pc-disclaimer{font-size:8.5pt;line-height:1.55;background:#f4f6f8;border:1px solid #d1d6db;border-radius:6px;padding:10px 12px;color:#4e5968;}
   .summary-grid{grid-template-columns:repeat(4,1fr);gap:8px;}
   .scard{padding:11px;}
   table{min-width:0;font-size:9pt;}
@@ -816,6 +822,17 @@ tr:last-child td{border-bottom:none;}
 <!-- ===================== 결과 화면 ===================== -->
 <section id="screen-result" class="hidden">
   <div class="wrap" style="padding-top:24px">
+
+    <!-- PDF 전용 첫 페이지 헤더 + 면책 고지 (화면에는 안 보이고 인쇄/PDF 시 맨 앞에 표시) -->
+    <div class="print-only print-cover">
+      <div class="pc-brand">
+        <div class="pc-title">AI 사업계획서 진단 결과보고서</div>
+        <div class="pc-sub">그로스벤처스 주식회사 · Beconic &nbsp;|&nbsp; 중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
+      </div>
+      <div class="disclaimer pc-disclaimer">
+        <b>[면책 고지]</b> 본 진단은 사용자가 업로드한 문서와 입력 정보를 기반으로 한 AI 분석 결과이며 <b>참고용 자가진단</b>입니다. 실제 지원 가능 여부·선정 여부·평가 결과는 주관기관의 공고문, 세부 운영지침, 제출자료, 증빙자료, 심사위원 판단에 따라 달라질 수 있으며, 본 결과는 어떠한 선정·평가 결과도 보장하지 않습니다. 최종 제출 전에는 반드시 공고문 원문, 주관기관 안내사항, 전문가 검토를 함께 확인하시기 바랍니다.
+      </div>
+    </div>
 
     <!-- 결과 헤더 -->
     <div class="card no-print" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
@@ -1254,8 +1271,8 @@ tr:last-child td{border-bottom:none;}
       </div>
     </div>
 
-    <!-- 17. 면책 고지문 -->
-    <div class="disclaimer" style="margin-top:16px">
+    <!-- 17. 면책 고지문 (화면 전용 — PDF에선 첫 페이지 print-cover에 표시) -->
+    <div class="disclaimer no-print" style="margin-top:16px">
       본 진단은 사용자가 업로드한 문서와 입력 정보를 기반으로 한 AI 분석 결과입니다. 실제 지원 가능 여부, 선정 여부, 평가 결과는 주관기관의 공고문, 세부 운영지침, 제출자료, 증빙자료, 심사위원 판단에 따라 달라질 수 있습니다. 본 결과는 참고용 진단이며, 최종 제출 전에는 반드시 공고문 원문, 주관기관 안내사항, 전문가 검토를 함께 확인하시기 바랍니다.
     </div>
 
@@ -1270,7 +1287,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">0461294c</span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">73b58342</span></div>
   </div>
 </footer>
 
