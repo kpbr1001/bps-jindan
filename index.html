@@ -7,20 +7,20 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<title>지원사업 사업계획서 AI 진단 MVP</title>
-<meta name="description" content="지원공고, 작성양식, 사업계획서를 비교해 적합성, 감점 리스크, 보완 방향을 진단합니다." />
+<title>지원사업 사업계획서 AI 진단</title>
+<meta name="description" content="지원공고와 사업계획서를 비교·분석하는 AI 진단" />
 
-<!-- ===== 카카오톡 / Open Graph 메타태그 ===== -->
+<!-- ===== 카카오톡 / Open Graph 메타태그 (APP_CONFIG와 동일 기준, JS가 런타임 재동기화) ===== -->
 <meta property="og:type" content="website" />
-<meta property="og:title" content="지원사업 사업계획서 AI 진단 리포트" />
-<meta property="og:description" content="지원공고, 작성양식, 사업계획서를 비교해 적합성, 감점 리스크, 보완 방향을 진단합니다." />
-<meta property="og:url" content="" />
+<meta property="og:title" content="지원사업 사업계획서 AI 진단" />
+<meta property="og:description" content="지원공고와 사업계획서를 비교·분석하는 AI 진단" />
+<meta property="og:url" content="https://saup-plan-jindan-2026.netlify.app" />
 <meta property="og:image" content="og_banner.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="지원사업 사업계획서 AI 진단 리포트" />
-<meta name="twitter:description" content="지원공고, 작성양식, 사업계획서를 비교해 적합성, 감점 리스크, 보완 방향을 진단합니다." />
+<meta name="twitter:title" content="지원사업 사업계획서 AI 진단" />
+<meta name="twitter:description" content="지원공고와 사업계획서를 비교·분석하는 AI 진단" />
 <meta name="twitter:image" content="og_banner.png" />
 
 <!-- ===== Pretendard 웹폰트 ===== -->
@@ -608,8 +608,9 @@ tr:last-child td{border-bottom:none;}
   .print-cover .pc-title{font-size:16pt;font-weight:800;color:#191f28;}
   .print-cover .pc-sub{font-size:8.5pt;color:#6b7684;margin-top:3px;}
   .print-cover .pc-disclaimer{font-size:8.5pt;line-height:1.55;background:#f4f6f8;border:1px solid #d1d6db;border-radius:6px;padding:10px 12px;color:#4e5968;}
-  .summary-grid{grid-template-columns:repeat(4,1fr);gap:8px;}
-  .scard{padding:11px;}
+  .summary-grid{grid-template-columns:repeat(2,1fr);gap:10px;}  /* A4: 4열→2열, 제목 줄바꿈 여유 확보 */
+  .scard{padding:12px 14px;}
+  .scard .v{font-size:13pt;line-height:1.4;}
   table{min-width:0;font-size:9pt;}
   th,td{padding:7px 9px;}
   .table-wrap{overflow:visible;border:1px solid #d1d6db;}
@@ -661,8 +662,8 @@ tr:last-child td{border-bottom:none;}
   <section class="hero no-print">
     <div class="wrap">
       <span class="badge">📄 공고 · 양식 · 사업계획서 3종 비교 진단</span>
-      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v5.1 · 캐시무효화·배포정합성자가검증</span>
-      <h1>지원사업 사업계획서<br/>AI 진단 MVP</h1>
+      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v5.2 · 타이틀단일화·ISSUE_LIBRARY·어댑터</span>
+      <h1 data-role="hero-title">지원사업 사업계획서<br/>AI 진단</h1>
       <p>지원공고, 작성양식, 작성한 사업계획서를 비교하여 <b>적합성, 감점 리스크, 보완 방향</b>을 진단합니다. 심사위원 관점의 보완 가이드를 받아보세요.</p>
     </div>
   </section>
@@ -832,7 +833,7 @@ tr:last-child td{border-bottom:none;}
     <!-- PDF 전용 첫 페이지 헤더 + 면책 고지 (화면에는 안 보이고 인쇄/PDF 시 맨 앞에 표시) -->
     <div class="print-only print-cover">
       <div class="pc-brand">
-        <div class="pc-title">AI 사업계획서 진단 결과보고서</div>
+        <div class="pc-title" data-role="report-cover-title">지원사업 사업계획서 AI 진단 결과보고서</div>
         <div class="pc-sub">그로스벤처스 주식회사 · Beconic &nbsp;|&nbsp; 중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
       </div>
       <div class="disclaimer pc-disclaimer">
@@ -853,7 +854,7 @@ tr:last-child td{border-bottom:none;}
 
     <!-- 인쇄 전용 제목 -->
     <div class="print-only" style="margin-bottom:12px">
-      <h1 style="font-size:18pt">지원사업 사업계획서 AI 진단 리포트</h1>
+      <h1 style="font-size:18pt" data-role="report-print-title">지원사업 사업계획서 AI 진단 결과보고서</h1>
       <p id="print-company" style="color:#191f28;font-size:12pt;font-weight:700;margin:4px 0 0"></p>
       <p id="print-date" style="color:#555;font-size:10pt;margin:2px 0 0"></p>
     </div>
@@ -1293,7 +1294,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">b4d03a07</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">5bde3bc5</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1312,29 +1313,93 @@ tr:last-child td{border-bottom:none;}
    ================================================================= */
 'use strict';
 
+// ═══════════════════════════════════════════════════════════════
+// APP_CONFIG — 서비스·보고서 명칭 단일 기준정보 (Single Source of Truth)
+// 지시서 4.1: 정적 타이틀이 8곳에 하드코딩돼 수정 누락·불일치 발생 → 한 곳에서 관리.
+// 화면/OG/공유/PDF/저장/파일명이 모두 이 상수를 참조하도록 DOMContentLoaded에서 동기화한다.
+// ═══════════════════════════════════════════════════════════════
+const APP_CONFIG = Object.freeze({
+  appTitle:    '지원사업 사업계획서 AI 진단',                    // 브라우저 탭·앱바·히어로
+  heroTitle:   '지원사업 사업계획서\nAI 진단',                    // 히어로 h1 (줄바꿈 \n → <br>)
+  reportTitle: '지원사업 사업계획서 AI 진단 결과보고서',          // PDF 표지·인쇄·저장본 제목
+  shareTitle:  '지원사업 사업계획서 AI 진단',                    // OG·twitter·Web Share
+  description: '지원공고와 사업계획서를 비교·분석하는 AI 진단',
+  serviceUrl:  'https://saup-plan-jindan-2026.netlify.app',      // 공유 URL (빈 문자열 금지)
+  filePrefix:  '사업계획서_AI진단_결과보고서'                     // 저장 파일명 접두
+});
+
+// 파일명 규칙: 접두_YYYYMMDD
+function createReportFileName(date){
+  date = date || new Date();
+  const stamp = [date.getFullYear(),
+    String(date.getMonth()+1).padStart(2,'0'),
+    String(date.getDate()).padStart(2,'0')].join('');
+  return `${APP_CONFIG.filePrefix}_${stamp}`;
+}
+
+// 정적 타이틀 동기화 — 하드코딩 대신 APP_CONFIG 기준으로 런타임에 일괄 설정
+function syncStaticTitles(){
+  try{
+    document.title = APP_CONFIG.appTitle;
+    const set = (sel, attr, val)=>{ const el=document.querySelector(sel); if(el) el.setAttribute(attr, val); };
+    set('meta[property="og:title"]',   'content', APP_CONFIG.shareTitle);
+    set('meta[name="twitter:title"]',  'content', APP_CONFIG.shareTitle);
+    set('meta[property="og:description"]','content', APP_CONFIG.description);
+    set('meta[name="twitter:description"]','content', APP_CONFIG.description);
+    set('meta[name="description"]',    'content', APP_CONFIG.description);
+    set('meta[property="og:url"]',     'content', APP_CONFIG.serviceUrl);
+    // 텍스트 노드: data-role 기준으로 채움 (있을 때만)
+    const txt = (sel, val)=>{ const el=document.querySelector(sel); if(el) el.textContent = val; };
+    txt('[data-role="app-title"]',    APP_CONFIG.appTitle);
+    const hero = document.querySelector('[data-role="hero-title"]');
+    if(hero) hero.innerHTML = APP_CONFIG.heroTitle.replace(/\n/g,'<br/>');
+    txt('[data-role="report-cover-title"]', APP_CONFIG.reportTitle);
+    txt('[data-role="report-print-title"]', APP_CONFIG.reportTitle);
+  }catch(_){}
+}
+
+// 정적 타이틀 자가감사 (지시서 19장) — 기준과 실제 DOM 값을 대조, 불일치 시 콘솔 경고
+function auditStaticTitles(){
+  try{
+    const checks = [
+      ['documentTitle', document.title, APP_CONFIG.appTitle],
+      ['ogTitle', document.querySelector('meta[property="og:title"]')?.content||'', APP_CONFIG.shareTitle],
+      ['twitterTitle', document.querySelector('meta[name="twitter:title"]')?.content||'', APP_CONFIG.shareTitle],
+      ['ogUrl', document.querySelector('meta[property="og:url"]')?.content||'', APP_CONFIG.serviceUrl],
+    ];
+    const mismatches = checks.filter(([k,actual,expected])=> actual!==expected)
+      .map(([k,actual,expected])=>({key:k, expected, actual}));
+    if(mismatches.length) console.error('[Title Audit] 불일치 발견', mismatches);
+    else console.info('[Title Audit] 모든 정적 타이틀 일치 ✓');
+    return mismatches;
+  }catch(_){ return []; }
+}
+
 // ── 빌드 서명 + 배포 정합성 자가검증 ──
 // 문제: footer의 build 해시는 HTML에 하드코딩이라, 옛 JS가 배포돼도 최신처럼 보인다.
 // 해결: 실제 실행 중인 핵심 함수(renderReport)의 소스 지문을 런타임에 계산해,
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v5.1';
-  try{ console.log('%c[Beconic BUILD] '+SIG+' · b4d03a07 · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
+  var SIG='v5.2';
+  try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
+    // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
+    if(typeof syncStaticTitles==='function') syncStaticTitles();
+    if(typeof auditStaticTitles==='function') auditStaticTitles();
     try{
       var src = (typeof renderReport==='function') ? renderReport.toString() : '';
       // 이 버전이 반드시 담아야 할 수정들의 코드 지문
       var markers = {
-        'soft축감지': src.indexOf('const soft')>=0 || src.indexOf('soft =')>=0,
-        'roadmap매칭': src.indexOf('cleanPool')>=0,
-        '화이트리스트가드': src.indexOf('완성형 표준 라벨')>=0,
-        '로드맵dedup': src.indexOf('dedupeRoadmap')>=0
+        'title동기화': typeof syncStaticTitles==='function',
+        'ISSUE_LIBRARY': typeof ISSUE_LIBRARY!=='undefined',
+        'legacy어댑터': typeof legacyToIssues==='function'
       };
       var missing = Object.keys(markers).filter(function(k){ return !markers[k]; });
       var el = document.getElementById('build-loaded');
       if(el){
         if(missing.length===0){
-          el.textContent = '· v5.1 ✓ '+new Date().toISOString().slice(11,19);
+          el.textContent = '· v5.2 ✓ '+new Date().toISOString().slice(11,19);
           el.style.color = '#16a34a';
         } else {
           el.textContent = '· ⚠ 옛 코드 실행 중(누락: '+missing.join(',')+') — 캐시 강력새로고침(Ctrl+Shift+R) 또는 재배포 필요';
@@ -1507,6 +1572,248 @@ const GRANT_TYPES = {
     detect:'바우처·수출바우처·데이터바우처, 수행기관, 멘토 매칭'
   }
 };
+// ═══════════════════════════════════════════════════════════════
+// ISSUE_LIBRARY — 표준 이슈 코드 라이브러리 (지시서 6장 + 우리 GRANT_TYPES 매핑 확장)
+// 원칙: AI는 issue_code만 선택, 제목(title)은 여기서 결정 → 문장형 제목·짤림 구조적 제거.
+// 확장: suppressedFor(유형별 억제) — 유형에 부적합한 축이 이슈로 뜨지 않게 GRANT_TYPES.suppress와 연동.
+//   · '시장규모(TAM)'  suppress → MARKET_EVIDENCE_WEAK 억제
+//   · '매출추정'        suppress → BM_REVENUE_UNCLEAR 억제
+//   · '상환력·재무건전성' suppress → (LOAN 전용 축) 다른 유형에서 억제
+//   · '경쟁사 점유율'   suppress → COMPETITOR_DIFFERENTIATION_WEAK 억제
+//   · 'AI활용 적합성'   suppress → AI_IMPLEMENTATION_UNCLEAR 억제(LOAN 등)
+// ═══════════════════════════════════════════════════════════════
+const ISSUE_LIBRARY = Object.freeze({
+  AI_IMPLEMENTATION_UNCLEAR: {
+    title:'AI 구현방식 불명확', category:'technology',
+    defaultFix:'RAG·프롬프트 체계·에이전트·외부 API가 어느 단계에서 사용되는지 시스템 구성도와 데이터 처리 흐름도로 제시하세요.',
+    defaultDocs:['AI 시스템 구성도','데이터 처리 흐름도','모델·프롬프트 검증 기준'],
+    keywords:['RAG','프롬프트','에이전트','모델','API','파인튜닝','자동화','AI 활용','AI 구현','툴명'],
+    suppressedFor:['LOAN'] },   // AI활용 적합성 suppress 유형
+  BENEFICIARY_VALUE_UNCLEAR: {
+    title:'수혜자 가치 불명확', category:'business',
+    defaultFix:'기업 내부 효율이 아니라 최종 수혜자(소상공인·고객)가 얻는 시간·비용·매출·접근성 개선 효과와 이용 흐름을 구체적으로 제시하세요.',
+    defaultDocs:['고객 여정도','수혜 구조도','사용 전후 비교 자료'],
+    keywords:['수혜자','소상공인','고객','이용자','가치','편익','고객 여정'],
+    suppressedFor:[] },
+  SECURITY_STABILITY_MISSING: {
+    title:'보안·운영안정성 미흡', category:'security',
+    defaultFix:'개인정보 비식별화, 접근권한, 저장기간, 암호화, 로그관리, 백업·복구, 장애 대응 및 외부 API 실패 시 대체 절차를 명시하세요.',
+    defaultDocs:['보안 정책','개인정보 처리 흐름도','백업·복구 계획','장애 대응 절차'],
+    keywords:['보안','개인정보','암호화','접근권한','백업','복구','장애','운영안정'],
+    suppressedFor:[] },
+  KPI_NOT_QUANTIFIED: {
+    title:'정량 KPI 부족', category:'performance',
+    defaultFix:'현재값·목표값·산식·측정주기·데이터 출처·담당자를 포함한 KPI 표를 작성하세요.',
+    defaultDocs:['성과지표 정의서','현재값 근거자료','성과 측정표'],
+    keywords:['KPI','현재값','목표값','측정','산식','성과지표','기대효과','정량'],
+    suppressedFor:[] },
+  ELIGIBILITY_UNVERIFIED: {
+    title:'신청자격 확인 필요', category:'eligibility',
+    defaultFix:'공고문 기준으로 기업 형태, 업력, 매출, 상시근로자 수, 정상 영업 여부, 제외업종 및 필수 확인서 발급 가능 여부를 대조하세요.',
+    defaultDocs:['소상공인 확인서','사업자등록증','매출 증빙','상시근로자 증빙'],
+    keywords:['자격','소상공인','확인서','업력','상시근로자','제외업종','휴폐업','체납','중복참여'],
+    suppressedFor:[] },
+  MARKET_EVIDENCE_WEAK: {
+    title:'시장 근거 부족', category:'market',
+    defaultFix:'시장 규모, 고객군, 성장률, 출처, 조사연도 및 자사 목표시장 산출 논리를 함께 제시하세요.',
+    defaultDocs:['시장조사 자료','통계 출처','TAM·SAM·SOM 산출표'],
+    keywords:['시장','TAM','SAM','SOM','성장률','목표시장','점유율'],
+    suppressedFor:['AI_SUBSIDY','LOAN','VOUCHER'] },   // 시장규모(TAM) suppress 유형
+  CUSTOMER_VALIDATION_WEAK: {
+    title:'고객검증 부족', category:'market',
+    defaultFix:'인터뷰, 설문, PoC, 사전예약, 구매의향서 등 실제 고객 검증 결과와 표본·질문·결과를 제시하세요.',
+    defaultDocs:['고객 인터뷰','설문 결과','PoC 결과','구매의향서'],
+    keywords:['고객검증','인터뷰','설문','PoC','사전예약','구매의향'],
+    suppressedFor:[] },
+  BM_REVENUE_UNCLEAR: {
+    title:'수익모델 불명확', category:'business',
+    defaultFix:'고객별 과금 방식, 단가, 원가, 마진, 구매주기, 재구매 및 매출 산식을 구체화하세요.',
+    defaultDocs:['가격정책','매출 산출표','원가·마진 구조'],
+    keywords:['수익모델','과금','단가','원가','마진','매출 산식','객단가'],
+    suppressedFor:['AI_SUBSIDY','LOAN','VOUCHER'] },   // 매출추정 suppress 유형
+  EXECUTION_PLAN_WEAK: {
+    title:'실행계획 구체성 부족', category:'execution',
+    defaultFix:'단계별 과업, 일정, 책임자, 산출물, 의사결정 기준 및 지연 시 대응방안을 명시하세요.',
+    defaultDocs:['WBS','추진일정표','담당자별 역할표'],
+    keywords:['실행','일정','담당자','산출물','WBS','마일스톤','집행계획'],
+    suppressedFor:[] },
+  TEAM_CAPABILITY_GAP: {
+    title:'팀 역량 보완 필요', category:'team',
+    defaultFix:'핵심 과업별 담당자·경력·실적을 연결하고 부족 역량은 채용·외주·자문 일정으로 보완하세요.',
+    defaultDocs:['조직도','참여인력 이력','역할분담표','외부 전문가 협약'],
+    keywords:['팀','인력','경력','역할','채용','외주','자문','대표 1인'],
+    suppressedFor:[] },
+  BUDGET_INCONSISTENT: {
+    title:'사업비 정합성 미흡', category:'finance',
+    defaultFix:'공고상 집행 가능 항목과 계획서의 금액·산출근거·자부담·합계를 대조하고 모든 표의 수치를 통일하세요.',
+    defaultDocs:['사업비 산출내역','견적서','자부담 증빙'],
+    keywords:['사업비','금액','산출근거','자부담','합계','견적','지원금 규모'],
+    suppressedFor:[] },
+  SCHEDULE_UNCLEAR: {
+    title:'추진일정 불명확', category:'execution',
+    defaultFix:'월별 일정, 중간 산출물, 검수 기준, 의존관계 및 지연 대응계획을 간트차트로 제시하세요.',
+    defaultDocs:['간트차트','마일스톤표','검수 계획'],
+    keywords:['일정','월별','간트','마일스톤','검수','지연','협약기간'],
+    suppressedFor:[] },
+  IP_STRATEGY_WEAK: {
+    title:'지식재산 전략 미흡', category:'technology',
+    defaultFix:'보유 IP, 출원 계획, 권리 귀속, 선행기술 차별점 및 모방 대응 방안을 명시하세요.',
+    defaultDocs:['특허·상표 현황','선행기술 조사','IP 출원 계획'],
+    keywords:['특허','상표','IP','선행기술','권리','모방','지식재산'],
+    suppressedFor:[] },
+  COMPETITOR_DIFFERENTIATION_WEAK: {
+    title:'경쟁차별성 부족', category:'market',
+    defaultFix:'경쟁대안과의 기능·가격·성과·전환비용을 동일 기준으로 비교하고 우위 근거를 증빙하세요.',
+    defaultDocs:['경쟁사 비교표','벤치마크 결과','고객 선택 근거'],
+    keywords:['경쟁사','차별성','경쟁력','벤치마크','전환비용'],
+    suppressedFor:['AI_SUBSIDY','LOAN'] },   // 경쟁사 점유율 suppress 유형
+  RELIABILITY_EVIDENCE_MISSING: {
+    title:'근거·증빙 부족', category:'evidence',
+    defaultFix:'주장마다 수치, 출처, 조사연도, 증빙 파일명을 연결하고 확인되지 않은 내용은 확인 필요로 표시하세요.',
+    defaultDocs:['통계 출처','실적 증빙','계약서','시험성적서'],
+    keywords:['근거','증빙','출처','실적','확인 필요'],
+    suppressedFor:[] },
+  FORM_REQUIREMENT_MISSING: {
+    title:'양식 요구사항 누락', category:'compliance',
+    defaultFix:'작성양식의 문항·표·분량·필수 첨부서류를 체크리스트로 대조하고 누락 항목을 보완하세요.',
+    defaultDocs:['작성양식 체크리스트','제출서류 목록'],
+    keywords:['양식','문항','필수','첨부','누락','분량'],
+    suppressedFor:[] },
+  // ── 유형 특화(우리 확장) ──
+  REPAYMENT_CAPACITY_WEAK: {
+    title:'상환능력 근거 부족', category:'finance',
+    defaultFix:'상환재원(현금흐름·매출), 부채비율, 자금용도의 사업연계성, 담보·보증 여력을 정량 근거로 제시하세요.',
+    defaultDocs:['현금흐름표','재무제표','부채현황','담보·보증 자료'],
+    keywords:['상환','부채비율','현금흐름','자금용도','담보','보증'],
+    onlyFor:['LOAN'] },   // 상환력 축 — LOAN 전용
+  SUBSCRIPTION_PURPOSE_MISFIT: {
+    title:'지원취지 부적합 우려', category:'business',
+    defaultFix:'단순 상용툴 구독·구매가 아니라, 자체 모델·프롬프트·리포트 체계 결합과 사업 프로세스 밀착 적용임을 구체 근거로 입증하세요.',
+    defaultDocs:['AI 적용 프로세스도','자체 구축 요소 명세','단순구독 대비 차별점'],
+    keywords:['단순구독','구독','구매','상용툴','취지','밀착'],
+    onlyFor:['AI_SUBSIDY'] },   // 취지부적합 — AI보조금 전용
+  TRL_OVERSTATED: {
+    title:'기술성숙도 과장 우려', category:'technology',
+    defaultFix:'핵심기술 용어와 실제 적용모델을 일치시키고, TRL·개발목표를 정량 기준선·목표값으로 제시하세요.',
+    defaultDocs:['TRL 근거자료','기술 명세서','개발목표 정의서'],
+    keywords:['TRL','기술성숙도','개발목표','기술 명칭'],
+    onlyFor:['RND'] },   // TRL — R&D 전용
+  DEMAND_UNCLEAR: {
+    title:'수요·과제 불명확', category:'business',
+    defaultFix:'바우처로 해결할 수요·과제를 구체화하고, 수행기관 선정 적정성과 도입 후 활용·성과계획을 제시하세요.',
+    defaultDocs:['수요 정의서','수행기관 선정 근거','활용·성과계획'],
+    keywords:['수요','수행기관','바우처','집행계획','활용계획'],
+    onlyFor:['VOUCHER'] },   // 수요명확성 — 바우처 전용
+  CUSTOM: {
+    title:'세부 보완과제', category:'other',
+    defaultFix:'공고문과 계획서 원문을 다시 대조하여 문제 원인, 조치, 증빙자료를 구체화하세요.',
+    defaultDocs:['관련 계획서 본문','객관적 증빙자료'],
+    keywords:[], suppressedFor:[] }
+});
+
+// issue_code → 표준 제목·메타 (없으면 CUSTOM 폴백)
+function getIssueMeta(code){ return ISSUE_LIBRARY[code] || ISSUE_LIBRARY.CUSTOM; }
+function getIssueTitle(code){ return getIssueMeta(code).title; }
+
+// 유형 적합성 판정: onlyFor 있으면 그 유형에만, suppressedFor면 해당 유형에서 제외
+function isIssueApplicable(code, grantType){
+  const m = getIssueMeta(code);
+  if(!grantType) return true;
+  if(Array.isArray(m.onlyFor) && m.onlyFor.length) return m.onlyFor.includes(grantType);
+  if(Array.isArray(m.suppressedFor) && m.suppressedFor.includes(grantType)) return false;
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// legacyToIssues — 하위호환 어댑터 (지시서에 없던 필수 보완)
+// 옛 스키마 {risks:[{title,why,fix,docs,evidence}], priorities, roadmap, rewrites}를
+// 새 스키마 {issues:[{issue_id,issue_code,...}], priority_issue_ids, roadmap, rewrites}로 변환.
+// 목적: 이미 배포된 공유링크·저장 HTML의 옛 응답도 새 렌더러가 처리 가능하게 함(4단계 대비).
+// 이번 단계에서는 렌더 경로를 바꾸지 않으므로 '준비된 유틸'로만 존재하며, 회귀 안전.
+// ═══════════════════════════════════════════════════════════════
+// 텍스트 → issue_code 추론 (keywords 최다 매칭). 유형 부적합 코드는 제외.
+function inferIssueCode(text, grantType){
+  const s = String(text||'').toLowerCase();
+  let best = 'CUSTOM', bestScore = 0;
+  for(const [code, meta] of Object.entries(ISSUE_LIBRARY)){
+    if(code==='CUSTOM') continue;
+    if(!isIssueApplicable(code, grantType)) continue;
+    const score = (meta.keywords||[]).reduce((n,k)=> n + (s.includes(String(k).toLowerCase())?1:0), 0);
+    if(score > bestScore){ bestScore = score; best = code; }
+  }
+  return bestScore>0 ? best : 'CUSTOM';
+}
+
+function legacyToIssues(d){
+  if(!d || typeof d!=='object') return d;
+  // 이미 새 스키마면 그대로 반환
+  if(Array.isArray(d.issues) && d.issues.length) return d;
+  const gt = d.grantType;
+  const issues = [];
+  const seenCode = new Map();   // issue_code → issue_id (동일 코드는 한 이슈로 통합)
+  let seq = 0;
+  const ensureIssue = (code, why, fix, docs, evidence, severity)=>{
+    if(seenCode.has(code)) return seenCode.get(code);
+    const id = 'ISSUE-'+String(++seq).padStart(3,'0');
+    const meta = getIssueMeta(code);
+    issues.push({
+      issue_id:id, issue_code:code, category:meta.category,
+      severity: severity || 'medium',
+      title: meta.title,
+      why: String(why||'').trim(),
+      fix: String(fix||'').trim() || meta.defaultFix,
+      required_documents: (Array.isArray(docs)&&docs.length)?docs:(docs?String(docs).split(/[,·]/).map(s=>s.trim()).filter(Boolean):meta.defaultDocs),
+      evidence: evidence ? [{document:'사업계획서', page:null, quote:String(evidence)}] : []
+    });
+    seenCode.set(code, id);
+    return id;
+  };
+  const sevMap = {'상':'high','중':'medium','하':'low'};
+  // risks → issues
+  (d.risks||[]).forEach(r=>{
+    const code = inferIssueCode((r.title||'')+' '+(r.why||''), gt);
+    ensureIssue(code, r.why, r.fix, r.docs, r.evidence, sevMap[r.severity]||'medium');
+  });
+  // weaknesses → issues (risks가 비었을 때 대비)
+  if(!issues.length) (d.weaknesses||[]).forEach(w=>{
+    const t=String(w||''); const m=t.match(/^(.+?)\s*[—–]\s*(.+)$/);
+    const code = inferIssueCode(t, gt);
+    ensureIssue(code, m?m[2].trim():t, '', '', '', 'medium');
+  });
+  // priority_issue_ids ← priorities 순서대로 code 추론
+  const priority_issue_ids = [];
+  (d.priorities||[]).forEach(p=>{
+    const code = inferIssueCode((p.title||'')+' '+(p.why||''), gt);
+    const id = ensureIssue(code, p.why, p.fix, null, '', 'medium');
+    if(!priority_issue_ids.includes(id)) priority_issue_ids.push(id);
+  });
+  if(!priority_issue_ids.length) issues.forEach(i=>priority_issue_ids.push(i.issue_id));
+  // roadmap ← task를 issue_id에 연결
+  const roadmap = (d.roadmap||[]).map((r,i)=>{
+    const code = inferIssueCode((r.task||'')+' '+(r.desc||''), gt);
+    const id = ensureIssue(code, r.desc||r.task, '', '', '', 'medium');
+    return { order:i+1, issue_id:id, action_steps:[String(r.task||'').trim()].filter(Boolean) };
+  });
+  // rewrites ← quote/topic를 issue_id에 연결
+  const rewrites = (d.rewrites||[]).map(rw=>{
+    const code = inferIssueCode((rw.topic||'')+' '+(rw.before||''), gt);
+    const id = ensureIssue(code, rw.before||rw.topic, rw.after, '', rw.quote, 'medium');
+    return { issue_id:id, source_quote:String(rw.quote||''), revised_text:String(rw.after||'') };
+  });
+  return Object.assign({}, d, { issues, priority_issue_ids, roadmap, rewrites });
+}
+
+// 참조 무결성 검사 (지시서 9장) — 준비된 유틸 (4단계에서 렌더 전 호출 예정)
+function validateIssueReferences(data){
+  if(!data || !Array.isArray(data.issues)) return [];
+  const ids = new Set(data.issues.map(i=>i.issue_id));
+  const errs = [];
+  (data.priority_issue_ids||[]).forEach(id=>{ if(!ids.has(id)) errs.push('priority 참조 오류: '+id); });
+  (data.roadmap||[]).forEach(r=>{ if(r.issue_id && !ids.has(r.issue_id)) errs.push('roadmap 참조 오류: '+r.issue_id); });
+  (data.rewrites||[]).forEach(r=>{ if(r.issue_id && !ids.has(r.issue_id)) errs.push('rewrites 참조 오류: '+r.issue_id); });
+  return errs;
+}
+
 /* 유형 판별 힌트 블록 (프롬프트에 주입) */
 function buildTypeClassifierBlock(){
   const rows = Object.entries(GRANT_TYPES).map(([k,t])=>
@@ -2145,7 +2452,7 @@ function renderReport(d){
       [/매출.*(산출|근거|추정|목표|계획)|산출근거|평균\s*단가|자체\s*산정|매출\s*수치/, '매출 산출근거 부족'],
       [/기술\s*보호|특허|지식재산|ip\s|경쟁사.*(모방|대응)|모방\s*대응/i, '기술보호·모방 대응 미흡'],
       [/과제명|사업명.*(불일치|상이)|신청서.*과제|트랙.*불일치|공고명.*불일치|자율형공장|동시수행/, '과제명 공고 불일치'],
-      [/총사업비|사업비.*(불일치|구성|편성|간)|자부담|양식.*(불일치|간|과 제출|와 제출)|수치.*불일치|금액.*불일치|양식\s*간|두 양식/, '사업비·양식 수치 불일치'],
+      [/총사업비|사업비.*(불일치|구성|편성|간)|자부담|양식.*(불일치|간|과 제출|와 제출)|수치.*불일치|금액.*불일치|양식\s*간|두 양식|지원금\s*규모|지원\s*규모.*(다르|불일치|상이)|정부지원금.*(다르|불일치|기준)|규모가.*공고|공고문\s*기준과\s*다르/, '사업비·양식 수치 불일치'],
       [/정보\s*보안|데이터\s*보안|접근통제|암호화|개인정보|보안\s*솔루션/, '정보보안 방안 부재'],
       [/추진\s*일정|마일스톤|협약기간.*일정|월별.*일정|단계별.*추진|kpi.*미|중간\s*점검/i, '추진 일정·KPI 부재'],
       [/기대효과.*(측정|수치|정량)|측정\s*방법|샘플\s*수|정량\s*(지표|목표).*미|효과.*미제시|성과\s*수치.*측정|작업시간\s*절감|성과\s*지표/, '기대효과 측정 방법 부재'],
@@ -2295,7 +2602,11 @@ function renderReport(d){
     const txt = String(w||'');
     const m = txt.match(/^(.+?)\s*[—–]\s*(.+)$/);
     const d2 = deriveFixDocs(txt);
-    return { title: cleanTitle(m ? m[1].trim() : txt.slice(0,40)), severity:'중', penalty:'', why: m ? m[2].trim() : txt, fix: d2.fix, docs: d2.docs };
+    const rawTitle = m ? m[1].trim() : txt.slice(0,40);
+    const rawWhy   = m ? m[2].trim() : txt;
+    // ★ cleanTitle이 아니라 smartTitle 사용 — 약점 보충 title도 문장형이면 why 기반 표준 라벨로 재구성 ★
+    //   (이 경로가 smartTitle을 우회하던 것이 'AI 활용이 로' 짤림의 실제 뿌리)
+    return { title: smartTitle(rawTitle, rawWhy), severity:'중', penalty:'', why: rawWhy, fix: d2.fix, docs: d2.docs };
   };
 
   const lv = (l)=> l==='양호'?'sev-low': l==='취약'?'sev-high':'sev-mid';
@@ -2541,7 +2852,7 @@ function renderReport(d){
     let rw = (d.rewrites && d.rewrites.length) ? d.rewrites.slice() : [];
     const rwPool = (d.priorities && d.priorities.length)
       ? d.priorities.map(p=>({topic:p.title, why:p.why}))
-      : (d.weaknesses||[]).map(w=>{ const t=String(w||''); const m=t.match(/^(.+?)\s*[—–]\s*(.+)$/); return {topic: cleanTitle(m?m[1].trim():t.slice(0,40)), why: m?m[2].trim():t}; });
+      : (d.weaknesses||[]).map(w=>{ const t=String(w||''); const m=t.match(/^(.+?)\s*[—–]\s*(.+)$/); const rt=m?m[1].trim():t.slice(0,40); const rw2=m?m[2].trim():t; return {topic: smartTitle(rt, rw2), why: rw2}; });
     const targetRw = Math.min(rwPool.length, 3);
     if(rwPool.length && rw.length < targetRw){
       const covered = rw.map(r=>String(r.topic||'').slice(0,6));
@@ -3249,7 +3560,7 @@ function downloadBlob(content, filename, type){
 }
 
 $('#btn-savetxt').addEventListener('click',()=>{
-  downloadBlob(buildReportText(), 'AI진단리포트_'+dateStamp()+'.txt', 'text/plain;charset=utf-8');
+  downloadBlob(buildReportText(), createReportFileName()+'.txt', 'text/plain;charset=utf-8');
 });
 
 $('#btn-saveas').addEventListener('click',()=>{
@@ -3258,7 +3569,7 @@ $('#btn-saveas').addEventListener('click',()=>{
   const editHTML = editEl.innerHTML;
   const html = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI 진단 리포트</title>
+<title>${esc(APP_CONFIG.reportTitle)}</title>
 <style>
 body{font-family:'Pretendard',system-ui,-apple-system,sans-serif;color:#191f28;line-height:1.7;max-width:840px;margin:0 auto;padding:30px 20px;word-break:keep-all;}
 h1{font-size:24px;} h2{font-size:18px;border-left:4px solid #3182f6;padding-left:10px;margin-top:30px;}
@@ -3269,7 +3580,7 @@ th,td{border:1px solid #e5e8eb;padding:10px;text-align:left;} th{background:#f9f
 .footer{margin-top:30px;border-top:1px solid #ccc;padding-top:16px;font-size:12px;color:#6b7684;}
 .disc{background:#f2f4f6;border-radius:10px;padding:14px;font-size:12px;color:#6b7684;margin-top:20px;}
 </style></head><body>
-<h1>지원사업 사업계획서 AI 진단 리포트</h1>
+<h1>${esc(APP_CONFIG.reportTitle)}</h1>
 <p style="color:#6b7684">진단일: ${esc(new Date().toLocaleString('ko-KR'))}</p>
 <h2>접수 정보</h2>
 <table><tbody>${intake}</tbody></table>
@@ -3283,7 +3594,7 @@ th,td{border:1px solid #e5e8eb;padding:10px;text-align:left;} th{background:#f9f
 중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)<br>
 © 2023~2026 growthventures Co., Ltd. All rights reserved.</div>
 </body></html>`;
-  downloadBlob(html, 'AI진단리포트_'+dateStamp()+'.html', 'text/html;charset=utf-8');
+  downloadBlob(html, createReportFileName()+'.html', 'text/html;charset=utf-8');
 });
 
 function dateStamp(){
@@ -3294,14 +3605,14 @@ function dateStamp(){
 /* =================================================================
    공유 (Web Share API → 폴백 링크 복사)
    ================================================================= */
-// 서비스 고정 URL (공유용) — location.href는 file://·blob 등으로 깨질 수 있어 고정값 사용
-const SERVICE_URL = '';
+// 서비스 고정 URL (공유용) — APP_CONFIG 참조 (빈 문자열 금지, 지시서 17장)
+const SERVICE_URL = APP_CONFIG.serviceUrl;
 
 $('#btn-share').addEventListener('click', async ()=>{
   const shareData = {
-    title:'지원사업 사업계획서 AI 진단 리포트',
-    text:'지원공고와 사업계획서를 비교해 적합성·감점 리스크·보완 방향을 진단합니다.',
-    url: SERVICE_URL
+    title: APP_CONFIG.shareTitle,
+    text:  APP_CONFIG.description,
+    url:   SERVICE_URL
   };
   // 1) Web Share API (모바일 우선)
   if(navigator.share){
