@@ -483,6 +483,8 @@ tr:last-child td{border-bottom:none;}
 .qm-y{background:var(--amber-bg);color:var(--amber);}
 .qm-r{background:var(--red-bg);color:var(--red);}
 .q-block{font-size:13px;line-height:1.6;}
+.q-action{margin-top:10px;padding:10px 12px;background:var(--blue-light,#eff6ff);border-radius:8px;font-size:12.5px;line-height:1.55;color:var(--gray-800,#2b3440);}
+.q-action .qa-label{display:inline-block;font-size:11px;font-weight:800;color:var(--blue,#3182f6);margin-right:6px;}
 .q-block .qb-label{font-weight:800;font-size:12px;display:inline-block;margin-bottom:3px;padding:2px 8px;border-radius:6px;}
 .qb-good{background:var(--green-bg);color:var(--green);}
 .qb-bad{background:var(--red-bg);color:var(--red);}
@@ -1005,9 +1007,9 @@ tr:last-child td{border-bottom:none;}
       <div style="height:14px"></div>
 
       <!-- 레이더 차트 + 도넛 -->
-      <div style="display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:center" class="radar-grid">
+      <div style="display:grid;grid-template-columns:210px 1fr;gap:18px;align-items:center" class="radar-grid">
         <div style="display:flex;justify-content:center">
-          <svg viewBox="-30 0 320 210" style="width:240px;max-width:100%" aria-label="평가항목 레이더 차트" preserveAspectRatio="xMidYMid meet">
+          <svg viewBox="-30 -18 320 246" style="width:230px;max-width:100%" aria-label="평가항목 레이더 차트" preserveAspectRatio="xMidYMid meet">
             <!-- 중심 (130,105), 최대 반경 80 -->
             <!-- 격자 (마름모 4단계) -->
             <g fill="none" stroke="#e5e8eb" stroke-width="1">
@@ -1287,7 +1289,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">73b58342</span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">a134489e</span></div>
   </div>
 </footer>
 
@@ -1686,10 +1688,10 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
   "rubricSource": "<공고명시 / 추정>",
   "cutScore": <선정 기준선 점수, 공고 명시값 또는 70>,
   "gapToCut": <cutScore 대비 점수차, 음수면 부족>,
-  "verdict": "<한 줄 종합 판정, 30자 내외>",
+  "verdict": "<한 줄 종합 판정, 30자 내외. 쉬운 일상어로 작성 — '직하·직상·상회·하회' 같은 한자어 대신 '바로 아래·근접·2점 부족' 등 직관적 표현 사용>",
   "summary": "<종합 의견 3~4문장, 사업계획서 실제 내용 반영>",
   "items": [
-    {"name":"<공고 배점표의 항목명>","max":<배점 정수>,"score":<0~max 정수>,"level":"<양호/보통/취약>","comment":"<해당 사업계획서 근거 1~2문장>","evidence":"<이 평가의 근거가 된 사업계획서 또는 공고문의 실제 문구를 8자 이상 그대로 인용. 지어내지 말 것. 일반론이면 빈 문자열>"}
+    {"name":"<공고 배점표의 항목명>","max":<배점 정수>,"score":<0~max 정수>,"level":"<양호/보통/취약>","comment":"<해당 사업계획서 근거 1~2문장>","action":"<이 항목의 점수를 올리기 위한 구체적 보완 방향 1문장. comment가 현재 상태 진단이라면 action은 '무엇을 어떻게 보강하라'는 실행 지시>","evidence":"<이 평가의 근거가 된 사업계획서 또는 공고문의 실제 문구를 8자 이상 그대로 인용. 지어내지 말 것. 일반론이면 빈 문자열>"}
     /* 공고 배점표의 항목 수만큼 (보통 3~5개). max의 합 = 100 */
   ],
   "strengths": ["<강점 3~4개, 사업계획서 근거>"],
@@ -2197,7 +2199,19 @@ function renderReport(d){
   const heroGrade = $('#hero-grade'); if(heroGrade) heroGrade.textContent = isQuality
     ? ((d.grade||'')+'등급 · 작성 완성도')
     : ((d.grade||'')+'등급 · '+(total>=cut?'선정권':'보완 필요'));
-  const heroVerdict = $('#hero-verdict'); if(heroVerdict) heroVerdict.textContent = d.verdict||'';
+  const heroVerdict = $('#hero-verdict');
+  if(heroVerdict){
+    // 모호한 한자어 표현을 쉬운 말로 다듬기 (사용자 친화)
+    let vtxt = String(d.verdict||'');
+    vtxt = vtxt
+      .replace(/기준선?\s*직하/g,'선정 기준선 바로 아래')
+      .replace(/기준선?\s*직상/g,'선정 기준선 바로 위')
+      .replace(/합격선?\s*직하/g,'합격선 바로 아래')
+      .replace(/([가-힣])\s*직하\b/g,'$1 바로 아래')
+      .replace(/([가-힣])\s*직상\b/g,'$1 바로 위')
+      .replace(/상회/g,'웃돎').replace(/하회/g,'밑돎');
+    heroVerdict.textContent = vtxt;
+  }
   const gap = isQuality ? null : (d.gapToCut!=null ? d.gapToCut : (total-cut));
   // 판별된 공고 유형 배지 (full 모드에서만)
   const typeLabel = d.grantTypeLabel || (d.grantType && GRANT_TYPES[d.grantType] ? GRANT_TYPES[d.grantType].label : '');
@@ -2363,7 +2377,10 @@ function renderReport(d){
       return `<details class="qcard"${i===0?' open':''}>
         <summary><span class="q-title">${i+1}. ${esc(it.name)} · ${it.score}/${it.max}점</span>
         <span class="q-right"><span class="qmini ${mini}">${esc(it.level)} ${pct}%</span><span class="q-arrow">▼</span></span></summary>
-        <div class="q-body"><div class="q-block">${esc(it.comment||'')}</div></div>
+        <div class="q-body">
+          <div class="q-block">${esc(it.comment||'')}</div>
+          <div class="q-action"><span class="qa-label">보완 방향</span> ${esc(it.action || deriveGuide(it.name, it.comment))}</div>
+        </div>
       </details>`;
     }).join('');
   }
@@ -2401,6 +2418,19 @@ function renderReport(d){
       }
     }
     if(rw.length) d.rewrites = rw;
+    // ★quote 보강★: rewrites.quote가 비면 topic과 매칭되는 risk/item의 evidence(실제 원문 인용)를 끌어와 채움
+    //   → AI가 items·risks엔 evidence를 넣고 rewrites.quote를 놓쳐도 실제 문장이 '수정 전'에 표시됨
+    const evPool = []
+      .concat((d.risks||[]).map(r=>({key:String(r.title||''), ev:String(r.evidence||'')})))
+      .concat((d.items||[]).map(it=>({key:String(it.name||''), ev:String(it.evidence||'')})))
+      .filter(x=> x.ev && x.ev.length>=6);
+    (d.rewrites||[]).forEach(r=>{
+      if(String(r.quote||'').trim()) return;   // 이미 quote 있으면 유지
+      const topic = String(r.topic||'');
+      // topic 앞 4글자로 느슨하게 매칭
+      const hit = evPool.find(x=> x.key && (topic.includes(x.key.slice(0,4)) || x.key.includes(topic.slice(0,4))));
+      if(hit){ r.quote = hit.ev; r._fallback = false; }
+    });
     if(d.rewrites && d.rewrites.length){
       rwSec.style.display='';
       const body = $('#rewrites-body');
@@ -2625,13 +2655,13 @@ function updateRadar(items){
   // 축 라벨 동적 배치 (반경 R+18 바깥)
   const lbl = $('#radar-labels');
   if(lbl){
-    const LR = R + 18;
+    const LR = R + 15;
     lbl.innerHTML = items.map((it,i)=>{
       const ang = -Math.PI/2 + (2*Math.PI*i/n);
       const lx = cx + LR*Math.cos(ang), ly = cy + LR*Math.sin(ang);
-      const c = Math.cos(ang);
+      const c = Math.cos(ang), s = Math.sin(ang);
       const anchor = c>0.3?'start': c<-0.3?'end':'middle';
-      const dy = Math.sin(ang)>0.5?'10':Math.sin(ang)<-0.5?'-2':'4';
+      const dy = s>0.5?'13': s<-0.5?'-6':'4';   // 상단은 위로, 하단은 아래로 충분히 띄움
       const nm = (it.name||'').length>8 ? (it.name||'').slice(0,7)+'…' : (it.name||'');
       return `<text x="${lx.toFixed(1)}" y="${(ly+ +dy).toFixed(1)}" text-anchor="${anchor}">${nm.replace(/[<>&]/g,'')}</text>`;
     }).join('');
