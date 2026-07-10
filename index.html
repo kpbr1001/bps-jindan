@@ -657,7 +657,7 @@ tr:last-child td{border-bottom:none;}
   <section class="hero no-print">
     <div class="wrap">
       <span class="badge">📄 공고 · 양식 · 사업계획서 3종 비교 진단</span>
-      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v3.4 · risks폴백·priorities폴백·로드맵보강</span>
+      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v4.9 · 로드맵smartTitle·사례C매칭·핵심메시지정제</span>
       <h1>지원사업 사업계획서<br/>AI 진단 MVP</h1>
       <p>지원공고, 작성양식, 작성한 사업계획서를 비교하여 <b>적합성, 감점 리스크, 보완 방향</b>을 진단합니다. 심사위원 관점의 보완 가이드를 받아보세요.</p>
     </div>
@@ -1289,7 +1289,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">1b9eacda</span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">cd4ac8f6</span></div>
   </div>
 </footer>
 
@@ -2133,9 +2133,20 @@ function renderReport(d){
     // 3) 재구성 실패 → cleanTitle 폴백
     return cleanTitle(t);
   };
+  // ── [디버그] 실제 AI 응답의 원본 title·task·why 캡처 (F12에서 짤림 추적용) ──
+  try{
+    if(Array.isArray(d.risks) && d.risks.length)
+      console.log('%c[Beconic title-debug] risks','color:#e11d48',
+        d.risks.map(r=>({title:r&&r.title, why:(r&&r.why||'').slice(0,30)})));
+    if(Array.isArray(d.roadmap) && d.roadmap.length)
+      console.log('%c[Beconic title-debug] roadmap','color:#e11d48',
+        d.roadmap.map(r=>({task:r&&r.task, desc:(r&&(r.desc||r.detail)||'').slice(0,30)})));
+  }catch(_){}
   if(Array.isArray(d.risks))      d.risks.forEach(r=>{ if(r&&r.title)  r.title  = smartTitle(r.title, r.why); });
   if(Array.isArray(d.priorities)) d.priorities.forEach(p=>{ if(p&&p.title) p.title = smartTitle(p.title, p.why); });
   if(Array.isArray(d.rewrites))   d.rewrites.forEach(r=>{ if(r&&r.topic)  r.topic  = smartTitle(r.topic, r.before||r.after); });
+  // ★ roadmap.task도 문장형 제목이면 재구성 (13번 로드맵·핵심메시지 짤림 뿌리 해결) ★
+  if(Array.isArray(d.roadmap))    d.roadmap.forEach(r=>{ if(r&&r.task)   r.task   = smartTitle(r.task, r.desc||r.detail||r.task_desc||r.task); });
 
   // ── 축 감지 실행 가이드 (12번 수정예시·13번 로드맵 공용) ──
   // 폴백 fix가 기본값일 때 항목마다 다른 구체 가이드를 생성해 중복 방지
@@ -2468,9 +2479,14 @@ function renderReport(d){
       let hit = evPool.find(x=> x.key===topic);
       if(!hit) hit = evPool.find(x=> x.key && (topic.includes(x.key.slice(0,4)) || x.key.includes(topic.slice(0,4))));
       if(!hit){
-        // topic의 핵심 명사(AI/팀/매출/기술/사업비 등)로 매칭
-        const kw = (topic.match(/AI|팀|매출|기술|사업비|보안|일정|공급|장비|시장|자금|인력/)||[])[0];
+        // topic의 핵심 명사로 매칭 (자격/요건/역량/기대효과/성과/추진/조직/데이터 등 축 확장)
+        const kw = (topic.match(/AI|팀|매출|기술|사업비|보안|일정|공급|장비|시장|자금|인력|자격|요건|역량|기대효과|효과|성과|지표|KPI|추진|조직|데이터|특허|지식재산|경쟁|차별|고객|채널|예산|집행|검증|모델|프롬프트|양식|과제명/i)||[])[0];
         if(kw) hit = evPool.find(x=> x.key.includes(kw) || x.ev.includes(kw));
+      }
+      if(!hit){
+        // 최후 브릿지: topic의 2글자 이상 어절 중 하나라도 key/ev에 substring으로 포함되면 채택
+        const toks = topic.split(/[\s·,]+/).filter(w=> w.length>=2);
+        if(toks.length) hit = evPool.find(x=> toks.some(t=> x.key.includes(t) || x.ev.includes(t)));
       }
       if(hit){ r.quote = hit.ev; r._fallback = false; }
     });
@@ -2584,15 +2600,20 @@ function renderReport(d){
               : (d.risks||[]).slice(0,3);
     if(src.length){
       // 각 항목은 '라벨 — 한 줄 액션'만 (why 전체 반복 금지). 상단에 통합 전략 한 문장.
-      const labels = src.map(x=> x.title || '').filter(Boolean);
+      // ★ 라벨은 smartTitle로 재정제 (문장형·짤림 방지), 액션은 fix 반복 대신 why 첫 문장 우선 ★
+      const labels = src.map(x=> smartTitle(x.title||'', x.why||x.fix||'')).filter(Boolean);
       const lead = labels.length
         ? `<li style="list-style:none;margin-bottom:8px;color:var(--gray-700,#4e5968)">지금 계획서의 방향과 실적은 충분하나, <b>${labels.slice(0,3).join(' · ')}</b> ${labels.length}가지가 근거·수치로 뒷받침되지 않아 점수를 잡고 있습니다. 아래 순서로 보완하면 선정 경쟁력이 올라갑니다.</li>`
         : '';
       const items = src.map(x=>{
-        const label = x.title || '';
-        const act = x.fix || x.why || '';
-        // 액션은 첫 문장만 간결하게
-        const shortAct = String(act).split(/(?<=[.。])\s/)[0].slice(0,60);
+        const label = smartTitle(x.title||'', x.why||x.fix||'');
+        // 액션: fix가 라벨과 겹치면(반복) why로 대체, 없으면 fix. 첫 문장만.
+        const rawFix = String(x.fix||'').trim();
+        const rawWhy = String(x.why||'').trim();
+        let act = rawWhy || rawFix;
+        // fix가 라벨 문구를 그대로 되풀이하면 why를 우선
+        if(!rawWhy && rawFix && label && rawFix.includes(label.slice(0,6))) act = rawFix;
+        const shortAct = act.split(/(?<=[.。])\s/)[0].slice(0,60);
         return `<li><b>${esc(label)}</b>${shortAct?` — ${esc(shortAct)}`:''}</li>`;
       }).join('');
       keyMsg.innerHTML = lead + items;
