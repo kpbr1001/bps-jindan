@@ -662,7 +662,7 @@ tr:last-child td{border-bottom:none;}
   <section class="hero no-print">
     <div class="wrap">
       <span class="badge">📄 공고 · 양식 · 사업계획서 3종 비교 진단</span>
-      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v5.8 · 8·9통합(1섹션)·11번멘토링보강·번호재조정</span>
+      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v6.0 · 8·11중복정리·전략제언A1A3종합</span>
       <h1 data-role="hero-title">지원사업 사업계획서<br/>AI 진단</h1>
       <p>지원공고, 작성양식, 작성한 사업계획서를 비교하여 <b>적합성, 감점 리스크, 보완 방향</b>을 진단합니다. 심사위원 관점의 보완 가이드를 받아보세요.</p>
     </div>
@@ -872,6 +872,16 @@ tr:last-child td{border-bottom:none;}
       </div>
       <div style="height:14px"></div>
       <div class="summary-grid" id="summary-grid"></div>
+
+      <!-- A1. 합격 시나리오 시뮬레이션 (점수·penalty·effect 기반, 지어내기 없음) -->
+      <div id="scenario-block" style="display:none;margin-top:16px">
+        <div style="font-weight:800;font-size:14px;color:var(--gray-900,#191f28);margin-bottom:10px">🎯 합격 시나리오 — 무엇을 고치면 몇 점 오르나</div>
+        <div id="scenario-body"></div>
+        <div class="callout" style="margin-top:10px;font-size:12.5px">
+          <span class="co-ico">ℹ️</span>
+          <div>점수 변화는 리스크별 예상 감점·보완 효과를 합산한 <b>참고용 추정</b>입니다. 실제 점수는 심사위원 판단에 따릅니다.</div>
+        </div>
+      </div>
     </div>
 
     <!-- 업로드/입력 확인 -->
@@ -1094,6 +1104,16 @@ tr:last-child td{border-bottom:none;}
         <span class="co-ico">💡</span>
         <div id="sw-insight"><b>핵심 진단:</b> 강점은 "이미 가진 것(문제의식·차별성)"이고, 약점은 대부분 "있는데 안 쓴 것(근거·증빙·숫자)"입니다. 즉 <b>새 역량을 만드는 게 아니라, 보유한 내용을 근거의 언어로 바꾸는 작업</b>이라 짧은 기간에 점수를 끌어올릴 수 있습니다.</div>
       </div>
+
+      <!-- A3. 강점→약점 방어 브릿지 -->
+      <div id="bridge-block" style="display:none;margin-top:16px">
+        <div style="font-weight:800;font-size:14px;color:var(--gray-900,#191f28);margin-bottom:10px">🔗 강점으로 약점 방어하기 — 가진 것을 무기로</div>
+        <div id="bridge-body" style="display:grid;gap:10px"></div>
+        <div class="callout" style="margin-top:10px;font-size:12.5px">
+          <span class="co-ico">ℹ️</span>
+          <div>이미 확보한 강점을 관련 약점의 근거로 활용하는 <b>연결 제안</b>입니다. 심사위원에게 "이 팀은 이미 증명했다"는 신호를 주는 서술 전략입니다.</div>
+        </div>
+      </div>
     </div>
 
     <!-- ===== 7. 공고 적합성 (신호등 · 입력값 연동) ===== -->
@@ -1136,14 +1156,6 @@ tr:last-child td{border-bottom:none;}
       <div class="callout" style="margin-top:4px">
         <span class="co-ico">📉</span>
         <div id="risk-sum"><b>리스크 합산:</b> 점수형 리스크를 방치하면 종합점수가 하락해 선정 경쟁력이 약화됩니다. 보완 시 점수 회복이 가능한 구조입니다. 자격요건은 점수와 별개로 신청 가능 여부를 결정하므로 최우선 확인 대상입니다.</div>
-      </div>
-
-      <!-- 9번에서 통합: 제출 전 실행 체크리스트 -->
-      <div class="mentor-block" style="margin-top:18px">
-        <h4>⏱ 제출 전 실행 체크리스트 (체크하며 진행하세요)</h4>
-        <div class="action-list" id="roadmap-list">
-          <!-- renderReport가 d.roadmap으로 동적 생성 -->
-        </div>
       </div>
     </div>
 
@@ -1191,11 +1203,6 @@ tr:last-child td{border-bottom:none;}
       <div class="mentor-block" style="margin-top:14px">
         <h4>🧭 총평 — 지금 어디에 서 있는가</h4>
         <div class="mb-quote" id="mentor-summary">진단을 실행하면 업로드한 계획서·공고 기준의 종합 총평이 여기에 표시됩니다.</div>
-      </div>
-
-      <div class="mentor-block" id="mentor-diagnosis-block" style="margin-top:14px;display:none">
-        <h4>🔑 핵심 진단 — 무엇이 점수를 잡고 있나</h4>
-        <ul class="mb-list" id="mentor-keydiag"></ul>
       </div>
 
       <div class="mentor-block" id="mentor-strategy-block" style="margin-top:14px;display:none">
@@ -1279,7 +1286,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">1db62058</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">ba05aade</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1366,7 +1373,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v5.8';
+  var SIG='v6.0';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -1384,7 +1391,7 @@ function auditStaticTitles(){
       var el = document.getElementById('build-loaded');
       if(el){
         if(missing.length===0){
-          el.textContent = '· v5.8 ✓ '+new Date().toISOString().slice(11,19);
+          el.textContent = '· v6.0 ✓ '+new Date().toISOString().slice(11,19);
           el.style.color = '#16a34a';
         } else {
           el.textContent = '· ⚠ 옛 코드 실행 중(누락: '+missing.join(',')+') — 캐시 강력새로고침(Ctrl+Shift+R) 또는 재배포 필요';
@@ -2527,6 +2534,17 @@ function renderReport(d){
     });
   }
 
+  // A3 브릿지 조언: 축별로 '강점을 약점 방어에 쓰는 법'
+  const bridgeAdvice = (axis)=>{
+    switch(axis){
+      case 'sales': return '이미 확보한 매출·계약 실적을 매출 추정의 근거로 삼으세요. "기존 N곳 실적 → 확장 시 M곳" 식으로 실적을 목표의 출발점으로 제시하면 산출근거가 단숨에 탄탄해집니다.';
+      case 'team': return '대표·핵심 인력의 경력·전문성을 실행역량 약점의 방어막으로 쓰세요. "이미 이 분야를 해본 사람"이라는 점을 채용 계획과 함께 제시하면 1인 체제 우려가 완화됩니다.';
+      case 'tech': return '보유 기술·시제품·MVP를 기술 구현 방식의 증거로 전면에 내세우세요. 이미 만든 결과물이 "구현 가능성"을 스스로 증명하므로, 추상적 서술 대신 실물·화면을 근거로 제시하세요.';
+      case 'market': return '확보한 시장·고객 반응을 수요 근거로 연결하세요. 실제 접점에서 나온 반응은 어떤 통계보다 강한 검증이므로, 정성적 강점을 정량 지표(문의 수·재구매율 등)로 바꿔 제시하세요.';
+      case 'validation': return '현장 관찰·파일럿 경험을 문제 정의와 실현가능성의 근거로 동시에 활용하세요. "직접 겪은 문제"라는 진정성은 심사위원이 가장 신뢰하는 강점입니다.';
+      default: return '이 강점을 관련 약점 서술의 첫 문장에 근거로 배치하세요. "이미 ~을 확보했고, 이를 바탕으로 ~을 보완한다"는 구조가 설득력을 높입니다.';
+    }
+  };
   // ── 9번 로드맵 전용: 리스크 title → '실행 단계'(무엇을 준비/작성하는지) ──
   // 8번의 '해결책 문구'를 반복하지 않고, 착수자가 바로 실행할 준비 항목을 제시한다.
   const deriveActionSteps = (title, why)=>{
@@ -2649,9 +2667,9 @@ function renderReport(d){
     const d2 = deriveFixDocs(txt);
     const rawTitle = m ? m[1].trim() : txt.slice(0,40);
     const rawWhy   = m ? m[2].trim() : txt;
-    // ★ smartTitle로 표준 라벨화 + 약점 원문(why)을 evidence로도 보존 ★
-    //   evidence는 11번 수정예시·9번 로드맵이 '이 계획서의 실제 문장'을 참조하는 근거가 된다.
-    return { title: smartTitle(rawTitle, rawWhy), severity:'중', penalty:'', why: rawWhy, fix: d2.fix, docs: d2.docs, evidence: rawWhy };
+    // ★ smartTitle로 표준 라벨화. evidence는 why 복사 시 8번에서 '왜 위험한가'와 중복되므로 비워둔다.
+    //   (실제 계획서 원문은 AI가 risks[].evidence 또는 rewrites[].quote로 별도 제공)
+    return { title: smartTitle(rawTitle, rawWhy), severity:'중', penalty:'', why: rawWhy, fix: d2.fix, docs: d2.docs, evidence: '' };
   };
 
   const lv = (l)=> l==='양호'?'sev-low': l==='취약'?'sev-high':'sev-mid';
@@ -2781,6 +2799,51 @@ function renderReport(d){
     }
   }
 
+  // ── A3. 강점→약점 방어 브릿지 (주제 키워드 매칭, 지어내기 없음) ──
+  const bridgeBlock = $('#bridge-block'), bridgeBody = $('#bridge-body');
+  if(bridgeBlock && bridgeBody && (d.strengths||[]).length && (d.weaknesses||[]).length){
+    // 강점/약점을 축(axis)으로 분류해 같은 축끼리 연결
+    const axisOf = (t)=>{
+      const s=String(t||'');
+      if(/매출|실적|납품|계약|판매|고객사|거래처|수주/.test(s)) return 'sales';
+      if(/팀|인력|대표|경력|이력|채용|전문가/.test(s)) return 'team';
+      if(/AI|기술|특허|모델|알고리즘|구현|개발|프로토타입|MVP|시제품/i.test(s)) return 'tech';
+      if(/시장|수요|고객|타겟|성장|트렌드/.test(s)) return 'market';
+      if(/문제|현장|관찰|검증|파일럿|PoC/i.test(s)) return 'validation';
+      return 'other';
+    };
+    const axisLabel = {sales:'매출·실적', team:'팀·인력', tech:'기술·제품', market:'시장·고객', validation:'현장·검증', other:'기타'};
+    const strs = (d.strengths||[]).map(s=>({text:String(s), axis:axisOf(s)}));
+    const wks  = (d.weaknesses||[]).map(w=>({text:String(w), axis:axisOf(w)}));
+    const pairs = [];
+    const usedWk = new Set();
+    strs.forEach(st=>{
+      // 같은 축 약점 우선 매칭
+      let wk = wks.find((w,i)=>!usedWk.has(i) && w.axis===st.axis);
+      let wkIdx = wk ? wks.indexOf(wk) : -1;
+      if(wk){ usedWk.add(wkIdx);
+        pairs.push({strength:st.text, weakness:wk.text, axis:st.axis}); }
+    });
+    if(pairs.length){
+      const shorten=(s,n)=>{ s=String(s||'').replace(/^[·\-\s]+/,''); return s.length>n?s.slice(0,n)+'…':s; };
+      bridgeBody.innerHTML = pairs.slice(0,3).map(p=>`
+        <div style="border:1px solid var(--gray-200,#e5e8eb);border-radius:12px;padding:12px 14px;background:var(--gray-50,#f9fafb)">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+            <span style="font-size:11px;font-weight:800;color:var(--green);background:var(--green-bg,#e7f7ee);padding:2px 8px;border-radius:999px">보유 강점</span>
+            <span style="font-size:12.5px;color:var(--gray-700,#4e5968)">${esc(shorten(p.strength,44))}</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+            <span style="font-size:11px;font-weight:800;color:var(--red);background:var(--red-bg,#fdecea);padding:2px 8px;border-radius:999px">방어할 약점</span>
+            <span style="font-size:12.5px;color:var(--gray-700,#4e5968)">${esc(shorten(p.weakness,44))}</span>
+          </div>
+          <div style="font-size:13px;color:var(--gray-900,#191f28);line-height:1.55;padding-top:8px;border-top:1px dashed var(--gray-200,#e5e8eb)">
+            <b>💬 이렇게 연결하세요:</b> ${esc(bridgeAdvice(p.axis))}
+          </div>
+        </div>`).join('');
+      bridgeBlock.style.display='';
+    }
+  }
+
   // 9) 감점 리스크
   const riskBox = $('#risk-cards');
   if(riskBox){
@@ -2831,11 +2894,15 @@ function renderReport(d){
         ? '<span class="vbadge vb-fail" title="AI가 제시한 근거가 업로드 문서에서 확인되지 않았습니다 — 직접 확인하세요">⚠ 근거 확인 필요</span>'
         : r._verify==='ok'
         ? '<span class="vbadge vb-ok" title="근거가 업로드 문서에서 확인됨">✓ 근거 확인</span>' : '';
-      // 9번에서 통합: 실행 단계 + 소요기간 + 근거 원문
+      // 9번에서 통합: 실행 단계 + 소요기간
       const estTime = ['1~2일','1~2일','2~3일','2~3일','2~3일'];
       const steps = deriveActionSteps(r.title, r.why);
+      // 계획서 원문: evidence가 why와 사실상 같으면(weaknessToRisk가 복사한 경우) 중복이므로 숨김
       const ev = String(r.evidence||'').trim();
-      const evLine = ev ? `<div class="rc-line"><div class="rc-k">계획서 원문</div><div class="rc-v" style="color:var(--gray-500,#8b95a1)">&ldquo;${esc(ev.length>90?ev.slice(0,90)+'…':ev)}&rdquo;</div></div>` : '';
+      const whyN = String(r.why||'').replace(/\s+/g,'');
+      const evN = ev.replace(/\s+/g,'');
+      const evDistinct = ev && evN!==whyN && !whyN.includes(evN) && !evN.includes(whyN);
+      const evLine = evDistinct ? `<div class="rc-line"><div class="rc-k">계획서 원문</div><div class="rc-v" style="color:var(--gray-500,#8b95a1)">&ldquo;${esc(ev.length>90?ev.slice(0,90)+'…':ev)}&rdquo;</div></div>` : '';
       return `
       <div class="risk-card r-${sevCls(r.severity).replace('sev-','')==='high'?'high':sevCls(r.severity).replace('sev-','')==='low'?'low':'mid'}">
         <div class="rc-head"><div class="rc-title">${i+1}. ${esc(r.title)} ${vb}</div>
@@ -2933,28 +3000,27 @@ function renderReport(d){
     } else {
       mentorBox.innerHTML = '진단 결과 요약이 생성되지 않았습니다. 상단의 항목별 평가와 감점 리스크를 참고하세요.';
     }
-    // ── 핵심 진단: 상위 리스크를 '제목 + 실제 계획서 원문 근거'로 요약 (evidence 기반, 생성 아님) ──
-    const rlist = (d.risks||[]).slice(0,4);
-    const kd = $('#mentor-keydiag');
-    if(kd && rlist.length){
-      kd.innerHTML = rlist.map(r=>{
-        const ev = String(r.evidence||'').trim();
-        const evPart = ev ? ` — 계획서엔 &ldquo;${esc(ev.length>50?ev.slice(0,50)+'…':ev)}&rdquo;로만 되어 있어 근거가 약합니다.` : '';
-        return `<li><b>${esc(r.title)}</b>${evPart}</li>`;
-      }).join('');
-      const blk = $('#mentor-diagnosis-block'); if(blk) blk.style.display='';
-    }
-    // ── 전략 제언: 점수 맥락 + 편집 관점 (한 문단) ──
+    // ── 전략 제언: A1 합격 시나리오 결과 + A3 강점 활용을 종합한 마무리 제언 ──
     const st = $('#mentor-strategy');
+    const rlist = (d.risks||[]).slice(0,4);
     if(st && rlist.length){
       const cur = (typeof d.totalScore==='number')?d.totalScore:null;
       const cut = (typeof d.cut==='number')?d.cut:(typeof d.cutScore==='number'?d.cutScore:70);
       const gap = (cur!=null)?(cur-cut):null;
+      // A1 재계산: 상위 보완 누적 점수로 합격 가능 여부 판단
+      const num=(s)=>{ const m=String(s||'').match(/\d+/); return m?parseInt(m[0],10):0; };
+      const sevGain2 = (sev)=> /상|high/i.test(String(sev))?4 : /하|low/i.test(String(sev))?2 : 3;
+      const gains=(d.priorities&&d.priorities.length)?d.priorities.map((p,i)=>num(p.effect)||(4-Math.min(i,2)))
+                 :(d.risks||[]).map(r=>num(r.penalty)||sevGain2(r.severity));
+      let proj = (cur!=null)?cur:0; gains.slice(0,4).forEach(g=>proj=Math.min(100,proj+g));
+      const canPass = (cur!=null) && proj>=cut;
       const gapPhrase = (gap==null)?''
-        : gap>=0 ? `현재 <b>${cur}점</b>으로 기준선(${cut}점)을 넘었지만, 상대평가에서 밀리지 않으려면 상위 약점부터 근거를 채워야 합니다. `
-                 : `현재 <b>${cur}점</b>으로 기준선(${cut}점)에 <b>${Math.abs(gap)}점</b> 부족합니다. `;
-      const n = rlist.length;
-      st.innerHTML = `${gapPhrase}도출된 ${n}개 약점은 대부분 "없는 것"이 아니라 <b>"있는데 숫자·출처로 안 쓴 것"</b>입니다. 위 8번 카드의 각 리스크에 붙은 <b>실행 단계</b>를 순서대로 따라가면, 새로 만드는 부담 없이 <b>보유 내용을 근거의 언어로 편집</b>하는 작업만으로 단기간에 점수를 끌어올릴 수 있습니다. 특히 <b>${esc(rlist[0].title)}</b>이(가) 점수 영향이 가장 크므로 먼저 처리하고, 제출 직전 자격요건·양식 누락을 별도로 점검하세요.`;
+        : gap>=0 ? `현재 <b>${cur}점</b>으로 기준선(${cut}점)을 이미 넘었습니다. 상대평가에서 밀리지 않도록 상위 약점의 근거를 마저 채우는 게 목표입니다. `
+                 : `현재 <b>${cur}점</b>으로 기준선(${cut}점)에 <b>${Math.abs(gap)}점</b> 부족하지만, ${canPass?`위 <b>합격 시나리오(1번 요약)</b>대로 상위 과제를 보완하면 <b>${proj}점</b>까지 올라 기준선을 넘어설 수 있습니다. `:`상위 과제를 모두 보완해도 <b>${proj}점</b> 수준이라, 8번 리스크 외에 항목별 평가에서 추가 개선 여지를 함께 찾아야 합니다. `}`;
+      // A3 강점 활용 한 마디 (강점이 있으면)
+      const hasStr = (d.strengths||[]).length>0;
+      const strPhrase = hasStr ? `그리고 이미 확보한 강점(<b>6번의 강점→약점 브릿지</b> 참고)을 관련 약점의 방어 근거로 끌어오면, "이 팀은 이미 증명했다"는 신호를 심사위원에게 줄 수 있습니다. ` : '';
+      st.innerHTML = `${gapPhrase}도출된 약점 대부분은 "없는 것"이 아니라 <b>"있는데 숫자·출처로 안 쓴 것"</b>입니다. 8번 카드의 <b>실행 단계</b>를 순서대로 따라가면 새로 만드는 부담 없이 보유 내용을 근거의 언어로 편집하는 작업만으로 점수를 끌어올릴 수 있습니다. ${strPhrase}특히 <b>${esc(rlist[0].title)}</b>이(가) 점수 영향이 가장 크므로 먼저 처리하고, 제출 직전 자격요건·양식 누락을 별도로 점검하세요.`;
       const sblk = $('#mentor-strategy-block'); if(sblk) sblk.style.display='';
     }
   }
@@ -3224,6 +3290,51 @@ function renderReport(d){
       ['종합 판정',`<span style="font-weight:800;font-size:13px">${esc(d.verdict||'')}</span>`],
       ['최우선 보완',`<span style="font-weight:800">${esc(topPrio)}</span>`]
     ].map(c=>`<div class="scard"><div class="k">${c[0]}</div><div class="v">${c[1]}</div></div>`).join('');
+  }
+
+  // ── A1. 합격 시나리오 시뮬레이션 (실제 penalty/effect 합산, 지어내기 없음) ──
+  if(!isQuality){
+    const scBlock = $('#scenario-block');
+    const scBody  = $('#scenario-body');
+    if(scBlock && scBody){
+      // 숫자 추출 헬퍼: "-8점"/"+4점"/"3~5점" → 절대값 정수
+      const num = (s)=>{ const m=String(s||'').match(/\d+/); return m?parseInt(m[0],10):0; };
+      // 보완 후보: priorities(effect) 우선, 없으면 risks(penalty)로 회복분 추정.
+      //   effect/penalty가 비어 있으면 severity·순위 기반 기본 회복분을 부여(항상 시나리오 생성).
+      const sevGain = (sev)=> /상|high/i.test(String(sev))?4 : /하|low/i.test(String(sev))?2 : 3;
+      const rawSrc = (d.priorities&&d.priorities.length)
+        ? d.priorities.map((p,i)=>({title:p.title, gain:num(p.effect) || (4-Math.min(i,2))}))   // 1위+4,2위+3,3위+ 이후+2
+        : (d.risks||[]).map((r,i)=>({title:r.title, gain:num(r.penalty) || sevGain(r.severity)}));
+      const cand = rawSrc.filter(x=>x.title && x.gain>0).sort((a,b)=>b.gain-a.gain).slice(0,4);
+      if(cand.length && typeof total==='number'){
+        // 누적 시나리오: 상위부터 하나씩 보완했을 때 예상 점수 (100 상한)
+        let acc = total, rows = [];
+        // 현재 상태
+        rows.push(`<div class="sc-row" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-100,#f1f3f5)">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--gray-200);color:var(--gray-600);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">0</div>
+          <div style="flex:1"><b>현재 상태</b></div>
+          <div style="font-weight:900;font-size:15px;color:${gap>=0?'var(--green)':'var(--red)'}">${total}점</div>
+        </div>`);
+        let crossed = (gap>=0);
+        cand.forEach((c,i)=>{
+          const before = acc;
+          acc = Math.min(100, acc + c.gain);
+          const nowOver = acc >= cut;
+          const justCrossed = !crossed && nowOver;
+          if(nowOver) crossed = true;
+          rows.push(`<div class="sc-row" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-100,#f1f3f5)${justCrossed?';background:var(--green-bg,#e7f7ee);border-radius:8px;padding-left:8px;padding-right:8px':''}">
+            <div style="width:24px;height:24px;border-radius:50%;background:${nowOver?'var(--green)':'var(--blue)'};color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>
+            <div style="flex:1;font-size:13px"><b>${esc(c.title)}</b> 보완 <span style="color:var(--green);font-weight:800">+${c.gain}점</span>${justCrossed?' <span style="color:var(--green);font-weight:800">← 기준선 돌파 🎉</span>':''}</div>
+            <div style="font-weight:900;font-size:15px;color:${nowOver?'var(--green)':'var(--gray-700)'}">${acc}점</div>
+          </div>`);
+        });
+        const finalMsg = crossed
+          ? `위 순서로 보완하면 <b>기준선(${cut}점)을 넘어설 수 있는</b> 구조입니다. 점수 회복 폭이 큰 항목부터 처리하세요.`
+          : `전 항목 보완 시 예상 <b>${acc}점</b>으로 기준선(${cut}점)까지 <b>${cut-acc}점</b> 더 필요합니다. 상위 리스크 외에 5번 항목별 평가에서 추가 개선 여지를 확인하세요.`;
+        scBody.innerHTML = rows.join('') + `<div style="margin-top:10px;font-size:13px;color:var(--gray-700,#4e5968);line-height:1.6">${finalMsg}</div>`;
+        scBlock.style.display='';
+      }
+    }
   }
   // 품질 모드: 적합성 섹션(7번)을 체크리스트로 치환
   if(isQuality) renderQualityChecklist(d);
