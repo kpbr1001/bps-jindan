@@ -662,7 +662,7 @@ tr:last-child td{border-bottom:none;}
   <section class="hero no-print">
     <div class="wrap">
       <span class="badge">📄 공고 · 양식 · 사업계획서 3종 비교 진단</span>
-      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v5.3 · 8·9·12중복제거·11수정문구정직화</span>
+      <span class="badge" style="background:#e7f7ee;color:#15803d;margin-left:6px" title="배포 버전 확인용">v5.4 · 8·9·11·12역할분리(실행단계·원문지침·셀프체크)</span>
       <h1 data-role="hero-title">지원사업 사업계획서<br/>AI 진단</h1>
       <p>지원공고, 작성양식, 작성한 사업계획서를 비교하여 <b>적합성, 감점 리스크, 보완 방향</b>을 진단합니다. 심사위원 관점의 보완 가이드를 받아보세요.</p>
     </div>
@@ -1294,7 +1294,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">08c76260</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">2325a97e</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1381,7 +1381,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v5.3';
+  var SIG='v5.4';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -1399,7 +1399,7 @@ function auditStaticTitles(){
       var el = document.getElementById('build-loaded');
       if(el){
         if(missing.length===0){
-          el.textContent = '· v5.3 ✓ '+new Date().toISOString().slice(11,19);
+          el.textContent = '· v5.4 ✓ '+new Date().toISOString().slice(11,19);
           el.style.color = '#16a34a';
         } else {
           el.textContent = '· ⚠ 옛 코드 실행 중(누락: '+missing.join(',')+') — 캐시 강력새로고침(Ctrl+Shift+R) 또는 재배포 필요';
@@ -2544,6 +2544,51 @@ function renderReport(d){
     });
   }
 
+  // ── 9번 로드맵 전용: 리스크 title → '실행 단계'(무엇을 준비/작성하는지) ──
+  // 8번의 '해결책 문구'를 반복하지 않고, 착수자가 바로 실행할 준비 항목을 제시한다.
+  const deriveActionSteps = (title, why)=>{
+    const s = String(title||'') + ' ' + String(why||'');
+    if(/rag|파인튜닝|모델|구현|툴명|프롬프트|자동화|ai\s?활용|ai활용/i.test(s))
+      return '① 사용 툴·모델명 목록화 → ② 적용 단계를 시스템 구성도로 도식화 → ③ 도입 전후 처리시간·비용 비교표 작성';
+    if(/공급기업|투입인력|조직|역량|인력|팀\s?구성|팀구성|채용|1인/i.test(s))
+      return '① 핵심 과업별 담당자 지정 → ② 이력·실적 1줄 요약 → ③ 부족 역량의 채용·외주 시점을 표로 작성';
+    if(/매출|산출근거|단가|추정|수익/i.test(s))
+      return '① 단가×수량×전환율 계산식 정리 → ② 근거 데이터 출처 명시 → ③ 모든 표의 매출 수치 통일 대조';
+    if(/기대효과|측정|kpi|정량|성과지표|지표/i.test(s))
+      return '① 핵심 지표 3개 선정 → ② 현재값·목표값·측정방법 표 작성 → ③ 데이터 출처·측정주기 명시';
+    if(/사업비|양식|금액|불일치|자부담|예산|집행/.test(s))
+      return '① 공고 집행 가능 항목 확인 → ② 금액·산출근거·자부담 대조표 작성 → ③ 모든 양식 간 수치 통일';
+    if(/과제명|사업명|트랙/.test(s))
+      return '① 공고문 사업명·트랙명 정확히 확인 → ② 계획서 표지·본문 과제명 일치 → ③ 동시수행 제한 여부 확인';
+    if(/보안|개인정보|암호화|접근|백업|장애/.test(s))
+      return '① 개인정보 처리 흐름도 작성 → ② 접근권한·암호화·백업 정책 명시 → ③ 외부 API 장애 시 대체 절차 기술';
+    if(/일정|마일스톤|추진|협약/.test(s))
+      return '① 협약기간 월별 마일스톤 배치 → ② 중간 산출물·검수 기준 명시 → ③ 지연 대응계획 간트차트화';
+    if(/소상공인|수혜|편익|고객/.test(s))
+      return '① 최종 수혜자 정의 → ② 도입 전후 편익을 정량 지표로 → ③ 고객 여정·이용 흐름 도식화';
+    if(/특허|지식재산|ip|선행기술|모방/i.test(s))
+      return '① 보유·출원 IP 목록화 → ② 선행기술 대비 차별점 정리 → ③ 권리 귀속·모방 대응 방안 명시';
+    return '① 계획서 해당 부분의 현재 서술 확인 → ② 정량 근거·출처 보강 → ③ 검증 가능한 문장으로 재작성';
+  };
+  // ── 11번 수정예시 전용: 원문(quote)이 있을 때 '이 문장을 이렇게 바꾸라'는 구체 재작성 지침 ──
+  // after(개선 예시문)를 AI가 안 준 폴백 상황에서, 일반 지시문 대신 원문을 짚어 3단 구조로 안내한다.
+  const deriveRewriteGuide = (quote, topic, why)=>{
+    const q = String(quote||'').trim();
+    const s = String(topic||'')+' '+String(why||'');
+    // 원문이 없으면 축별 일반 가이드
+    if(!q) return deriveGuide(topic, why);
+    // 원문의 성격을 감지해 '이 표현을 → 무엇으로' 형태의 실전 지침
+    let head = `현재 문장 "${q.length>30?q.slice(0,30)+'…':q}"은(는) `;
+    if(/매장\s?수|평균\s?단가|자체\s?산정|매출|억|만원/.test(q))
+      return head + '산출 과정이 생략돼 있습니다. "목표 거래처 N곳 × 평균 단가 M원 × 전환율 K%" 형태로 계산식을 풀어 쓰고, 각 숫자의 근거(기존 실적·유사업체·시장자료)를 괄호로 덧붙이세요.';
+    if(/설계\s?보조|ai\s?기반|활용|디자인|프로그램/i.test(q))
+      return head + 'AI를 "무엇에" 쓰는지만 있고 "어떻게"가 없습니다. 사용 툴·모델명, 적용 단계(예: 초안 생성→검수→수정), 사람이 개입하는 지점을 문장에 넣어 "구체적 구현 방식"으로 바꾸세요.';
+    if(/1인|대표|대학원생|팀|충원|예정/.test(q))
+      return head + '인력 상태만 서술돼 있습니다. "누가 어떤 역할을, 언제까지 확보"를 넣고, 현재 대표의 관련 경력·실적을 한 줄 붙여 실행 역량을 드러내세요.';
+    if(/kpi|목표|효과|절감|향상|개선|%/.test(q))
+      return head + '효과가 정성적으로만 서술돼 있습니다. "현재값 → 목표값(측정 방법)" 형태로 바꾸고(예: 처리시간 10분→3분, 로그 기반 측정), 측정 주기와 데이터 출처를 명시하세요.';
+    return head + '주장만 있고 근거가 약합니다. "주장 → 뒷받침 숫자·사례 → 출처(자료명)" 3단 구조로 재작성해 검증 가능하게 만드세요.';
+  };
   // ── 축 감지 실행 가이드 (12번 수정예시·13번 로드맵 공용) ──
   // 폴백 fix가 기본값일 때 항목마다 다른 구체 가이드를 생성해 중복 방지
   const deriveGuide = (topic, why)=>{
@@ -2831,13 +2876,13 @@ function renderReport(d){
     if(prios && prios.length){
     d.priorities = prios;
     prioBox.innerHTML = prios.map(p=>{
-      // 역할 차별화: pb-why에 8번 why를 반복하지 않고 '착수 액션'(fix 기반)을 넣는다
-      const action = String(p.why||'').trim();  // 보충 시 fix가 들어옴
+      // 역할 차별화: 8번의 '해결책 문구'를 반복하지 않고, 착수자가 바로 실행할 '준비 단계'를 제시
+      const steps = deriveActionSteps(p.title, p.why);
       return `
       <div class="prio-step"><div class="prio-badge">${p.rank}</div>
         <div class="prio-body">
           <div class="pb-top"><div class="pb-title">${esc(p.title)}</div><div class="pb-effect">${esc(p.effect||'')}</div></div>
-          <div class="pb-why">${esc(action)}</div>
+          <div class="pb-why">${esc(steps)}</div>
           ${(p.time||p.docs)?`<div class="pb-meta">⏱ 예상 소요 <b>${esc(p.time||'-')}</b> · 필요 자료 <b>${esc(p.docs||'-')}</b></div>`:''}
         </div>
       </div>`;}).join('');
@@ -2930,8 +2975,13 @@ function renderReport(d){
         body.innerHTML = d.rewrites.map((r,i)=>{
           const q = String(r.quote||'').trim();
           const hasQuote = !!q;
-          const afterText = String(r.after||'').trim();
+          let afterText = String(r.after||'').trim();
           const afterIsGuide = !afterText || isGuideText(afterText) || r._fallback;
+          // ★ 가이드(폴백)인 경우: 원문을 짚어 '이 문장을 이렇게 바꾸라'는 상세 지침으로 교체 ★
+          //   원문이 있으면 8·9번과 다른, 이 문장 전용 재작성 지침이 나온다.
+          if(afterIsGuide){
+            afterText = deriveRewriteGuide(q, r.topic, r.why || r.before);
+          }
           const beforeText = q || String(r.before||'').trim();
           // 태그: 원문 유무 × after 성격에 따라 정확히
           const beforeTag = hasQuote ? '내 계획서 원문' : '보완 포인트';
@@ -2974,12 +3024,22 @@ function renderReport(d){
       for(const w of words){ if((acc+' '+w).trim().length > 58) break; acc=(acc+' '+w).trim(); }
       return (acc || x.slice(0,56)).replace(/[·,\s]+$/,'') + ' …';
     };
-    // roadmap 보충: AI roadmap이 priorities보다 적으면 부족분을 채움 (1단계만 오는 문제 해결)
+    // 제출前 로드맵은 '체크리스트' 성격 — 9번(실행 단계)과 겹치지 않게 '완료 확인' 문구로
     const tags=['핵심','보강','정비','마감','점검'];
-    const isGenericFix = (s)=> !s || /해당 약점을 계획서에 근거·수치|근거·수치·수행 방식과 함께 구체적으로 보강/.test(String(s));
+    const toChecklistDesc = (title, why)=>{
+      const s = String(title||'')+' '+String(why||'');
+      if(/ai|구현|모델|프롬프트|툴/i.test(s)) return 'AI 툴명·적용 단계·검증 방법이 문서에 들어갔는지 확인';
+      if(/팀|인력|채용|1인/.test(s)) return '담당자·역할·채용 시점 표가 들어갔는지 확인';
+      if(/매출|산출|단가/.test(s)) return '매출 계산식과 숫자 출처가 표로 들어갔는지 확인';
+      if(/기대효과|측정|kpi|지표/i.test(s)) return '현재값→목표값·측정 방법이 정량 표로 들어갔는지 확인';
+      if(/사업비|양식|금액|불일치/.test(s)) return '모든 표·양식의 금액 일치 여부 최종 대조';
+      if(/과제명|사업명|트랙/.test(s)) return '공고문과 과제명 일치, 동시수행 제한 확인';
+      if(/보안|개인정보|암호화/.test(s)) return '보안·장애 대응 절차 서술 여부 확인';
+      return '정량 근거·출처가 보강됐는지 확인';
+    };
     let rmItems = [];
     if(d.roadmap && d.roadmap.length){
-      rmItems = d.roadmap.map((r,i)=>({ when: r.when || (`${i+1}단계`), task: r.task||'', desc: shortDesc(r.desc||r.detail||r.task_desc||''), tag: r.tag||tags[i]||'보완' }));
+      rmItems = d.roadmap.map((r,i)=>({ when: r.when || (`${i+1}단계`), task: r.task||'', desc: '', tag: r.tag||tags[i]||'보완' }));
     }
     const prioPool = d.priorities||[];
     if(prioPool.length && rmItems.length < Math.min(prioPool.length,3)){
@@ -2987,26 +3047,25 @@ function renderReport(d){
       const supplement = prioPool
         .filter(p=> !covered.some(c=> c && String(p.title||'').includes(c)))
         .slice(0, Math.max(0, Math.min(prioPool.length,4) - rmItems.length))
-        .map((p,i)=>{ const raw = isGenericFix(p.fix)?deriveGuide(p.title,p.why):p.fix; return { when:``, task:p.title||'', desc:shortDesc(raw), tag:'' }; });
+        .map((p,i)=>({ when:``, task:p.title||'', desc:'', tag:'' }));
       if(supplement.length){ try{ console.log('%c[Beconic] roadmap 보충','color:#f59e0b','AI '+rmItems.length+'개 → '+supplement.length+'개 보충'); }catch(_){} }
       rmItems = rmItems.concat(supplement);
     }
-    // ★ 중복 제거: title(task)이 같은 카드는 하나만 유지 (AI가 동일 항목 중복 전송/보충 중복 방지) ★
-    //   desc는 더 정보량 많은 쪽(긴 문장)을 남긴다.
+    // ★ 중복 제거: title(task)이 같은 카드는 하나만 유지 ★
     (function dedupeRoadmap(){
-      const seen = new Map();
+      const seen = new Set();
       const out = [];
       rmItems.forEach(r=>{
         const key = String(r.task||'').replace(/\s+/g,'').trim();
-        if(!key){ out.push(r); return; }
-        if(seen.has(key)){
-          const prev = seen.get(key);
-          if(String(r.desc||'').length > String(prev.desc||'').length) prev.desc = r.desc;  // 더 긴 desc 유지
-        } else { seen.set(key, r); out.push(r); }
+        if(key && !seen.has(key)){ seen.add(key); out.push(r); } else if(!key){ out.push(r); }
       });
       rmItems = out;
     })();
-    rmItems.forEach((r,i)=>{ r.when=`${i+1}단계`; if(!r.tag) r.tag=tags[i]||'보완'; });
+    // desc는 title 기준 체크리스트 문구로 통일 생성 (task 원문 why 참조)
+    const whyByTitle = {};
+    (d.risks||[]).concat(d.priorities||[]).forEach(x=>{ const k=String(x.title||'').replace(/\s+/g,''); if(k&&!whyByTitle[k]) whyByTitle[k]=x.why||''; });
+    rmItems.forEach((r,i)=>{ r.when=`${i+1}단계`; if(!r.tag) r.tag=tags[i]||'보완';
+      r.desc = toChecklistDesc(r.task, whyByTitle[String(r.task||'').replace(/\s+/g,'')]||''); });
     if(rmItems.length){
       rmList.innerHTML = rmItems.map(r=>
         `<label class="action-item"><input type="checkbox"/><span><b>${esc(r.when)}</b> — ${esc(r.task)}${r.desc?`<span class="act-desc">${esc(r.desc)}</span>`:''}</span><span class="ai-day">${esc(r.tag)}</span></label>`
@@ -3045,8 +3104,8 @@ function renderReport(d){
     }
   }
 
-  // 12번 핵심 메시지 — 8·9번과 역할 분리: 라벨 나열(8·9번이 이미 함)이 아니라
-  //   '종합 전략 한 문단 + 이번 주 착수 액션 3가지'로 상위 관점 제공
+  // 12번 핵심 메시지 — 8·9번과 완전 분리: 라벨·해결책 반복을 버리고
+  //   '종합 총평 한 문단 + 심사위원이 던질 질문(셀프체크)'로 다른 각도를 제공
   const keyMsg = $('#key-messages');
   if(keyMsg){
     const src = (d.priorities && d.priorities.length) ? d.priorities.slice()
@@ -3064,19 +3123,28 @@ function renderReport(d){
       const cur = (typeof d.totalScore==='number')?d.totalScore:null;
       const cut = (typeof d.cut==='number')?d.cut:70;
       const gap = (cur!=null)?(cur-cut):null;
-      // 종합 전략 한 문단 (점수 맥락 + 전략 방향)
       const gapPhrase = (gap!=null)
-        ? (gap>=0 ? `현재 <b>${cur}점</b>으로 기준선(${cut}점)을 넘었지만 방심할 수 없는 위치입니다.`
+        ? (gap>=0 ? `현재 <b>${cur}점</b>으로 기준선(${cut}점)을 넘었지만, 상대평가에서 밀리지 않으려면 상위 약점부터 근거를 채워야 하는 위치입니다.`
                   : `현재 <b>${cur}점</b>으로 기준선(${cut}점)에 <b>${Math.abs(gap)}점</b> 못 미칩니다.`)
         : '';
-      const strategy = `<li style="list-style:none;margin-bottom:10px;color:var(--gray-700,#4e5968);line-height:1.6">${gapPhrase} 문제는 역량이 아니라 <b>근거 제시 방식</b>입니다 — ${labels.slice(0,3).join(' · ')} ${labels.length>3?`외 ${labels.length-3}가지 `:''}모두 "있는데 숫자·출처로 안 쓴 것"이라, 새로 만들기보다 <b>보유 내용을 근거의 언어로 바꾸는 편집 작업</b>으로 단기간에 점수를 끌어올릴 수 있습니다.</li>`;
-      // 이번 주 착수 액션 3가지 (상위 우선순위의 fix를 간결 명령형으로)
-      const topN = uniq.slice(0,3).map(({x,label},i)=>{
-        const fix = String(x.fix||x.why||'').trim();
-        const act = fix.split(/(?<=[.。])\s/)[0].slice(0,50) || '계획서 해당 부분을 근거·수치와 함께 보강';
-        return `<li style="margin-bottom:4px"><b>이번 주 ${i+1}순위 · ${esc(label)}</b> — ${esc(act)}</li>`;
-      }).join('');
-      keyMsg.innerHTML = strategy + topN;
+      // 종합 총평 한 문단만 (라벨 나열·해결책 반복 없음)
+      const strategy = `<li style="list-style:none;margin-bottom:12px;color:var(--gray-700,#4e5968);line-height:1.65">${gapPhrase} 핵심은 역량이 아니라 <b>근거 제시 방식</b>입니다. 도출된 약점 대부분이 "없는 것"이 아니라 "있는데 숫자·출처로 안 쓴 것"이라, 새로 만들기보다 <b>보유 내용을 근거의 언어로 편집</b>하는 작업으로 단기간에 점수를 끌어올릴 수 있습니다. 아래는 심사위원이 이 계획서를 볼 때 던질 법한 질문입니다 — 제출 전 스스로 답할 수 있는지 점검하세요.</li>`;
+      // 심사위원 셀프체크 질문 — 리스크를 '질문' 형태로 뒤집어 8·9번과 다른 각도 제공
+      const toQuestion = (label, why)=>{
+        const s = String(label||'')+' '+String(why||'');
+        if(/ai|구현|모델|프롬프트|툴/i.test(s)) return 'AI를 "어떤 툴로, 어느 단계에서, 어떻게" 쓰는지 이 문서만 보고 재현할 수 있는가?';
+        if(/팀|인력|채용|1인/.test(s)) return '핵심 과업마다 담당자와 확보 시점이 명시돼 있는가? 대표 1인 의존이 아닌가?';
+        if(/매출|산출|단가|추정/.test(s)) return '매출 목표의 계산식(단가×수량×전환율)과 각 숫자의 출처가 제시돼 있는가?';
+        if(/기대효과|측정|kpi|지표/i.test(s)) return '성과가 "현재값→목표값(측정 방법)"으로 정량화돼 있는가?';
+        if(/사업비|양식|금액|불일치/.test(s)) return '모든 표·양식의 금액이 일치하고, 공고 집행 기준에 맞는가?';
+        if(/과제명|사업명|트랙/.test(s)) return '공고문의 사업명·트랙명과 계획서 과제명이 정확히 일치하는가?';
+        if(/보안|개인정보|암호화/.test(s)) return '데이터 보안·장애 대응 절차가 구체적으로 서술돼 있는가?';
+        return '이 주장을 뒷받침하는 숫자·사례·출처가 문서에 제시돼 있는가?';
+      };
+      const questions = uniq.slice(0,3).map(({x,label})=>
+        `<li style="margin-bottom:5px"><b>${esc(label)}</b> — ${esc(toQuestion(label, x.why))}</li>`
+      ).join('');
+      keyMsg.innerHTML = strategy + questions;
     }
   }
 
