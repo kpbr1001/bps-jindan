@@ -1144,10 +1144,10 @@ tr:last-child td{border-bottom:none;}
     <!-- ===== [신규 v6.2] 표현 밀도 진단 (AI스러운 부실 문장 탐지) ===== -->
     <div class="card" id="fluff-card" style="display:none">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-        <h3 class="h-sec" style="font-size:18px"><span class="num" style="background:#7C3AED">✎</span>표현 밀도 진단</h3>
+        <h3 class="h-sec" style="font-size:18px"><span class="num" style="background:#7C3AED">✎</span>근거 없는 핵심 주장 진단</h3>
         <span class="sample-badge">AI 분석 결과</span>
       </div>
-      <p class="sub">'내용'이 아니라 '표현'을 봅니다. AI로 초안을 쓰면 흔히 나타나는 공허한 문장 — 어느 계획서에나 있는 일반론, 형용사만 있고 실체 없는 서술 — 을 찾아 사람 손길로 바꿀 지점을 짚어드립니다.</p>
+      <p class="sub">감점 리스크(8번)가 <b>"무엇이 빠졌나"</b>를 본다면, 여기서는 <b>"쓰긴 썼는데 근거가 없는 단정"</b>을 봅니다. 시장규모·매출·경쟁력을 출처·수치 없이 사실처럼 진술해, 심사위원이 "근거는?"이라고 되물을 문장만 짚습니다.</p>
       <div style="height:14px"></div>
 
       <!-- 밀도 게이지 -->
@@ -1158,7 +1158,7 @@ tr:last-child td{border-bottom:none;}
 
       <div class="callout" style="margin-top:6px">
         <span class="co-ico">✎</span>
-        <div id="fluff-summary"><b>표현 밀도란?</b> 심사위원은 "무엇을 썼나"만큼 "어떻게 썼나"를 봅니다. 같은 내용도 구체적 수치·고유명사·근거로 쓰면 설득력이 오릅니다. 아래 문장들을 개선 예시처럼 바꾸면 'AI로 대충 쓴 티'가 사라집니다.</div>
+        <div id="fluff-summary"><b>왜 중요한가?</b> 심사위원은 핵심 주장에 근거가 없으면 감점합니다. 특히 시장규모·매출·경쟁력·실현가능성 같은 당락 요소는 반드시 출처·수치로 뒷받침해야 합니다. 아래 문장을 개선 예시처럼 근거 기반으로 바꾸면 감점을 막을 수 있습니다.</div>
       </div>
     </div>
 
@@ -1308,7 +1308,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">6fe8c999</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">1f9ab606</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1395,7 +1395,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v6.4';
+  var SIG='v6.6';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -1413,7 +1413,7 @@ function auditStaticTitles(){
       var el = document.getElementById('build-loaded');
       if(el){
         if(missing.length===0){
-          el.textContent = '· v6.4 ✓ '+new Date().toISOString().slice(11,19);
+          el.textContent = '· v6.6 ✓ '+new Date().toISOString().slice(11,19);
           el.style.color = '#16a34a';
         } else {
           el.textContent = '· ⚠ 옛 코드 실행 중(누락: '+missing.join(',')+') — 캐시 강력새로고침(Ctrl+Shift+R) 또는 재배포 필요';
@@ -1976,8 +1976,8 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
   "strengths": ["<계획서 강점 3~4개, 근거>"],
   "weaknesses": ["<계획서 약점 3~5개, 근거>"],
   "fluff": [
-    {"quote":"<계획서 원문에서 '표현이 공허한' 실제 문장 8자 이상 그대로 복사. 실재 문장만>","type":"<S1/S4/S5>","severity":"<치명적/권장>","why":"<왜 공허한지 짧게>","after":"<구체적으로 바꾼 예시 1문장>"}
-    /* 표현의 공허함만. 심사위원처럼 경중 구분: 치명적=출처없는 큰 수치·교과서 클리셰(명백히 감점), 권장=형용사 과잉 등 고치면 좋은 것. 총 3~6개(치명적 우선). 실재 문장만, 없으면 []. 애매하면 넣지 말 것(오탐 방지). S1=일반론, S4=형용사만, S5=주어·시점 실종 */
+    {"quote":"<계획서 원문에서 '근거 없이 사실처럼 단정한' 실제 문장 8자 이상 그대로 복사. 실재 문장만>","type":"<S1/S4/S5>","severity":"<치명적/권장>","why":"<어떤 근거·출처·수치가 빠졌는지>","after":"<근거를 담아 바꾼 예시 1문장>"}
+    /* ★fluff 고유 임무='근거 없는 단정' 탐지. 검증 없이 사실처럼 써서 "근거는?" 되물을 문장만. risks(내용 약점)·rewrites(표현 개선)와 겹치는 문장 반복 금지. 기준: 심사 감점 직결만. 치명적=핵심 주장의 근거 공백, 권장=최대 1~2개. 형용사 많다는 이유만으로 잡지 말 것. 없으면 []. 개수 채우기 금지 */
   ],
   "priorities": [
     {"rank":1,"title":"<보완 과제>","effect":"<기대 개선>","why":"<이유, 계획서 근거>","time":"<소요>","docs":"<필요자료>"}
@@ -2060,11 +2060,14 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
   "strengths": ["<강점 3~4개, 사업계획서 근거>"],
   "weaknesses": ["<약점 3~5개, 사업계획서 근거>"],
   "fluff": [
-    {"quote":"<계획서 원문에서 '표현이 공허한' 실제 문장 8자 이상 그대로 복사. 실재 문장만>","type":"<S1/S4/S5>","severity":"<치명적/권장>","why":"<왜 공허한지 짧게>","after":"<구체적으로 바꾼 예시 1문장>"}
-    /* 표현의 공허함만(내용 약점 아님). 실재 문장만 quote, 없으면 []. 심사위원처럼 경중을 나눌 것:
-       severity="치명적": 출처 없는 큰 수치·시장규모, '4차 산업혁명'급 교과서 클리셰 등 명백히 감점되는 것. 있는 만큼 다 잡되 확신 있는 것만.
-       severity="권장": 형용사 과잉(다양한/체계적인/효율적인), 다소 일반적이나 고치면 인상이 좋아지는 것.
-       총 3~6개 권장(치명적 우선, 권장 보조). 억지로 채우지 말고 애매하면 넣지 말 것(오탐 방지). S1=일반론, S4=형용사만 구체없음, S5=주어·시점 실종 */
+    {"quote":"<계획서 원문에서 '근거 없이 사실처럼 단정한' 실제 문장 8자 이상 그대로 복사. 실재 문장만>","type":"<S1/S4/S5>","severity":"<치명적/권장>","why":"<이 단정에 어떤 근거·출처·수치가 빠졌는지>","after":"<근거·출처·수치를 담아 바꾼 예시 1문장>"}
+    /* ★fluff의 고유 임무 = '근거 없는 단정' 탐지. 계획서가 검증 없이 사실처럼 써서 심사위원이 "근거는?"이라고 되물을 문장만 잡으세요.
+       ★★다른 섹션과 절대 겹치지 말 것:
+         - risks(감점 리스크)는 '내용·구조의 약점'(팀 부족, 매출 근거 부족 등 무엇이 빠졌나)을 다룹니다. fluff는 여기서 다룬 것을 반복하지 마세요.
+         - rewrites(수정 예시)는 '공고 평가축 문장의 표현 개선'을 다룹니다. fluff는 여기서 다룬 문장을 반복하지 마세요.
+         - fluff는 오직 "근거 없이 단정한 주장"에만 집중 — 시장규모·매출·경쟁력·성과를 출처·수치 없이 사실처럼 진술한 문장.
+       기준: "이 문장이 심사에서 감점되는가?"만. 개수 할당량 없음. 치명적=핵심 주장의 근거 공백(감점 직결), 권장=근거 붙이면 강해질 핵심 문장 최대 1~2개.
+       ★형용사 많다는 이유만으로 잡지 말 것. 배경·인사말·부수 문장 제외. 근거없는 단정이 없으면 빈 배열 []. 개수 채우기 금지. */
   ],
   "fit": [
     {"item":"<자격항목>","require":"<공고 요구>","current":"<입력/계획서 반영>","status":"<충족/확인필요/미확인>","action":"<조치>"}
@@ -2095,7 +2098,7 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
 ★★ AI보조금 유형의 risks는 반드시 다음 중에서: 단순구독 취지부적합 / AI적용 프로세스 밀착성 부족 / 소상공인 수혜 불명확 / AI모델 구현방식(RAG·파인튜닝) 미제시 / 보안·운영안정성 미제시 / 자격·배제사유.
 ※ mentoring(종합 멘토링)도 판별 유형의 실제 점수·항목명으로 작성하세요. 창업 배점(문제인식·성장전략·실현가능성)을 언급하지 마세요.
 ★★ risks와 priorities와 rewrites는 절대 비우지 마세요. weaknesses(약점)를 작성했다면 그 약점들을 감점 리스크(risks)와 보완 우선순위(priorities)와 수정예시(rewrites)로도 반드시 변환해 채우세요. risks는 title/severity/why/fix/docs 형식, priorities는 rank/title/effect/why 형식, rewrites는 topic/before/after 형식으로 구체화합니다. 이 셋 중 하나라도 비면 진단이 불완전합니다. roadmap도 4~6개 반드시 채우세요.
-★★ fluff(표현 밀도)는 다른 항목과 성격이 다릅니다. weaknesses·risks가 '내용의 약점(무엇이 빠졌나)'이라면, fluff는 '표현의 공허함(어떻게 썼나)'만 봅니다. 계획서에 S1/S4/S5에 해당하는 공허한 문장이 실재할 때만 원문을 quote로 넣으세요. 억지로 만들지 말고, 정말 공허한 문장이 없으면 빈 배열 []로 두세요. 내용은 충실한데 근거가 부족한 것(그건 weaknesses)과, 표현 자체가 공허한 것(fluff)을 혼동하지 마세요. 오탐은 신뢰를 해치므로 확신이 있을 때만 지적하세요.
+★★ fluff(근거 없는 단정)의 고유 임무는 다른 섹션과 명확히 다릅니다. risks(감점 리스크)는 '내용·구조의 약점(무엇이 빠졌나)', rewrites(수정 예시)는 '공고 평가축 문장의 표현 개선'을 다룹니다. fluff는 오직 "계획서가 근거 없이 사실처럼 단정한 주장" — 시장규모·매출·경쟁력·성과를 출처·수치·검증 없이 진술해 심사위원이 "근거는?"이라고 되물을 문장만 잡으세요. ★risks·rewrites에서 이미 다룬 문장을 fluff에서 반복하지 마세요(중복 금지). 판단 기준은 "심사에서 감점되는가?"뿐이며, 형용사가 많다거나 표현이 매끄럽지 않다는 이유로는 절대 잡지 마세요. 근거 없는 단정이 없으면 빈 배열 []로 두세요. 진짜 심사위원이 "이건 무슨 근거로?"라고 물을 문장만 고르세요.
 ★★ 개수 일치 (중요): weaknesses에 작성한 약점의 개수만큼 risks도 동일하게 만드세요. 약점이 5개면 risks도 5개입니다 — 하나도 누락하지 마세요. priorities는 그 중 점수 영향이 큰 상위 3~4개, roadmap은 risks 전체를 제출 순서로 재배열해 risks와 같은 개수로 만드세요. "핵심 메시지"(mentoring 내 요약)와 roadmap 단계 수가 크게 어긋나지 않도록 하세요. 점수 영향이 큰 약점부터 risks·priorities 상위에 배치합니다.
 JSON만 출력하세요.`;
 }
@@ -3029,6 +3032,21 @@ function renderReport(d){
   const fluffCard = $('#fluff-card');
   if(fluffCard){
     let fluff = Array.isArray(d.fluff) ? d.fluff.filter(f=>f && f.quote && String(f.quote).trim().length>=6) : [];
+    // ★중복 제거: 8번 risks(evidence)·10번 rewrites(quote)가 이미 인용한 문장과 겹치면 fluff에서 제외
+    //   (같은 계획서 문장이 여러 섹션에 반복 노출되는 것을 방지 → 섹션 간 차별화)
+    const norm = (s)=> String(s||'').replace(/\s+/g,'').replace(/[.,·…"'“”‘’]/g,'').trim();
+    const usedQuotes = new Set();
+    (d.risks||[]).forEach(r=>{ const q=norm(r.evidence); if(q.length>=6) usedQuotes.add(q); });
+    (d.rewrites||[]).forEach(r=>{ const q=norm(r.quote); if(q.length>=6) usedQuotes.add(q); });
+    fluff = fluff.filter(f=>{
+      const q = norm(f.quote);
+      // 완전일치 또는 상당부분 포함이면 중복으로 간주
+      for(const u of usedQuotes){
+        if(u===q) return false;
+        if(q.length>=10 && (u.includes(q)||q.includes(u))) return false;
+      }
+      return true;
+    });
     if(fluff.length){
       const typeLabel = {S1:'일반론 과잉', S4:'형용사 과잉·실체 부재', S5:'주어·시점 실종'};
       const typeColor = {S1:'#7C3AED', S4:'#B45309', S5:'#DC2626'};
@@ -3046,7 +3064,7 @@ function renderReport(d){
           <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;background:var(--gray-50,#f9fafb);border-radius:12px">
             <div style="font-size:13px;color:var(--gray-600,#4e5968)">공허한 표현</div>
             ${parts.join('<span style="color:var(--gray-300)">·</span>')}
-            <div style="flex:1;min-width:140px;font-size:12.5px;color:var(--gray-500,#8b95a1)">${critN?'🔴 치명적 문장부터 고치세요. ':''}시간이 부족하면 치명적 항목만, 여유가 있으면 권장까지 손보면 완성도가 올라갑니다.</div>
+            <div style="flex:1;min-width:140px;font-size:12.5px;color:var(--gray-500,#8b95a1)">${critN?'🔴 치명적 문장은 심사 감점으로 직결됩니다. 반드시 근거를 채우세요.':'핵심 주장에 근거를 보강하면 감점을 막을 수 있습니다.'}</div>
           </div>`;
       }
       const cards = $('#fluff-cards');
