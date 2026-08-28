@@ -1308,7 +1308,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">56b6d0f3</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">6fe8c999</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1395,7 +1395,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v6.3';
+  var SIG='v6.4';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -1413,7 +1413,7 @@ function auditStaticTitles(){
       var el = document.getElementById('build-loaded');
       if(el){
         if(missing.length===0){
-          el.textContent = '· v6.3 ✓ '+new Date().toISOString().slice(11,19);
+          el.textContent = '· v6.4 ✓ '+new Date().toISOString().slice(11,19);
           el.style.color = '#16a34a';
         } else {
           el.textContent = '· ⚠ 옛 코드 실행 중(누락: '+missing.join(',')+') — 캐시 강력새로고침(Ctrl+Shift+R) 또는 재배포 필요';
@@ -1976,8 +1976,8 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
   "strengths": ["<계획서 강점 3~4개, 근거>"],
   "weaknesses": ["<계획서 약점 3~5개, 근거>"],
   "fluff": [
-    {"quote":"<계획서 원문에서 '표현이 공허한' 실제 문장 8자 이상 그대로 복사. 실재 문장만>","type":"<S1/S4/S5>","why":"<왜 공허한지 짧게>","after":"<구체적으로 바꾼 예시 1문장>"}
-    /* 0~4개. 표현의 공허함만. S1=일반론('4차 산업혁명' 등), S4=형용사만('다양한/체계적인') 구체 없음, S5=주어·시점 실종. 실재 문장만, 없으면 []. 확신 있을 때만 */
+    {"quote":"<계획서 원문에서 '표현이 공허한' 실제 문장 8자 이상 그대로 복사. 실재 문장만>","type":"<S1/S4/S5>","severity":"<치명적/권장>","why":"<왜 공허한지 짧게>","after":"<구체적으로 바꾼 예시 1문장>"}
+    /* 표현의 공허함만. 심사위원처럼 경중 구분: 치명적=출처없는 큰 수치·교과서 클리셰(명백히 감점), 권장=형용사 과잉 등 고치면 좋은 것. 총 3~6개(치명적 우선). 실재 문장만, 없으면 []. 애매하면 넣지 말 것(오탐 방지). S1=일반론, S4=형용사만, S5=주어·시점 실종 */
   ],
   "priorities": [
     {"rank":1,"title":"<보완 과제>","effect":"<기대 개선>","why":"<이유, 계획서 근거>","time":"<소요>","docs":"<필요자료>"}
@@ -2060,8 +2060,11 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
   "strengths": ["<강점 3~4개, 사업계획서 근거>"],
   "weaknesses": ["<약점 3~5개, 사업계획서 근거>"],
   "fluff": [
-    {"quote":"<계획서 원문에서 '표현이 공허한' 실제 문장 8자 이상 그대로 복사. 실재 문장만>","type":"<S1/S4/S5>","why":"<왜 공허한지 짧게>","after":"<구체적으로 바꾼 예시 1문장>"}
-    /* 0~4개. 내용 약점 아니라 표현의 공허함만. S1=일반론('4차 산업혁명','급변하는 시장' 등 어디에나 있는 총론), S4=형용사만('다양한/체계적인/효율적인') 구체 없음, S5=주어·시점 실종('~할 예정'만 반복). 실재 문장만 quote, 없으면 []. 확신 있을 때만(오탐 방지) */
+    {"quote":"<계획서 원문에서 '표현이 공허한' 실제 문장 8자 이상 그대로 복사. 실재 문장만>","type":"<S1/S4/S5>","severity":"<치명적/권장>","why":"<왜 공허한지 짧게>","after":"<구체적으로 바꾼 예시 1문장>"}
+    /* 표현의 공허함만(내용 약점 아님). 실재 문장만 quote, 없으면 []. 심사위원처럼 경중을 나눌 것:
+       severity="치명적": 출처 없는 큰 수치·시장규모, '4차 산업혁명'급 교과서 클리셰 등 명백히 감점되는 것. 있는 만큼 다 잡되 확신 있는 것만.
+       severity="권장": 형용사 과잉(다양한/체계적인/효율적인), 다소 일반적이나 고치면 인상이 좋아지는 것.
+       총 3~6개 권장(치명적 우선, 권장 보조). 억지로 채우지 말고 애매하면 넣지 말 것(오탐 방지). S1=일반론, S4=형용사만 구체없음, S5=주어·시점 실종 */
   ],
   "fit": [
     {"item":"<자격항목>","require":"<공고 요구>","current":"<입력/계획서 반영>","status":"<충족/확인필요/미확인>","action":"<조치>"}
@@ -3022,35 +3025,44 @@ function renderReport(d){
     }).join('');
   }
 
-  // ── [신규 v6.2] 표현 밀도 진단 (d.fluff) ──
+  // ── [v6.3] 표현 밀도 진단 (d.fluff) — 심사위원식 경중 등급화 ──
   const fluffCard = $('#fluff-card');
   if(fluffCard){
-    const fluff = Array.isArray(d.fluff) ? d.fluff.filter(f=>f && f.quote && String(f.quote).trim().length>=6) : [];
+    let fluff = Array.isArray(d.fluff) ? d.fluff.filter(f=>f && f.quote && String(f.quote).trim().length>=6) : [];
     if(fluff.length){
       const typeLabel = {S1:'일반론 과잉', S4:'형용사 과잉·실체 부재', S5:'주어·시점 실종'};
       const typeColor = {S1:'#7C3AED', S4:'#B45309', S5:'#DC2626'};
-      // 밀도 게이지: 부실 문장 수 기반 정성 표시 (점수 아님, 비율 개념)
-      const n = fluff.length;
-      const level = n<=1 ? '양호' : n<=3 ? '보통' : '주의';
-      const levelColor = n<=1 ? 'var(--green,#15803D)' : n<=3 ? 'var(--amber,#B45309)' : 'var(--red,#DC2626)';
+      // 치명적 우선 정렬
+      const isCrit = (f)=> /치명|critical|high|상/i.test(String(f.severity||''));
+      fluff = fluff.slice().sort((a,b)=> (isCrit(b)?1:0)-(isCrit(a)?1:0));
+      const critN = fluff.filter(isCrit).length;
+      const recN  = fluff.length - critN;
       const gauge = $('#fluff-gauge');
       if(gauge){
+        const parts = [];
+        if(critN) parts.push(`<span style="font-weight:900;font-size:18px;color:var(--red,#DC2626)">🔴 치명적 ${critN}개</span>`);
+        if(recN)  parts.push(`<span style="font-weight:900;font-size:18px;color:var(--amber,#B45309)">🟡 개선 권장 ${recN}개</span>`);
         gauge.innerHTML = `
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;background:var(--gray-50,#f9fafb);border-radius:12px">
-            <div style="font-size:13px;color:var(--gray-600,#4e5968)">공허한 표현으로 지적된 문장</div>
-            <div style="font-weight:900;font-size:20px;color:${levelColor}">${n}개 · ${level}</div>
-            <div style="flex:1;min-width:120px;font-size:12.5px;color:var(--gray-500,#8b95a1)">상위 계획서는 이런 문장이 적습니다. 아래 예시처럼 바꾸면 설득력이 올라갑니다.</div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;background:var(--gray-50,#f9fafb);border-radius:12px">
+            <div style="font-size:13px;color:var(--gray-600,#4e5968)">공허한 표현</div>
+            ${parts.join('<span style="color:var(--gray-300)">·</span>')}
+            <div style="flex:1;min-width:140px;font-size:12.5px;color:var(--gray-500,#8b95a1)">${critN?'🔴 치명적 문장부터 고치세요. ':''}시간이 부족하면 치명적 항목만, 여유가 있으면 권장까지 손보면 완성도가 올라갑니다.</div>
           </div>`;
       }
       const cards = $('#fluff-cards');
       if(cards){
-        cards.innerHTML = fluff.slice(0,4).map((f,i)=>{
+        cards.innerHTML = fluff.slice(0,6).map((f)=>{
           const ty = String(f.type||'').toUpperCase().match(/S[145]/) ? f.type.toUpperCase() : 'S1';
           const col = typeColor[ty]||'#7C3AED';
           const lab = typeLabel[ty]||'공허한 표현';
+          const crit = isCrit(f);
+          const sevBadge = crit
+            ? '<span style="font-size:11px;font-weight:800;color:#fff;background:var(--red,#DC2626);padding:2px 9px;border-radius:999px">🔴 치명적</span>'
+            : '<span style="font-size:11px;font-weight:800;color:#fff;background:var(--amber,#B45309);padding:2px 9px;border-radius:999px">🟡 개선 권장</span>';
           return `
-          <div style="border:1px solid var(--gray-200,#e5e8eb);border-radius:12px;padding:14px 16px;margin-bottom:10px;background:#fff">
+          <div style="border:1px solid ${crit?'var(--red,#DC2626)':'var(--gray-200,#e5e8eb)'};border-left:4px solid ${crit?'var(--red,#DC2626)':'var(--amber,#B45309)'};border-radius:12px;padding:14px 16px;margin-bottom:10px;background:#fff">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+              ${sevBadge}
               <span style="font-size:11px;font-weight:800;color:#fff;background:${col};padding:2px 9px;border-radius:999px">${esc(ty)} · ${esc(lab)}</span>
             </div>
             <div style="font-size:13.5px;color:var(--gray-700,#4e5968);margin-bottom:8px;padding:8px 10px;background:var(--red-bg,#fdecea);border-radius:8px">
@@ -3063,7 +3075,6 @@ function renderReport(d){
       }
       fluffCard.style.display='';
     } else {
-      // 부실 문장이 없으면 섹션 자체를 숨김 (억지로 표시하지 않음 = 오탐 방지)
       fluffCard.style.display='none';
     }
   }
