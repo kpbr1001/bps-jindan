@@ -865,6 +865,17 @@ tr:last-child td{border-bottom:none;}
       아래 결과보고서는 수정·편집 가능합니다. 최종 제출 전에는 공고문 원문과 전문가 검토를 함께 확인하시기 바랍니다.
     </div>
 
+    <!-- 불완전 응답 경고 배너 (AI가 핵심 항목을 비웠을 때만 표시) -->
+    <div id="incomplete-banner" class="no-print" style="display:none;margin-top:16px;padding:14px 16px;border-radius:12px;background:#fff4f4;border:1px solid #ffd0d0">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:18px;line-height:1.2">⚠️</span>
+        <div style="font-size:14px;color:#c0392b;line-height:1.55">
+          <b>일부 진단 항목이 비어 있습니다.</b> AI가 이번 응답에서 약점·감점 리스크 등 핵심 항목을 충분히 채우지 못했습니다.
+          아래 리포트에 빈 섹션이 있을 수 있으니, <b>상단의 「다시 입력」 후 재진단</b>을 권장합니다. 재진단하면 대부분 정상 생성됩니다.
+        </div>
+      </div>
+    </div>
+
     <!-- 6.1 요약 카드 -->
     <div class="card" style="margin-top:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
@@ -1308,7 +1319,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">5faf82b0</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">9537357b</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1395,7 +1406,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v6.9';
+  var SIG='v7.0';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -1413,7 +1424,7 @@ function auditStaticTitles(){
       var el = document.getElementById('build-loaded');
       if(el){
         if(missing.length===0){
-          el.textContent = '· v6.9 ✓ '+new Date().toISOString().slice(11,19);
+          el.textContent = '· v7.0 ✓ '+new Date().toISOString().slice(11,19);
           el.style.color = '#16a34a';
         } else {
           el.textContent = '· ⚠ 옛 코드 실행 중(누락: '+missing.join(',')+') — 캐시 강력새로고침(Ctrl+Shift+R) 또는 재배포 필요';
@@ -2010,6 +2021,7 @@ ${buildTypeClassifierBlock()}
 3. 근거가 부족하면 "확인 필요"로 표기하고 추측하지 마세요.
 4. 모든 진단은 사업계획서의 실제 내용을 인용·반영해야 합니다. 일반론만 쓰지 마세요.
 5. **근거 인용(evidence) 의무**: 각 평가항목·리스크의 evidence에는 그 판단의 근거가 된 문서 속 문구를 **원문 그대로 8자 이상 복사**해 넣으세요. 요약·바꿔쓰기 금지(시스템이 원문과 대조해 검증합니다). 근거가 문서에 없으면 evidence를 빈 문자열로 두고, 해당 판단은 일반론·추정임을 comment에 밝히세요.
+6. ★★★[가장 중요] 핵심 배열을 절대 비우지 마세요★★★: strengths(강점)·weaknesses(약점)·risks(감점 리스크)·priorities(우선순위)는 반드시 채워야 합니다. 어떤 사업계획서에도 보완할 약점은 존재합니다 — 약점이 하나도 없다는 응답은 진단 실패입니다. summary나 mentoring에서 문제점을 지적했다면, 그 문제들을 반드시 weaknesses와 risks 배열에도 각각 항목으로 옮겨 담으세요. weaknesses 3~5개, risks도 같은 개수로 생성하는 것이 정상입니다.
 
 # 채점 기준 결정 (STEP 0 유형판별 후 수행)
 A. 지원공고문에서 "평가지표·배점표·심사기준"을 먼저 찾으세요. 흔히 '평가항목', '배점', '심사지표', 붙임/별표의 '기술성평가 지표' 등에 있습니다. 공고 본문의 '선정절차/서류평가 항목'에 배점표가 있는 경우가 많으니 반드시 확인하세요.
@@ -2182,20 +2194,22 @@ async function callDiagnosisAPI(parsed, company, mode){
   if(!planText) return null;   // 계획서만 필수
   mode = mode || (noticeText ? 'full' : 'quality');
 
-  const prompt = buildDiagnosisPrompt(noticeText, planText, templateText, company, mode);
+  const basePrompt = buildDiagnosisPrompt(noticeText, planText, templateText, company, mode);
   const endpoint = API_PROXY_URL || 'https://api.anthropic.com/v1/messages';
-  const body = {
-    model: DIAG_MODEL,
-    max_tokens: 12000,                // fluff 등 확장으로 응답이 길어져 상향 (잘림 방지)
-    messages: [{ role:'user', content: prompt }]
+
+  // ── 응답 완결성 검사: 핵심 배열이 비면 '불완전'으로 판정 (빈 껍데기 리포트 방지) ──
+  //   weaknesses·risks는 진단의 핵심 산출물이므로, 하나라도 비면 재시도 대상.
+  const isIncomplete = (d)=>{
+    if(!d) return true;
+    const wk = Array.isArray(d.weaknesses) ? d.weaknesses.length : 0;
+    const rk = Array.isArray(d.risks) ? d.risks.length : 0;
+    return (wk===0 || rk===0);
   };
 
-  try{
-    const res = await fetch(endpoint, {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify(body)
-    });
+  // ── 실제 요청 1회 수행 (프롬프트를 인자로 받아 재시도 시 보정 지시를 덧붙일 수 있게 함) ──
+  const runOnce = async (prompt)=>{
+    const body = { model: DIAG_MODEL, max_tokens: 12000, messages: [{ role:'user', content: prompt }] };
+    const res = await fetch(endpoint, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) });
 
     // 에러 응답이면(스트림 아님) 본문을 읽어 원인 안내
     if(!res.ok){
@@ -2270,6 +2284,23 @@ async function callDiagnosisAPI(parsed, company, mode){
     if(!diag) throw new Error('AI가 생성한 JSON을 해석하지 못했습니다. 다시 시도하면 대부분 정상 처리됩니다.');
     // 자기검증 루프 — evidence를 원문과 대조해 미검증 항목 강등
     verifyEvidence(diag, noticeText + '\n' + planText);
+    return diag;
+  };  // ── runOnce 끝 ──
+
+  // ── 품질 게이트: 1차 요청 → 핵심 배열이 비면 보정 지시로 1회 재요청 ──
+  try{
+    let diag = await runOnce(basePrompt);
+    if(isIncomplete(diag)){
+      // AI가 weaknesses/risks를 비운 경우 — 계획서에 약점이 없을 리 없으므로 재요청
+      console.warn('[Beconic] 1차 응답에 핵심 배열(weaknesses/risks) 누락 → 보정 재요청');
+      const loadText = $('#loading-text');
+      if(loadText) loadText.textContent = 'AI 응답을 보완하는 중입니다… (필수 항목 재요청)';
+      const fixupNote = '\n\n【필수 보정 지시】직전 응답에서 weaknesses(약점) 또는 risks(감점 리스크) 배열이 비어 있었습니다. 이는 진단 실패입니다. 사업계획서에는 반드시 보완할 약점이 존재합니다. 이번에는 weaknesses를 3~5개, risks를 그와 같은 개수로 title/severity/why/fix/steps/docs/evidence를 채워 반드시 생성하고, priorities·rewrites·roadmap도 채우세요. summary와 mentoring에 이미 지적한 문제(예: 팀 구성 공란, 매출 근거 부족 등)를 그대로 배열로 옮기면 됩니다. JSON만 출력하세요.';
+      const retry = await runOnce(basePrompt + fixupNote);
+      if(retry && !isIncomplete(retry)){ diag = retry; }
+      else if(retry){ diag = retry; diag._incomplete = true; }   // 재시도도 부족 → 경고 플래그
+      else if(diag){ diag._incomplete = true; }
+    }
     window.__diagError = null;
     return diag;
   }catch(e){
@@ -2366,6 +2397,8 @@ function validateKoreanText(text){
 /* 실제 진단 데이터(API 응답)로 4~13번 섹션을 채운다 */
 function renderReport(d){
   if(!d) return false;
+  // 불완전 응답 경고 배너 — AI가 핵심 배열을 비운 채 응답했을 때(재시도도 실패) 표시
+  try{ const ib=document.getElementById('incomplete-banner'); if(ib) ib.style.display = d._incomplete ? 'block' : 'none'; }catch(_){}
   // ── 배포·데이터 진단 로그 (F12 콘솔에서 확인) ──
   try{
     console.log('%c[Beconic 진단 v3.1]','color:#3182f6;font-weight:bold',{
@@ -2769,12 +2802,12 @@ function renderReport(d){
   const weaknessToRisk = (w)=>{
     const txt = String(w||'');
     const m = txt.match(/^(.+?)\s*[—–]\s*(.+)$/);
-    const d2 = deriveFixDocs(txt);
     const rawTitle = m ? m[1].trim() : txt.slice(0,40);
     const rawWhy   = m ? m[2].trim() : txt;
-    // ★ smartTitle로 표준 라벨화. evidence는 why 복사 시 8번에서 '왜 위험한가'와 중복되므로 비워둔다.
-    //   (실제 계획서 원문은 AI가 risks[].evidence 또는 rewrites[].quote로 별도 제공)
-    return { title: smartTitle(rawTitle, rawWhy), severity:'중', penalty:'', why: rawWhy, fix: d2.fix, docs: d2.docs, evidence: '' };
+    const title = smartTitle(rawTitle, rawWhy);
+    // ★ fix/docs는 오분류 정규식(deriveFixDocs) 대신 제목 기반 중립 폴백을 사용해 'OEM→AI' 같은 오분류를 차단한다.
+    //   evidence는 why 복사 시 8번의 '왜 위험한가'와 중복되므로 비워둔다.
+    return { title, severity:'중', penalty:'', why: rawWhy, fix: neutralGuide(title), docs: `${riskSubject(title)} 관련 근거 자료(출처가 명시된 통계·실적·계약·증빙 등)`, evidence: '' };
   };
 
   const lv = (l)=> l==='양호'?'sev-low': l==='취약'?'sev-high':'sev-mid';
