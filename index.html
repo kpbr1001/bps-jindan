@@ -611,8 +611,8 @@ tr:last-child td{border-bottom:none;}
   .summary-grid{grid-template-columns:repeat(2,1fr);gap:10px;}  /* A4: 4열→2열, 제목 줄바꿈 여유 확보 */
   .scard{padding:12px 14px;}
   .scard .v{font-size:13pt;line-height:1.4;}
-  table{min-width:0;font-size:9pt;}
-  th,td{padding:7px 9px;}
+  table{min-width:0;font-size:9pt;table-layout:fixed;width:100%;}
+  th,td{padding:7px 9px;word-break:break-word;overflow-wrap:anywhere;vertical-align:top;}
   .table-wrap{overflow:visible;border:1px solid #d1d6db;}
   .editable{border:1px solid #ccc;background:#fff;}
   .footer{border-top:1px solid #999;page-break-inside:avoid;}
@@ -1318,7 +1318,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">f6838376</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">c8c2de74</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1405,7 +1405,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v7.4';
+  var SIG='v7.5';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -2899,6 +2899,17 @@ function renderReport(d){
     ? ((d.grade||'')+'등급 · 작성 완성도')
     : ((d.grade||'')+'등급 · '+(total>=cut?'선정권':'보완 필요'));
   const heroVerdict = $('#hero-verdict');
+  // 점수 격차 기반 상태 라벨: verdict(AI 문장)와 점수 톤이 어긋나 보이지 않도록 명확한 상태를 코드가 얹는다.
+  //   (예: 74점 통과인데 "보완 필요"만 강조돼 부정적으로 읽히던 문제 방지)
+  const _gapForLabel = isQuality ? null : (d.gapToCut!=null ? d.gapToCut : (total-cut));
+  const scoreLabel = (g)=>{
+    if(g==null) return '';
+    if(g>=10) return '선정 유력권';
+    if(g>=3)  return '서류 통과권 · 발표 보강 시 안정권';
+    if(g>=0)  return '통과 경계선 · 보완 시 안정권 진입';
+    if(g>=-5) return '경계선 아래 · 보완 시 통과 가능';
+    return '기준선 미달 · 우선 보완 필수';
+  };
   if(heroVerdict){
     // 모호한 한자어 표현을 쉬운 말로 다듬기 (사용자 친화)
     let vtxt = String(d.verdict||'');
@@ -3575,7 +3586,7 @@ function renderReport(d){
     sg.innerHTML = [
       [isQuality?'완성도 점수':'종합 점수',`<span style="font-weight:900;font-size:18px;color:var(--blue-dark)">${total}<span style="font-size:12px;color:var(--gray-500)">/100</span></span> <span class="status-chip chip-mid" style="margin-left:4px">${esc(d.grade||'')}등급</span>`],
       card2,
-      ['종합 판정',`<span style="font-weight:800;font-size:13px">${esc(d.verdict||'')}</span>`],
+      ['종합 판정',`<span style="font-weight:800;font-size:13px;color:${(_gapForLabel!=null&&_gapForLabel>=0)?'var(--green)':'var(--red)'}">${esc(isQuality?(d.verdict||''):(scoreLabel(_gapForLabel)||d.verdict||''))}</span>${(!isQuality&&d.verdict)?`<div class="muted" style="font-size:11.5px;margin-top:3px;line-height:1.4">${esc(d.verdict)}</div>`:''}`],
       ['최우선 보완',`<span style="font-weight:800">${esc(topPrio)}</span>`]
     ].map(c=>`<div class="scard"><div class="k">${c[0]}</div><div class="v">${c[1]}</div></div>`).join('');
   }
@@ -3594,9 +3605,9 @@ function renderReport(d){
       if(d.items && d.items.length){
         cand = [...d.items]
           .map(it=>{ const max=+it.max||0, sc=+it.score||0; const deficit=Math.max(0,max-sc);
-                     return { title:String(it.name||'').trim(), deficit, gain:Math.max(deficit>0?1:0, Math.min(5, Math.round(deficit*0.4))) }; })
+                     return { title:String(it.name||'').trim(), deficit, ratio: max>0?sc/max:1, gain:Math.max(deficit>0?1:0, Math.min(5, Math.round(deficit*0.4))) }; })
           .filter(x=>x.title && x.gain>0)
-          .sort((a,b)=>b.deficit-a.deficit)   // 충족률 낮은(부족분 큰) 항목부터
+          .sort((a,b)=>a.ratio-b.ratio)   // 충족률 낮은 순 — 최우선 보완(1번 요약)과 동일 기준으로 통일
           .slice(0,4);
       } else {
         // items가 없을 때만 priorities/risks로 폴백
