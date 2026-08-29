@@ -865,8 +865,8 @@ tr:last-child td{border-bottom:none;}
       아래 결과보고서는 수정·편집 가능합니다. 최종 제출 전에는 공고문 원문과 전문가 검토를 함께 확인하시기 바랍니다.
     </div>
 
-    <!-- 불완전 응답 경고 배너 (AI가 핵심 항목을 비웠을 때만 표시) -->
-    <div id="incomplete-banner" class="no-print" style="display:none;margin-top:16px;padding:14px 16px;border-radius:12px;background:#fff4f4;border:1px solid #ffd0d0">
+    <!-- 불완전 응답 경고 배너 (AI가 핵심 항목을 비웠고 파생도 불가할 때만 표시. 인쇄에도 남긴다) -->
+    <div id="incomplete-banner" style="display:none;margin-top:16px;padding:14px 16px;border-radius:12px;background:#fff4f4;border:1px solid #ffd0d0">
       <div style="display:flex;gap:10px;align-items:flex-start">
         <span style="font-size:18px;line-height:1.2">⚠️</span>
         <div style="font-size:14px;color:#c0392b;line-height:1.55">
@@ -1319,7 +1319,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">9537357b</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">aad95cc5</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1406,7 +1406,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v7.0';
+  var SIG='v7.1';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -1424,7 +1424,7 @@ function auditStaticTitles(){
       var el = document.getElementById('build-loaded');
       if(el){
         if(missing.length===0){
-          el.textContent = '· v7.0 ✓ '+new Date().toISOString().slice(11,19);
+          el.textContent = '· v7.1 ✓ '+new Date().toISOString().slice(11,19);
           el.style.color = '#16a34a';
         } else {
           el.textContent = '· ⚠ 옛 코드 실행 중(누락: '+missing.join(',')+') — 캐시 강력새로고침(Ctrl+Shift+R) 또는 재배포 필요';
@@ -2187,6 +2187,51 @@ function parseLenientJSON(raw){
   return null;
 }
 
+/* ============================================================
+   방향1 — items 기반 자동 파생
+   AI가 items(항목별 점수·comment·action)는 잘 채우면서 weaknesses/risks
+   배열은 자주 비우는 구조적 문제에 대응. 재시도로도 안 채워지면,
+   AI가 이미 생산한 items의 분석을 코드로 약점·리스크로 변환한다.
+   → AI 재호출 없이 결정론적으로 채워 '빈 껍데기 리포트'를 원천 차단.
+   ============================================================ */
+function deriveIssuesFromItems(diag){
+  const items = Array.isArray(diag.items) ? diag.items : [];
+  if(!items.length) return { wk:[], risks:[] };
+  // comment에서 '약점 부분'만 추출: 역접(다만/그러나/~으나) 뒤를 우선 채택
+  const extractWeak = (comment)=>{
+    let t = String(comment||'').trim();
+    let m = t.match(/(?:다만|그러나|하지만)[\s,]*(.+)/);
+    if(m) return m[1].trim();
+    m = t.match(/(?:으나|하나|지만)[\s,]*(.+)/);
+    if(m) return m[1].trim();
+    return t;   // 역접이 없으면(취약 항목 등) comment 전체가 약점
+  };
+  // 약점 신호: level이 취약/보통이거나 comment에 결핍 표현이 있으면
+  const weakMarkers = /(다만|그러나|하지만|으나|부족|미흡|공란|불명확|불충분|낮|없|미기재|한 줄|불과|아쉬|취약|보강|모호|미제시)/;
+  const wk = [], risks = [];
+  items.forEach(it=>{
+    const name = String(it.name||'').trim();
+    const comment = String(it.comment||'').trim();
+    const action = String(it.action||'').trim();
+    const level = String(it.level||'').trim();
+    if(!name || !comment) return;
+    const hasWeak = (level==='취약' || level==='보통') || weakMarkers.test(comment);
+    if(!hasWeak) return;
+    const weakPart = extractWeak(comment);
+    const sev = level==='취약' ? '상' : '중';   // 양호+약점신호도 '중'
+    wk.push(`${name} — ${weakPart}`);
+    risks.push({
+      title: name, severity: sev, penalty: '',
+      why: weakPart,
+      fix: action || '',           // AI action은 이미 구체적 보완방향 → 그대로 fix로
+      steps: '', docs: '',
+      evidence: comment.slice(0,80),
+      _derived: true
+    });
+  });
+  return { wk, risks };
+}
+
 async function callDiagnosisAPI(parsed, company, mode){
   const noticeText   = parsed.notice   && parsed.notice.text   || '';
   const planText     = parsed.plan     && parsed.plan.text     || '';
@@ -2298,8 +2343,22 @@ async function callDiagnosisAPI(parsed, company, mode){
       const fixupNote = '\n\n【필수 보정 지시】직전 응답에서 weaknesses(약점) 또는 risks(감점 리스크) 배열이 비어 있었습니다. 이는 진단 실패입니다. 사업계획서에는 반드시 보완할 약점이 존재합니다. 이번에는 weaknesses를 3~5개, risks를 그와 같은 개수로 title/severity/why/fix/steps/docs/evidence를 채워 반드시 생성하고, priorities·rewrites·roadmap도 채우세요. summary와 mentoring에 이미 지적한 문제(예: 팀 구성 공란, 매출 근거 부족 등)를 그대로 배열로 옮기면 됩니다. JSON만 출력하세요.';
       const retry = await runOnce(basePrompt + fixupNote);
       if(retry && !isIncomplete(retry)){ diag = retry; }
-      else if(retry){ diag = retry; diag._incomplete = true; }   // 재시도도 부족 → 경고 플래그
-      else if(diag){ diag._incomplete = true; }
+      else {
+        // 재시도도 배열을 비웠다 → AI가 이미 채운 items에서 약점·리스크를 파생해 결정론적으로 채운다.
+        const src = (retry && Array.isArray(retry.items) && retry.items.length) ? retry : diag;
+        const { wk, risks } = deriveIssuesFromItems(src);
+        if(wk.length || risks.length){
+          if(retry) diag = retry;
+          if(!(Array.isArray(diag.weaknesses) && diag.weaknesses.length)) diag.weaknesses = wk;
+          if(!(Array.isArray(diag.risks) && diag.risks.length)) diag.risks = risks;
+          diag._derivedFilled = true;   // 파생으로 채웠음(정상 렌더, 경고 배너 없음)
+          console.warn('[Beconic] 재시도 후에도 배열 누락 → items에서 '+wk.length+'개 약점·'+risks.length+'개 리스크 파생 완료');
+        } else {
+          // items조차 부실해 파생 불가 → 경고 플래그
+          if(retry) diag = retry;
+          if(diag) diag._incomplete = true;
+        }
+      }
     }
     window.__diagError = null;
     return diag;
