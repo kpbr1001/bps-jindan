@@ -1308,7 +1308,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">bc288755</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">5faf82b0</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1395,7 +1395,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v6.8';
+  var SIG='v6.9';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -1413,7 +1413,7 @@ function auditStaticTitles(){
       var el = document.getElementById('build-loaded');
       if(el){
         if(missing.length===0){
-          el.textContent = '· v6.8 ✓ '+new Date().toISOString().slice(11,19);
+          el.textContent = '· v6.9 ✓ '+new Date().toISOString().slice(11,19);
           el.style.color = '#16a34a';
         } else {
           el.textContent = '· ⚠ 옛 코드 실행 중(누락: '+missing.join(',')+') — 캐시 강력새로고침(Ctrl+Shift+R) 또는 재배포 필요';
@@ -2101,6 +2101,24 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
 ★★ risks와 priorities와 rewrites는 절대 비우지 마세요. weaknesses(약점)를 작성했다면 그 약점들을 감점 리스크(risks)와 보완 우선순위(priorities)와 수정예시(rewrites)로도 반드시 변환해 채우세요. risks는 title/severity/why/fix/docs 형식, priorities는 rank/title/effect/why 형식, rewrites는 topic/before/after 형식으로 구체화합니다. 이 셋 중 하나라도 비면 진단이 불완전합니다. roadmap도 4~6개 반드시 채우세요.
 ★★ fluff(근거 없는 단정)의 고유 임무는 다른 섹션과 명확히 다릅니다. risks(감점 리스크)는 '내용·구조의 약점(무엇이 빠졌나)', rewrites(수정 예시)는 '공고 평가축 문장의 표현 개선'을 다룹니다. fluff는 오직 "계획서가 근거 없이 사실처럼 단정한 주장" — 시장규모·매출·경쟁력·성과를 출처·수치·검증 없이 진술해 심사위원이 "근거는?"이라고 되물을 문장만 잡으세요. ★risks·rewrites에서 이미 다룬 문장을 fluff에서 반복하지 마세요(중복 금지). 판단 기준은 "심사에서 감점되는가?"뿐이며, 형용사가 많다거나 표현이 매끄럽지 않다는 이유로는 절대 잡지 마세요. 근거 없는 단정이 없으면 빈 배열 []로 두세요. 진짜 심사위원이 "이건 무슨 근거로?"라고 물을 문장만 고르세요.
 ★★ 개수 일치 (중요): weaknesses에 작성한 약점의 개수만큼 risks도 동일하게 만드세요. 약점이 5개면 risks도 5개입니다 — 하나도 누락하지 마세요. priorities는 그 중 점수 영향이 큰 상위 3~4개, roadmap은 risks 전체를 제출 순서로 재배열해 risks와 같은 개수로 만드세요. "핵심 메시지"(mentoring 내 요약)와 roadmap 단계 수가 크게 어긋나지 않도록 하세요. 점수 영향이 큰 약점부터 risks·priorities 상위에 배치합니다.
+★★ [매우 중요] risks의 fix·steps·docs 작성 규칙 — 카드마다 반드시 그 리스크에만 해당하는 내용이어야 합니다. 아래는 실제 대비 예시입니다.
+
+  ✗ 나쁜 예 (모든 카드에 같은 문구 복사 — 절대 금지):
+    카드1 fix: "해당 위험을 계획서에 근거·수치·수행 방식과 함께 구체적으로 보강하세요."
+    카드2 fix: "해당 위험을 계획서에 근거·수치·수행 방식과 함께 구체적으로 보강하세요."
+    → 이렇게 똑같이 쓰면 심각한 오류입니다. 어느 카드에도 실질 도움이 안 됩니다.
+
+  ✓ 좋은 예 (각 리스크의 실제 대상을 짚어 다르게):
+    카드1 title "매출 산출근거 부족"
+      fix: "매출 목표(2.5억→6.5억→15억)의 산출식을 '타깃 거래처 수×평균 객단가×수주 전환율'로 제시하고, 각 수치를 기존 실적·유사업체 데이터로 뒷받침하세요."
+      steps: "① 최근 3년 실적·파이프라인 확보 → ② 전환율·객단가 근거 정리 → ③ 연도별 산출식과 출처를 표로 삽입"
+      docs: "최근 3년 매출 실적표, 수주 파이프라인, 유사업체 매출 벤치마크(출처 명시)"
+    카드2 title "OEM 협력사 정보 미기재"
+      fix: "OEM 협력사의 업체명·납품 이력·계약 형태(MOU/정식계약)를 명시하고, 품질관리·납기 대응 체계를 함께 기술해 제조 안정성을 입증하세요."
+      steps: "① 협력사 리스트·계약 현황 정리 → ② 납품 실적·품질 인증 확보 → ③ 공급망 안정성 근거를 표로 삽입"
+      docs: "OEM 계약서·MOU, 협력사 납품 실적, 품질경영 인증서"
+
+  → 두 카드의 fix·steps·docs가 대상(매출 vs 협력사)에 따라 완전히 다릅니다. 반드시 각 리스크 고유의 내용으로 채우고, 계획서에 실제 등장한 제품·수치·상황을 인용해 구체화하세요.
 JSON만 출력하세요.`;
 }
 
@@ -2617,6 +2635,21 @@ function renderReport(d){
       default: return '이 강점을 관련 약점 서술의 첫 문장에 근거로 배치하세요. "이미 ~을 확보했고, 이를 바탕으로 ~을 보완한다"는 구조가 설득력을 높입니다.';
     }
   };
+  // ── 중립 안전 폴백: 정규식으로 '축'을 추정하지 않고, 리스크 제목 자체를 대상으로 삼는다 ──
+  //   deriveGuide/deriveActionSteps의 정규식 오분류(예: 'OEM…검증'→AI축)를 원천 차단.
+  //   제목에서 결핍어·괄호부연만 떼어 핵심 대상을 뽑고, 딴소리가 불가능한 중립 지시를 만든다.
+  const riskSubject = (title)=>{
+    let t = String(title||'').replace(/\([^)]*\)/g,'').trim();          // 괄호 부연 제거
+    t = t.replace(/\s*(부족|미흡|부재|미비|누락|불일치|미제시|공란|취약|저조)\s*$/,'').trim(); // 결핍어 제거→대상만
+    return t || '해당 항목';
+  };
+  const neutralGuide = (title)=>{
+    return `${riskSubject(title)}에 대한 구체적 근거·수치·수행 방식을 계획서에 제시해 심사위원이 검증할 수 있게 보완하세요.`;
+  };
+  const neutralSteps = (title)=>{
+    const s = riskSubject(title);
+    return `① 계획서에서 ${s} 관련 현재 서술 확인 → ② 뒷받침 근거·수치·출처 조사·확보 → ③ 검증 가능한 문장·표로 재작성`;
+  };
   // ── 9번 로드맵 전용: 리스크 title → '실행 단계'(무엇을 준비/작성하는지) ──
   // 8번의 '해결책 문구'를 반복하지 않고, 착수자가 바로 실행할 준비 항목을 제시한다.
   const deriveActionSteps = (title, why)=>{
@@ -2956,16 +2989,17 @@ function renderReport(d){
     })();
     d.risks = risks; // suppress 필터가 이미 위에서 처리됨 (weaknesses는 유형정합하므로 안전)
     // AI가 보낸 risks의 fix/docs가 비었거나 무의미하면 title·why 축 감지로 보정 (엉뚱한 해결책 방지)
-    // ★ AI가 준 fix/steps/docs를 신뢰. 폴백은 진짜 비었을 때만(근본치료: 정규식 폴백이 AI 값을 덮어 복붙되던 문제 해결)
-    //   추가로, 여러 카드가 같은 fix를 반환한 경우(AI가 게을러서 복붙)만 폴백으로 개별화한다.
+    // ★ AI가 준 fix/docs를 신뢰. 폴백은 (a)진짜 비었거나 (b)카드끼리 복붙일 때만 발동하되,
+    //   '축 추정' 정규식(deriveGuide) 대신 제목 자체를 대상으로 하는 중립 폴백을 쓴다.
+    //   → 'OEM…검증'을 AI축으로 오분류하던 문제 원천 차단. 폴백이 엉뚱한 리스크를 가리킬 수 없음.
     const fixSeen = {};
     risks.forEach(r=>{ const k=String(r.fix||'').replace(/\s+/g,''); if(k) fixSeen[k]=(fixSeen[k]||0)+1; });
     risks.forEach(r=>{
       const fx = String(r.fix||'').trim();
-      const dupFix = fx && fixSeen[fx.replace(/\s+/g,'')] > 1;   // 2개 이상 카드가 동일 fix → 복붙으로 판단
-      if(!fx || fx.length < 8 || dupFix){ r.fix = deriveGuide(r.title, r.why); }
-      // docs: AI가 구체적으로 줬으면 신뢰. 비었을 때만 축 감지 폴백(고정 한 줄 대신 deriveFixDocs 사용)
-      if(!String(r.docs||'').trim()){ r.docs = deriveFixDocs(String(r.title||'')+' '+String(r.why||'')).docs; }
+      const dupFix = fx && fixSeen[fx.replace(/\s+/g,'')] > 1;   // 2개 이상 카드가 동일 fix → 복붙
+      if(!fx || fx.length < 8 || dupFix){ r.fix = neutralGuide(r.title); }
+      // docs: AI가 줬으면 신뢰. 비었을 때만 중립 폴백(제목 대상 명시, 축 추정 안 함)
+      if(!String(r.docs||'').trim()){ r.docs = `${riskSubject(r.title)} 관련 근거 자료(출처가 명시된 통계·실적·계약·증빙 등)`; }
     });
     riskBox.innerHTML = risks.map((r,i)=>{
       const vb = r._verify==='fail'
@@ -2978,7 +3012,7 @@ function renderReport(d){
       const aiSteps = String(r.steps||'').trim();
       const stepsDupKey = aiSteps.replace(/\s+/g,'');
       const stepsDup = aiSteps && (risks.filter(x=>String(x.steps||'').replace(/\s+/g,'')===stepsDupKey).length > 1);
-      const steps = (aiSteps && aiSteps.length >= 8 && !stepsDup) ? aiSteps : deriveActionSteps(r.title, r.why);
+      const steps = (aiSteps && aiSteps.length >= 8 && !stepsDup) ? aiSteps : neutralSteps(r.title);
       // 계획서 원문: evidence가 why와 사실상 같으면(weaknessToRisk가 복사한 경우) 중복이므로 숨김
       const ev = String(r.evidence||'').trim();
       const whyN = String(r.why||'').replace(/\s+/g,'');
@@ -3039,7 +3073,7 @@ function renderReport(d){
     // prio-steps 요소가 있을 때만 렌더 (9번 통합 이후엔 보통 없음 — 8번·체크리스트가 대체)
     if(prioBox && prios && prios.length){
       prioBox.innerHTML = prios.map(p=>{
-        const steps = deriveActionSteps(p.title, p.why);
+        const steps = neutralSteps(p.title);
         const ev = String(p.evidence||'').trim();
         const evLine = ev ? `<div class="pb-evidence" style="margin-top:6px;font-size:12.5px;color:var(--gray-500,#8b95a1)">📄 계획서 현재: &ldquo;${esc(ev.length>60?ev.slice(0,60)+'…':ev)}&rdquo;</div>` : '';
         return `
@@ -3067,7 +3101,7 @@ function renderReport(d){
         <span class="q-right"><span class="qmini ${mini}">${esc(it.level)} ${pct}%</span><span class="q-arrow">▼</span></span></summary>
         <div class="q-body">
           <div class="q-block">${esc(it.comment||'')}</div>
-          <div class="q-action"><span class="qa-label">보완 방향</span> ${esc(it.action || deriveGuide(it.name, it.comment))}</div>
+          <div class="q-action"><span class="qa-label">보완 방향</span> ${esc(it.action || neutralGuide(it.name))}</div>
         </div>
       </details>`;
     }).join('');
