@@ -883,6 +883,16 @@ tr:last-child td{border-bottom:none;}
         <span class="sample-badge" id="summary-badge">예시 데이터</span>
       </div>
       <div style="height:14px"></div>
+      <!-- 적격성 경고: 점수와 무관하게 신청 자격 자체를 위협하는 리스크 (AI가 eligibilityAlert로 추출 시 표시) -->
+      <div id="eligibility-alert" style="display:none;margin-bottom:14px;background:var(--red-bg,#ffe8e8);border:1px solid #ffc9c9;border-left:5px solid var(--red,#e03131);border-radius:12px;padding:14px 16px;">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span style="font-size:18px;line-height:1.3">🚨</span>
+          <div>
+            <div style="font-size:13.5px;font-weight:800;color:var(--red,#e03131);margin-bottom:4px">신청 자격 우선 확인 — 점수보다 먼저입니다</div>
+            <div id="eligibility-alert-text" style="font-size:13px;color:var(--gray-800,#2b3440);line-height:1.6"></div>
+          </div>
+        </div>
+      </div>
       <div class="summary-grid" id="summary-grid"></div>
 
       <!-- A1. 합격 시나리오 시뮬레이션 (점수·penalty·effect 기반, 지어내기 없음) -->
@@ -1319,7 +1329,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">11520f72</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">5045575e</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1406,7 +1416,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v7.6';
+  var SIG='v7.7';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -2063,6 +2073,7 @@ ${templateText ? '# 작성양식 (발췌)\n'+templateText.slice(0,4000) : ''}
   "rubricSource": "<공고명시 / 추정>",
   "cutScore": <선정 기준선 점수, 공고 명시값 또는 70>,
   "gapToCut": <cutScore 대비 점수차, 음수면 부족>,
+  "eligibilityAlert": "<점수와 무관하게 '신청 자격 자체'를 위협하는 치명적 리스크가 계획서·공고에서 발견되면 한 문장으로. 예: 동시수행 금지 대상 해당 가능(과제명에 자율형공장 명기), 입력 기업명과 계획서 법인명 불일치, 업력이 공고 자격연한 초과 등. 없으면 빈 문자열. 점수 감점이 아니라 '신청 불가·탈락'으로 이어질 수 있는 것만. 일반 보완사항은 넣지 말 것>",
   "verdict": "<한 줄 종합 판정, 30자 내외. 쉬운 일상어로 작성 — '직하·직상·상회·하회' 같은 한자어 대신 '바로 아래·근접·2점 부족' 등 직관적 표현 사용>",
   "summary": "<종합 의견 3~4문장, 사업계획서 실제 내용 반영>",
   "items": [
@@ -2986,7 +2997,39 @@ function renderReport(d){
 
   // 6) 강점/약점
   const strBox = $('#sw-strengths'), wkBox = $('#sw-weaknesses');
-  if(strBox && d.strengths) strBox.innerHTML = d.strengths.map(s=>`<li>${esc(s)}</li>`).join('');
+  // 강점 파생: AI가 strengths를 비웠을 때 items의 양호/보통 항목 comment에서 긍정 부분을 추출(약점 파생과 대칭)
+  let strengthsToShow = (Array.isArray(d.strengths) && d.strengths.length) ? d.strengths : [];
+  if(!strengthsToShow.length && Array.isArray(d.items) && d.items.length){
+    const posMarker = /(양호|우수|충실|구체적|상세|명기|명확|확보|보유|탄탄|강점|잘 |적절|체계적|풍부)/;
+    const derived = [];
+    [...d.items].sort((a,b)=>(b.score/b.max)-(a.score/a.max)).forEach(it=>{
+      if(derived.length>=4) return;
+      const lv = String(it.level||'');
+      const cm = String(it.comment||'').trim();
+      const ratio = it.max ? it.score/it.max : 0;
+      if(!it.name) return;
+      if((lv==='양호'||lv==='보통') && cm){
+        // 역접(으나/되나/하나/다만/그러나) 앞부분 = 긍정 서술
+        let pos = cm.split(/(?:으나|되나|였으나|았으나|었으나|하나|지만|다만|그러나|하지만)/)[0].trim();
+        pos = pos.replace(/[,·\s]+$/,'').trim();
+        if(pos.length>=8 && posMarker.test(pos)){ derived.push(`${it.name} — ${pos}`); return; }
+      }
+      // comment가 없거나 긍정부 추출 실패 시: 충족률 기반 기본 강점 (양호 또는 70%+)
+      if(lv==='양호'){
+        derived.push(`${it.name} — 배점 대비 충족도가 양호한 항목`);
+      } else if(ratio>=0.7){
+        derived.push(`${it.name} — 배점 대비 ${Math.round(ratio*100)}% 충족으로 기본기가 갖춰진 항목`);
+      }
+    });
+    if(derived.length) strengthsToShow = derived;
+  }
+  if(strBox){
+    strBox.innerHTML = strengthsToShow.length
+      ? strengthsToShow.map(s=>`<li>${esc(s)}</li>`).join('')
+      : `<li style="color:var(--gray-500)">뚜렷한 강점 항목이 도출되지 않았습니다. 위 약점 보완이 우선입니다.</li>`;
+  }
+  // 파생 결과를 d.strengths에 반영(핵심진단 문구·브릿지에서 재사용)
+  if(strengthsToShow.length && !(Array.isArray(d.strengths)&&d.strengths.length)) d.strengths = strengthsToShow;
   if(wkBox && d.weaknesses) wkBox.innerHTML = d.weaknesses.map(s=>`<li>${esc(s)}</li>`).join('');
   // 핵심 진단 문구 — 계획서별 강점/약점 개수·최약 항목 반영 (매번 동일 문구 방지)
   const swInsight = $('#sw-insight');
@@ -3202,11 +3245,19 @@ function renderReport(d){
     qBox.innerHTML = d.items.map((it,i)=>{
       const pct = Math.round((it.score/it.max)*100);
       const mini = it.level==='양호'?'qm-g': it.level==='취약'?'qm-r':'qm-y';
+      // comment가 비면 level·충족률 기반 폴백 진단 문구 생성 (AI가 후순위 항목을 덜 채우는 경우 방지)
+      let cmt = String(it.comment||'').trim();
+      if(!cmt){
+        const lv = String(it.level||'');
+        if(lv==='양호') cmt = `배점(${it.max}점) 대비 ${pct}% 충족으로 양호한 항목입니다. 현재 서술을 유지하되, 근거 수치·출처를 한 단계 더 보강하면 만점권에 근접할 수 있습니다.`;
+        else if(lv==='취약') cmt = `배점 대비 충족률이 ${pct}%로 낮아 우선 보완 대상입니다. 핵심 근거·정량 지표가 부족할 가능성이 높으니 아래 보완 방향을 참고하세요.`;
+        else cmt = `배점(${it.max}점) 대비 ${pct}% 충족으로 보통 수준입니다. 서술은 있으나 정량 근거·증빙 연계가 부족해 점수 상승 여지가 있습니다.`;
+      }
       return `<details class="qcard"${i===0?' open':''}>
         <summary><span class="q-title">${i+1}. ${esc(it.name)} · ${it.score}/${it.max}점</span>
         <span class="q-right"><span class="qmini ${mini}">${esc(it.level)} ${pct}%</span><span class="q-arrow">▼</span></span></summary>
         <div class="q-body">
-          <div class="q-block">${esc(it.comment||'')}</div>
+          <div class="q-block">${esc(cmt)}</div>
           <div class="q-action"><span class="qa-label">보완 방향</span> ${esc(it.action || neutralGuide(it.name))}</div>
         </div>
       </details>`;
@@ -3569,6 +3620,14 @@ function renderReport(d){
   }
 
   // 요약 카드 갱신
+  // 적격성 경고: 점수와 무관하게 신청 자격을 위협하는 리스크가 있으면 진단요약 상단에 노출
+  const elAlert = $('#eligibility-alert'), elAlertTxt = $('#eligibility-alert-text');
+  if(elAlert && elAlertTxt){
+    const alertMsg = String(d.eligibilityAlert||'').trim();
+    if(alertMsg && !isQuality){ elAlertTxt.textContent = alertMsg; elAlert.style.display=''; }
+    else { elAlert.style.display='none'; }
+  }
+
   const sg = $('#summary-grid');
   if(sg){
     // 최우선 보완: 5번 평가항목 대응도·6번 핵심진단과 '동일 기준'(충족률 score/max 최저)으로 통일.
