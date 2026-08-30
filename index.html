@@ -375,6 +375,10 @@ tr:last-child td{border-bottom:none;}
   background:linear-gradient(135deg,#0b3d91,var(--blue));border-radius:var(--radius);
   padding:28px 30px;color:#fff;
 }
+/* 점수 구간별 배경색: 70+ 통과권(초록), 60~69 보완필요(앰버), 60미만 대폭보완(레드) */
+.score-hero.sh-pass{background:linear-gradient(135deg,#0f7a4d,#16a34a);}
+.score-hero.sh-warn{background:linear-gradient(135deg,#b45309,#f59e0b);}
+.score-hero.sh-fail{background:linear-gradient(135deg,#991b1b,#e03131);}
 .score-hero .gauge-wrap{position:relative;width:168px;height:168px;flex-shrink:0;}
 .score-hero .gauge-label{
   position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
@@ -1270,7 +1274,7 @@ tr:last-child td{border-bottom:none;}
 
 담당 컨설턴트가 기업 상황에 맞는 추가 의견을 여기에 작성합니다. 예) 해당 기업은 화장품 제조 분야 초기창업기업으로, 인증·시험성적서 확보 일정을 사업계획서 추진일정에 반영할 것을 권장합니다.
 
-작성한 내용은 임시 저장되며 PDF·HTML·TXT 저장 시 그대로 반영됩니다.</div>
+작성한 내용은 임시 저장되며 PDF 저장 시 그대로 반영됩니다.</div>
       <div class="btn-group no-print" style="margin-top:14px">
         <button id="btn-save-edit" class="btn btn-ghost btn-sm">💾 임시 저장</button>
         <button id="btn-reset-edit" class="btn btn-ghost btn-sm">↺ 초기화</button>
@@ -1296,9 +1300,6 @@ tr:last-child td{border-bottom:none;}
       <div style="height:12px"></div>
       <div class="btn-group">
         <button id="btn-pdf" class="btn btn-primary">🖨️ PDF 저장 / A4 인쇄</button>
-        <button id="btn-saveas" class="btn btn-outline">📥 다른 이름 저장 (HTML)</button>
-        <button id="btn-savetxt" class="btn btn-outline">📄 TXT 저장</button>
-        <button id="btn-share" class="btn btn-ghost">🔗 공유</button>
       </div>
     </div>
 
@@ -1329,7 +1330,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">8f97972d</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">e6c5ae74</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1416,7 +1417,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v7.8';
+  var SIG='v8.1';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -1434,7 +1435,7 @@ function auditStaticTitles(){
       var el = document.getElementById('build-loaded');
       if(el){
         if(missing.length===0){
-          el.textContent = '· v7.3 ✓ '+new Date().toISOString().slice(11,19);
+          el.textContent = '· '+SIG+' ✓ '+new Date().toISOString().slice(11,19);
           el.style.color = '#16a34a';
         } else {
           el.textContent = '· ⚠ 옛 코드 실행 중(누락: '+missing.join(',')+') — 캐시 강력새로고침(Ctrl+Shift+R) 또는 재배포 필요';
@@ -2902,6 +2903,8 @@ function renderReport(d){
     b.style.color = 'var(--green)';
     b.style.borderColor = '#bbf0cf';
   });
+  // 예시 안내 배너(큰 박스)는 실제 진단 시 불필요 → 숨김 (방법론 카드와 4번 카드 사이 빈 여백 제거)
+  $$('#diagnosis-wrap .sample-banner').forEach(b=>{ b.style.display='none'; });
 
   // 4) 종합 점수 히어로
   const total = d.totalScore!=null ? d.totalScore : (d.items||[]).reduce((s,i)=>s+(i.score||0),0);
@@ -2958,6 +2961,17 @@ function renderReport(d){
   // 게이지 원호
   const circ = $('#hero-gauge-arc');
   if(circ){ const C=326.7; circ.setAttribute('stroke-dashoffset', (C*(1-total/maxSum)).toFixed(1)); }
+  // 점수 구간별 배경색: 70+ 초록(통과권) / 60~69 앰버(보완필요) / 60미만 레드(대폭보완)
+  //   품질모드(공고 없음)는 절대점수 의미가 약해 기본 파란색 유지
+  const heroEl = circ ? circ.closest('.score-hero') : document.querySelector('.score-hero');
+  if(heroEl){
+    heroEl.classList.remove('sh-pass','sh-warn','sh-fail');
+    if(!isQuality){
+      if(total>=70) heroEl.classList.add('sh-pass');
+      else if(total>=60) heroEl.classList.add('sh-warn');
+      else heroEl.classList.add('sh-fail');
+    }
+  }
 
   // 5) 평가항목 갭차트 + 합계
   const gapBox = $('#eval-gaprows');
@@ -3708,7 +3722,8 @@ function renderReport(d){
           <div style="flex:1"><b>현재 상태</b></div>
           <div style="font-weight:900;font-size:15px;color:${gap>=0?'var(--green)':'var(--red)'}">${total}점</div>
         </div>`);
-        let crossed = (gap>=0);
+        const alreadyOver = (gap>=0);   // 보완 전 이미 기준선 통과 여부
+        let crossed = alreadyOver;
         cand.forEach((c,i)=>{
           const before = acc;
           acc = Math.min(100, acc + c.gain);
@@ -3721,9 +3736,11 @@ function renderReport(d){
             <div style="font-weight:900;font-size:15px;color:${nowOver?'var(--green)':'var(--gray-700)'}">${acc}점</div>
           </div>`);
         });
-        const finalMsg = crossed
-          ? `위 순서로 보완하면 <b>기준선(${cut}점)을 넘어설 수 있는</b> 구조입니다. 점수 회복 폭이 큰 항목부터 처리하세요.`
-          : `전 항목 보완 시 예상 <b>${acc}점</b>으로 기준선(${cut}점)까지 <b>${cut-acc}점</b> 더 필요합니다. 상위 리스크 외에 5번 항목별 평가에서 추가 개선 여지를 확인하세요.`;
+        const finalMsg = alreadyOver
+          ? `현재 <b>기준선(${cut}점)을 이미 넘은</b> 상태입니다. 위 보완은 발표평가·최종심사에서 밀리지 않도록 <b>안정권(약 ${Math.min(100,acc)}점)</b>으로 끌어올리는 단계입니다. 점수 회복 폭이 큰 항목부터 처리하세요.`
+          : (crossed
+            ? `위 순서로 보완하면 <b>기준선(${cut}점)을 넘어설 수 있는</b> 구조입니다. 점수 회복 폭이 큰 항목부터 처리하세요.`
+            : `전 항목 보완 시 예상 <b>${acc}점</b>으로 기준선(${cut}점)까지 <b>${cut-acc}점</b> 더 필요합니다. 상위 리스크 외에 5번 항목별 평가에서 추가 개선 여지를 확인하세요.`);
         scBody.innerHTML = rows.join('') + `<div style="margin-top:10px;font-size:13px;color:var(--gray-700,#4e5968);line-height:1.6">${finalMsg}</div>`;
         scBlock.style.display='';
       }
@@ -3769,10 +3786,10 @@ function applyModeBanner(mode){
     if(host) host.insertBefore(bar, host.firstChild);
   }
   if(mode==='quality'){
-    bar.style.cssText = 'margin:0 0 4px;padding:12px 16px;border-radius:12px;background:var(--amber-bg);border:1px solid #f3dca6;color:#7a5208;font-size:13px;font-weight:700;line-height:1.6';
+    bar.style.cssText = 'margin:16px 0 12px;padding:12px 16px;border-radius:12px;background:var(--amber-bg);border:1px solid #f3dca6;color:#7a5208;font-size:13px;font-weight:700;line-height:1.6';
     bar.innerHTML = '📝 <b>계획서 품질 진단 모드</b> · 공고문이 없어 특정 사업 적합성·선정 여부는 평가하지 않습니다. 점수는 일반 작성 완성도 기준의 참고치입니다.';
   } else {
-    bar.style.cssText = 'margin:0 0 4px;padding:12px 16px;border-radius:12px;background:var(--green-bg);border:1px solid #bbf0cf;color:var(--green);font-size:13px;font-weight:700;line-height:1.6';
+    bar.style.cssText = 'margin:16px 0 12px;padding:12px 16px;border-radius:12px;background:var(--green-bg);border:1px solid #bbf0cf;color:var(--green);font-size:13px;font-weight:700;line-height:1.6';
     bar.innerHTML = '✅ <b>공고 적합성 진단 모드</b> · 공고문 배점표를 기준으로 사업계획서를 채점하고 자격요건을 대조합니다.';
   }
 }
@@ -4257,44 +4274,6 @@ function downloadBlob(content, filename, type){
   setTimeout(()=>URL.revokeObjectURL(url), 1000);
 }
 
-$('#btn-savetxt').addEventListener('click',()=>{
-  downloadBlob(buildReportText(), createReportFileName()+'.txt', 'text/plain;charset=utf-8');
-});
-
-$('#btn-saveas').addEventListener('click',()=>{
-  const c = state.company;
-  const intake = $('#intake-body').innerHTML;
-  const editHTML = editEl.innerHTML;
-  const html = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(APP_CONFIG.reportTitle)}</title>
-<style>
-body{font-family:'Pretendard',system-ui,-apple-system,sans-serif;color:#191f28;line-height:1.7;max-width:840px;margin:0 auto;padding:30px 20px;word-break:keep-all;}
-h1{font-size:24px;} h2{font-size:18px;border-left:4px solid #3182f6;padding-left:10px;margin-top:30px;}
-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px;}
-th,td{border:1px solid #e5e8eb;padding:10px;text-align:left;} th{background:#f9fafb;width:34%;}
-.box{background:#f4f8ff;border:1px solid #cfe2ff;border-radius:10px;padding:16px;margin-top:14px;}
-.edit{border:1px solid #e5e8eb;border-radius:10px;padding:16px;margin-top:10px;}
-.footer{margin-top:30px;border-top:1px solid #ccc;padding-top:16px;font-size:12px;color:#6b7684;}
-.disc{background:#f2f4f6;border-radius:10px;padding:14px;font-size:12px;color:#6b7684;margin-top:20px;}
-</style></head><body>
-<h1>${esc(APP_CONFIG.reportTitle)}</h1>
-<p style="color:#6b7684">진단일: ${esc(new Date().toLocaleString('ko-KR'))}</p>
-<h2>접수 정보</h2>
-<table><tbody>${intake}</tbody></table>
-<h2>문서 기반 진단 결과</h2>
-<div class="box">현재 화면의 진단 표(공고 적합성·평가항목·감점 리스크 등)는 <b>예시 데이터</b>이며, AI 분석 API 연동 시 업로드 문서 기반 실제 결과로 대체됩니다. 본 MVP는 검증되지 않은 수치를 실제 진단으로 출력하지 않습니다.</div>
-<h2>멘토링 의견 / 편집 메모</h2>
-<div class="edit">${editHTML}</div>
-<div class="disc">본 진단은 사용자가 업로드한 문서와 입력 정보를 기반으로 한 AI 분석 결과입니다. 실제 지원 가능 여부, 선정 여부, 평가 결과는 주관기관의 공고문, 세부 운영지침, 제출자료, 증빙자료, 심사위원 판단에 따라 달라질 수 있습니다. 본 결과는 참고용 진단이며, 최종 제출 전에는 반드시 공고문 원문, 주관기관 안내사항, 전문가 검토를 함께 확인하시기 바랍니다.</div>
-<div class="footer"><b>그로스벤처스 주식회사</b><br>서울시 구로구 디지털로27길 24, 209호<br>
-070-4103-4177 · start@gven.kr · www.beconic.kr<br>
-중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)<br>
-© 2023~2026 growthventures Co., Ltd. All rights reserved.</div>
-</body></html>`;
-  downloadBlob(html, createReportFileName()+'.html', 'text/html;charset=utf-8');
-});
-
 function dateStamp(){
   const d=new Date();
   return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
@@ -4305,27 +4284,6 @@ function dateStamp(){
    ================================================================= */
 // 서비스 고정 URL (공유용) — APP_CONFIG 참조 (빈 문자열 금지, 지시서 17장)
 const SERVICE_URL = APP_CONFIG.serviceUrl;
-
-$('#btn-share').addEventListener('click', async ()=>{
-  const shareData = {
-    title: APP_CONFIG.shareTitle,
-    text:  APP_CONFIG.description,
-    url:   SERVICE_URL
-  };
-  // 1) Web Share API (모바일 우선)
-  if(navigator.share){
-    try{ await navigator.share(shareData); return; }
-    catch(e){ if(e && e.name==='AbortError') return; /* 사용자가 취소 */ }
-  }
-  // 2) 클립보드 복사
-  try{
-    await navigator.clipboard.writeText(SERVICE_URL);
-    alert('서비스 링크가 복사되었습니다.\n' + SERVICE_URL);
-    return;
-  }catch(e){}
-  // 3) 최후 폴백: 수동 복사
-  window.prompt('아래 링크를 복사하세요:', SERVICE_URL);
-});
 
 /* =================================================================
    다시 입력
