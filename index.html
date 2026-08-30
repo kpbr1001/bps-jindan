@@ -1329,7 +1329,7 @@ tr:last-child td{border-bottom:none;}
     <div>전화 070-4103-4177 · 이메일 <a href="mailto:start@gven.kr">start@gven.kr</a> · <a href="https://www.beconic.kr" target="_blank" rel="noopener">www.beconic.kr</a></div>
     <div class="cert">중소벤처기업부 공식 인증 중소기업상담회사 (제2025-684호)</div>
     <div class="copy">© 2023~2026 Copyright ⓒ growthventures Co., Ltd. All rights reserved.</div>
-    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">5045575e</span> <span id="build-loaded"></span></div>
+    <div class="copy" style="margin-top:4px;opacity:.55;font-size:10px">build <span id="build-hash">8f97972d</span> <span id="build-loaded"></span></div>
   </div>
 </footer>
 
@@ -1416,7 +1416,7 @@ function auditStaticTitles(){
 //       이 버전이 담고 있어야 할 핵심 수정(soft매칭·roadmap매칭·화이트리스트)이
 //       실제 코드에 있는지 검사한다. 없으면 footer에 "옛 코드 실행 중" 경고를 띄운다.
 (function(){
-  var SIG='v7.7';
+  var SIG='v7.8';
   try{ console.log('%c[Beconic BUILD] '+SIG+' · title-config · loaded '+new Date().toLocaleTimeString(),'color:#16a34a;font-weight:bold'); }catch(_){}
   document.addEventListener('DOMContentLoaded',function(){
     // 정적 타이틀을 APP_CONFIG 기준으로 일괄 동기화 후 자가감사
@@ -1460,6 +1460,12 @@ const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
 const esc = (str)=>String(str==null?'':str)
   .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
   .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+// 항목명 정제: AI가 name에 이미 넣은 배점 표기 "(20점)" 등을 제거(렌더가 /max점을 따로 붙이므로 중복 방지)
+const stripPts = (name)=> String(name||'')
+  .replace(/\s*[（(]\s*\d+\s*점?\s*[）)]\s*$/,'')   // 끝의 (20점) / (20)
+  .replace(/\s*[／/]\s*\d+\s*점\s*$/,'')            // 끝의 /20점
+  .trim();
 
 // 8.8 숫자 표기: 3자리마다 쉼표 + 원. 문서/입력에 없는 숫자는 생성하지 않음.
 function formatCurrencyKRW(val){
@@ -2223,7 +2229,7 @@ function deriveIssuesFromItems(diag){
   const weakMarkers = /(다만|그러나|하지만|으나|되나|였으나|었으나|하나|음에도|ㄴ데도|부족|미흡|공란|불명확|불충분|낮|없|미기재|한 줄|불과|아쉬|취약|보강|모호|미제시|목표로만|예정|계획에 그|추정|괴리|한계)/;
   const wk = [], risks = [];
   items.forEach(it=>{
-    const name = String(it.name||'').trim();
+    const name = String(it.name||'').replace(/\s*[（(]\s*\d+\s*점?\s*[）)]\s*$/,'').replace(/\s*[／/]\s*\d+\s*점\s*$/,'').trim();
     const comment = String(it.comment||'').trim();
     const action = String(it.action||'').trim();
     const level = String(it.level||'').trim();
@@ -2684,8 +2690,10 @@ function renderReport(d){
       console.log('%c[Beconic title-debug] roadmap','color:#e11d48',
         d.roadmap.map(r=>({task:r&&r.task, desc:(r&&(r.desc||r.detail)||'').slice(0,30)})));
   }catch(_){}
-  if(Array.isArray(d.risks))      d.risks.forEach(r=>{ if(r&&r.title)  r.title  = smartTitle(r.title, r.why); });
-  if(Array.isArray(d.priorities)) d.priorities.forEach(p=>{ if(p&&p.title) p.title = smartTitle(p.title, p.why); });
+  // items의 name에 AI가 넣은 배점 표기 "(20점)"을 렌더 전에 일괄 제거 → 대응도·최우선·9번·강점·약점 모두 중복표기 방지
+  if(Array.isArray(d.items)) d.items.forEach(it=>{ if(it&&it.name) it.name = stripPts(it.name); });
+  if(Array.isArray(d.risks))      d.risks.forEach(r=>{ if(r&&r.title)  r.title  = smartTitle(stripPts(r.title), r.why); });
+  if(Array.isArray(d.priorities)) d.priorities.forEach(p=>{ if(p&&p.title) p.title = smartTitle(stripPts(p.title), p.why); });
   if(Array.isArray(d.rewrites))   d.rewrites.forEach(r=>{ if(r&&r.topic)  r.topic  = smartTitle(r.topic, r.before||r.after); });
   // ★ roadmap.task도 문장형 제목이면 재구성 (13번 로드맵·핵심메시지 짤림 뿌리 해결) ★
   // roadmap은 risks를 재배열한 것 → desc(=fix)로 재구성 실패 시, 이미 정제된 risks/priorities 라벨과 매칭해 가져온다.
@@ -2963,7 +2971,7 @@ function renderReport(d){
         : it._verify==='ok'
         ? ' <span class="vbadge vb-ok" title="근거가 업로드 문서에서 확인됨">✓ 근거 확인</span>' : '';
       return `<div class="gap-row">
-        <div class="gap-name"><span class="gap-name-text">${esc(it.name)} <span class="muted" style="font-weight:600">/${it.max}점</span></span>${vb?`<span class="gap-name-badge">${vb.trim()}</span>`:''}</div>
+        <div class="gap-name"><span class="gap-name-text">${esc(stripPts(it.name))} <span class="muted" style="font-weight:600">/${it.max}점</span></span>${vb?`<span class="gap-name-badge">${vb.trim()}</span>`:''}</div>
         <div class="gap-track"><div class="gap-fill ${fillCls(it.level)}" style="width:${pct}%">${it.score}점</div>${cutLine}</div>
         <div class="gap-score ${lv(it.level)}">${esc(it.level)}</div>
       </div>`;
@@ -3000,27 +3008,40 @@ function renderReport(d){
   // 강점 파생: AI가 strengths를 비웠을 때 items의 양호/보통 항목 comment에서 긍정 부분을 추출(약점 파생과 대칭)
   let strengthsToShow = (Array.isArray(d.strengths) && d.strengths.length) ? d.strengths : [];
   if(!strengthsToShow.length && Array.isArray(d.items) && d.items.length){
-    const posMarker = /(양호|우수|충실|구체적|상세|명기|명확|확보|보유|탄탄|강점|잘 |적절|체계적|풍부)/;
-    const derived = [];
+    const posMarker = /(양호|우수|충실|구체적|상세|명기|명확|확보|보유|탄탄|강점|잘 |적절|체계적|풍부|갖추|뛰어|충분|밀착|양질|명시)/;
+    const hasReversal = /(으나|되나|였으나|았으나|었으나|하나|지만|다만|그러나|하지만)/;
+    const weakNames = new Set((Array.isArray(d.weaknesses)?d.weaknesses:[]).map(x=>String(x).split(/[—\-]/)[0].trim()));
+    const derived = [];       // 1차: 약점과 안 겹치는 순수 강점
+    const partial = [];       // 2차: 약점과 겹치지만 역접 앞 긍정부가 뚜렷한 '부분 강점'
     [...d.items].sort((a,b)=>(b.score/b.max)-(a.score/a.max)).forEach(it=>{
-      if(derived.length>=4) return;
       const lv = String(it.level||'');
       const cm = String(it.comment||'').trim();
       const ratio = it.max ? it.score/it.max : 0;
       if(!it.name) return;
-      if((lv==='양호'||lv==='보통') && cm){
-        // 역접(으나/되나/하나/다만/그러나) 앞부분 = 긍정 서술
-        let pos = cm.split(/(?:으나|되나|였으나|았으나|었으나|하나|지만|다만|그러나|하지만)/)[0].trim();
-        pos = pos.replace(/[,·\s]+$/,'').trim();
-        if(pos.length>=8 && posMarker.test(pos)){ derived.push(`${it.name} — ${pos}`); return; }
+      const nm = stripPts(it.name);
+      const overlaps = weakNames.has(nm);
+      // 역접 앞부분(긍정 서술) 추출
+      let posPart = '';
+      if(cm && hasReversal.test(cm)){
+        posPart = cm.split(hasReversal)[0].trim().replace(/[,·\s]+$/,'').trim();
       }
-      // comment가 없거나 긍정부 추출 실패 시: 충족률 기반 기본 강점 (양호 또는 70%+)
-      if(lv==='양호'){
-        derived.push(`${it.name} — 배점 대비 충족도가 양호한 항목`);
-      } else if(ratio>=0.7){
-        derived.push(`${it.name} — 배점 대비 ${Math.round(ratio*100)}% 충족으로 기본기가 갖춰진 항목`);
+      if(overlaps){
+        // 약점과 겹치는 항목: 역접 앞 긍정부가 뚜렷하면 '부분 강점' 후보로만
+        if(posPart.length>=8) partial.push(`${nm} — ${posPart} (일부 보완 필요)`);
+        return;
       }
+      // 약점과 안 겹치는 항목: 정식 강점
+      if(posPart.length>=6){ derived.push(`${nm} — ${posPart}`); return; }
+      if(cm && posMarker.test(cm) && lv!=='취약'){
+        const firstSent = cm.split(/[.。]/)[0].trim();
+        if(firstSent.length>=8){ derived.push(`${nm} — ${firstSent}`); return; }
+      }
+      if(lv==='양호'){ derived.push(`${nm} — 배점 대비 충족도가 양호한 항목`); }
+      else if(ratio>=0.6 && lv!=='취약'){ derived.push(`${nm} — 배점 대비 ${Math.round(ratio*100)}% 충족으로 기본기가 갖춰진 항목`); }
     });
+    // 순수 강점이 2개 미만이면 부분 강점으로 보충 (전 항목이 약점인 경우에도 강점 0개 방지)
+    while(derived.length<2 && partial.length) derived.push(partial.shift());
+    derived.splice(4);   // 최대 4개
     if(derived.length) strengthsToShow = derived;
   }
   if(strBox){
@@ -3254,7 +3275,7 @@ function renderReport(d){
         else cmt = `배점(${it.max}점) 대비 ${pct}% 충족으로 보통 수준입니다. 서술은 있으나 정량 근거·증빙 연계가 부족해 점수 상승 여지가 있습니다.`;
       }
       return `<details class="qcard"${i===0?' open':''}>
-        <summary><span class="q-title">${i+1}. ${esc(it.name)} · ${it.score}/${it.max}점</span>
+        <summary><span class="q-title">${i+1}. ${esc(stripPts(it.name))} · ${it.score}/${it.max}점</span>
         <span class="q-right"><span class="qmini ${mini}">${esc(it.level)} ${pct}%</span><span class="q-arrow">▼</span></span></summary>
         <div class="q-body">
           <div class="q-block">${esc(cmt)}</div>
